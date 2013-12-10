@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0.html</licenseUrl>
+    <projectUrl>https://github.com/zoosk/testrail-client</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright 2013</copyright>
+  </metadata>
+  <files>
+    <file src="..\TestRail\*.*" target=""/>
+    <file src="..\TestRail\Properties\*.*" target="Properties\"/>
+    <file src="..\TestRail\Types\*.*" target="Types\"/>
+    <file src="..\TestRail\bin\Debug\*.pdb" target="lib\net45\"/>
+  </files>
+</package>
