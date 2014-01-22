@@ -979,6 +979,7 @@ namespace TestRail
             {
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
                 request.AllowAutoRedirect = true;
+                int length = 0;
                 string authInfo = Convert.ToBase64String(Encoding.Default.GetBytes(_UserName_ + ":" + _Password_));
                 request.Headers["Authorization"] = "Basic " + authInfo;
                 request.UserAgent = "TestRail Client for .NET";
@@ -990,11 +991,13 @@ namespace TestRail
                 if (!string.IsNullOrWhiteSpace(postContent))
                 {
                     byte[] byteArray = Encoding.UTF8.GetBytes(postContent);
-                    request.ContentLength = byteArray.Length;
+                    length = byteArray.Length;
                     Stream requestDataStream = request.GetRequestStream();
                     requestDataStream.Write(byteArray, 0, byteArray.Length);
                     requestDataStream.Close();
                 }
+
+                request.ContentLength = length;
 
                 // receive the response
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
