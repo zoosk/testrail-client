@@ -979,25 +979,23 @@ namespace TestRail
             {
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
                 request.AllowAutoRedirect = true;
-                int length = 0;
                 string authInfo = Convert.ToBase64String(Encoding.Default.GetBytes(_UserName_ + ":" + _Password_));
                 request.Headers["Authorization"] = "Basic " + authInfo;
                 request.UserAgent = "TestRail Client for .NET";
                 request.Method = "POST";
                 request.ContentType = "application/json";
+                request.ContentLength = 0;
                 request.Accept = "application/json";
 
                 // add post data to the request
                 if (!string.IsNullOrWhiteSpace(postContent))
                 {
                     byte[] byteArray = Encoding.UTF8.GetBytes(postContent);
-                    length = byteArray.Length;
+                    request.ContentLength = byteArray.Length;
                     Stream requestDataStream = request.GetRequestStream();
                     requestDataStream.Write(byteArray, 0, byteArray.Length);
                     requestDataStream.Close();
                 }
-
-                request.ContentLength = length;
 
                 // receive the response
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
