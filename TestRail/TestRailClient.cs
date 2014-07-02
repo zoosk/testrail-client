@@ -261,7 +261,7 @@ namespace TestRail
         /// <param name="milestoneID">(optional)id of the milestone to link the test plan</param>
         /// <param name="entries">an array of objects describing the test runs of the plan</param>
         /// <returns>result of the command</returns>
-        public CommandResult<ulong> AddPlan(ulong projectID, string name, string description = null, ulong? milestoneID = null, List<PlanEntry> entries = null)
+        public CommandResult<ulong> AddPlan(ulong projectID, string name, string description = null, ulong? milestoneID = null, List<PlanEntry> entries = null)//todo:add config ids here
         // , params ulong[] suiteIDs)
         {
             if (string.IsNullOrWhiteSpace(name))
