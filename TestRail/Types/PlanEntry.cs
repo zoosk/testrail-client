@@ -11,6 +11,7 @@ namespace TestRail.Types
         public string ID { get; set; }
 
         public List<ulong> RunIDList { get; private set; }
+        public List<Run> RunList { get; set; }
 
         /// <summary>the id of the test suite for the test run</summary>
         public ulong? SuiteID { get; set; }
@@ -66,6 +67,17 @@ namespace TestRail.Types
                 }
 
                 jsonParams.config_ids = jarray;
+            }
+
+            if (null != RunList && 0 < RunList.Count)
+            {
+                JArray jarray = new JArray();
+                foreach (Run run in RunList)
+                {
+                    jarray.Add(run.GetJson());
+                }
+
+                jsonParams.runs = jarray;
             }
 
             return jsonParams;

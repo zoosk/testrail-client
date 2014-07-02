@@ -788,6 +788,18 @@ namespace TestRail
             string uri = _CreateUri_(_CommandType_.get, nodeName);
             return _GetItems_<Priority>(nodeName, uri, Priority.Parse);
         }
+
+        /// <summary>
+        /// Returns a list of Config Groups available in a Project
+        /// </summary>
+        /// <param name="projectID">ID of the Project to return the Config Groups for</param>
+        /// <returns>list of ConfigurationGroup</returns>
+        public List<ConfigurationGroup> GetConfigurationGroups(ulong projectID)
+        {
+            string nodeName = "configs";
+            string uri = _CreateUri_(_CommandType_.get, nodeName, projectID);
+            return _GetItems_<ConfigurationGroup>(nodeName, uri, ConfigurationGroup.Parse);
+        }
         #endregion Get Commands
 
         #endregion Public Methods
