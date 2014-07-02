@@ -26,6 +26,9 @@ namespace TestRail.Types
 
         /// <summary>an array of case IDs for the custom case selection</summary>
         public List<ulong> CaseIDs { get; set; }
+
+        /// <summary>an array of config IDs to allow for multiple test run configurations to be created</summary>
+        public List<ulong> ConfigIDs { get; set; }
         #endregion Public Properties
 
         #region Public Methods
@@ -53,6 +56,18 @@ namespace TestRail.Types
             {
                 jsonParams.include_all = true;
             }
+
+            if (null != ConfigIDs && 0 < ConfigIDs.Count)
+            {
+                JArray jarray = new JArray();
+                foreach (ulong configID in ConfigIDs)
+                {
+                    jarray.Add(configID);
+                }
+
+                jsonParams.config_ids = jarray;
+            }
+
             return jsonParams;
         }
 
