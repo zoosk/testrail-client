@@ -97,6 +97,12 @@ namespace TestRail.Types
 
             pe.RunIDList = _ConvertToRunIDs(json["runs"] as JArray);
             pe.CaseIDs = _ConvertToCaseIDs(json["case_ids"] as JArray);
+
+            JArray jarray = json["runs"] as JArray;
+            if (null != jarray)
+            {
+                pe.RunList = JsonUtility.ConvertJArrayToList<Run>(jarray, Run.Parse);
+            }
             return pe;
         }
         #endregion Public Methods
