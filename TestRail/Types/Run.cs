@@ -84,7 +84,10 @@ namespace TestRail.Types
         public string Url { get; private set; }
 
         /// <summary>an array of case IDs for the custom case selection</summary>
-        public HashSet<ulong> CaseIDs { get; set;}
+        public HashSet<ulong> CaseIDs { get; set; }
+
+        /// <summary>an array of case IDs for the custom case selection</summary>
+        public List<ulong> ConfigIDs { get; set; }
         #endregion Properties
 
         #region Public Methods
@@ -150,6 +153,17 @@ namespace TestRail.Types
                 }
                 jsonParams.case_ids = jarray;
             }
+
+            if (null != ConfigIDs && 0 < ConfigIDs.Count)
+            {
+                JArray jarray = new JArray();
+                foreach (ulong configID in ConfigIDs)
+                {
+                    jarray.Add(configID);
+                }
+                jsonParams.config_ids = jarray;
+            }
+
             return jsonParams;
         }
         #endregion Public Methods

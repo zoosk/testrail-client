@@ -261,7 +261,7 @@ namespace TestRail
         /// <param name="milestoneID">(optional)id of the milestone to link the test plan</param>
         /// <param name="entries">an array of objects describing the test runs of the plan</param>
         /// <returns>result of the command</returns>
-        public CommandResult<ulong> AddPlan(ulong projectID, string name, string description = null, ulong? milestoneID = null, List<PlanEntry> entries = null)
+        public CommandResult<ulong> AddPlan(ulong projectID, string name, string description = null, ulong? milestoneID = null, List<PlanEntry> entries = null)//todo:add config ids here
         // , params ulong[] suiteIDs)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -787,6 +787,18 @@ namespace TestRail
             string nodeName = "priorities";
             string uri = _CreateUri_(_CommandType_.get, nodeName);
             return _GetItems_<Priority>(nodeName, uri, Priority.Parse);
+        }
+
+        /// <summary>
+        /// Returns a list of Config Groups available in a Project
+        /// </summary>
+        /// <param name="projectID">ID of the Project to return the Config Groups for</param>
+        /// <returns>list of ConfigurationGroup</returns>
+        public List<ConfigurationGroup> GetConfigurationGroups(ulong projectID)
+        {
+            string nodeName = "configs";
+            string uri = _CreateUri_(_CommandType_.get, nodeName, projectID);
+            return _GetItems_<ConfigurationGroup>(nodeName, uri, ConfigurationGroup.Parse);
         }
         #endregion Get Commands
 

@@ -11,6 +11,7 @@ namespace TestRail.Types
         public string ID { get; set; }
 
         public List<ulong> RunIDList { get; private set; }
+        public List<Run> RunList { get; set; }
 
         /// <summary>the id of the test suite for the test run</summary>
         public ulong? SuiteID { get; set; }
@@ -26,6 +27,9 @@ namespace TestRail.Types
 
         /// <summary>an array of case IDs for the custom case selection</summary>
         public List<ulong> CaseIDs { get; set; }
+
+        /// <summary>an array of config IDs to allow for multiple test run configurations to be created</summary>
+        public List<ulong> ConfigIDs { get; set; }
         #endregion Public Properties
 
         #region Public Methods
@@ -53,6 +57,29 @@ namespace TestRail.Types
             {
                 jsonParams.include_all = true;
             }
+
+            if (null != ConfigIDs && 0 < ConfigIDs.Count)
+            {
+                JArray jarray = new JArray();
+                foreach (ulong configID in ConfigIDs)
+                {
+                    jarray.Add(configID);
+                }
+
+                jsonParams.config_ids = jarray;
+            }
+
+            if (null != RunList && 0 < RunList.Count)
+            {
+                JArray jarray = new JArray();
+                foreach (Run run in RunList)
+                {
+                    jarray.Add(run.GetJson());
+                }
+
+                jsonParams.runs = jarray;
+            }
+
             return jsonParams;
         }
 
@@ -70,6 +97,12 @@ namespace TestRail.Types
 
             pe.RunIDList = _ConvertToRunIDs(json["runs"] as JArray);
             pe.CaseIDs = _ConvertToCaseIDs(json["case_ids"] as JArray);
+
+            JArray jarray = json["runs"] as JArray;
+            if (null != jarray)
+            {
+                pe.RunList = JsonUtility.ConvertJArrayToList<Run>(jarray, Run.Parse);
+            }
             return pe;
         }
         #endregion Public Methods

@@ -54,6 +54,8 @@
     <Compile Include="Types\CaseField.cs" />
     <Compile Include="Types\CaseType.cs" />
     <Compile Include="CommandResult.cs" />
+    <Compile Include="Types\ConfigurationGroup.cs" />
+    <Compile Include="Types\Configuration.cs" />
     <Compile Include="Types\Config.cs" />
     <Compile Include="Types\ConfigContext.cs" />
     <Compile Include="Types\ConfigOption.cs" />
@@ -89,4 +91,3 @@
   </Target>
   -->
 </Project>
-
