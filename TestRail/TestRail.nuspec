@@ -10,7 +10,18 @@
     <projectUrl>https://github.com/zoosk/testrail-client</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Update Json.net Nuget Package</releaseNotes>
+    <releaseNotes>
+    ##1.0.0.6
+      - Bug 
+        - Result Status Enum for Untested had wrong ID
+      - Feature 
+        - Get Plan now populates complete run objects
+        - Get for Configs
+        - Ability to create a test plan with configs
+        - Config Ids added to plan entry 
+    ##1.0.0.5
+      - Update Json.net Nuget Package
+    </releaseNotes>
     <copyright>Copyright 2013</copyright>
   </metadata>
   <files>
