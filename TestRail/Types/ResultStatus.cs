@@ -4,7 +4,7 @@
     public enum ResultStatus
     {
         /// <summary>the test has not been run</summary>
-        Untested = 0,
+        Untested = 3,
         /// <summary>the test passed</summary>
         Passed = 1,
         /// <summary>the test is blocked</summary>
