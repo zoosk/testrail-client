@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>TestRail</id>
-    <version>1.0.0.6</version>
+    <version>1.0.0.7</version>
     <title>TestRail Client</title>
     <authors>TestRail Client Committers</authors>
     <owners>TestRail Client Committers</owners>
