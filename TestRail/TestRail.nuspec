@@ -25,10 +25,11 @@
       - Update Json.net Nuget Package
     </releaseNotes>
     <copyright>Copyright 2013</copyright>
+  
+    <dependencies>
+      <dependency id="Newtonsoft.Json" version="6.0.6"/>
+    </dependencies>
   </metadata>
-  <dependencies>
-    <dependency id="Newtonsoft.Json" version="6.0.6"/>
-  </dependencies>
   <files>
     <file src="..\TestRail\*.*" target=""/>
     <file src="..\TestRail\Properties\*.*" target="Properties\"/>
