@@ -11,6 +11,8 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>C# implementation of the TestRail API</description>
     <releaseNotes>
+    ##1.0.0.7
+      - Update dependencies for this package
     ##1.0.0.6
       - Bug 
         - Result Status Enum for Untested had wrong ID
