@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/zoosk/testrail-client</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes></releaseNotes>
+    <releaseNotes>Update Json.net Nuget Package</releaseNotes>
     <copyright>Copyright 2013</copyright>
   </metadata>
   <files>
