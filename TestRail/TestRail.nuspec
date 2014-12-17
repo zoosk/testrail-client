@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>$id$</id>
-    <version>$version$</version>
-    <title>$title$</title>
-    <authors>$author$</authors>
-    <owners>$author$</owners>
+    <id>TestRail</id>
+    <version>1.0.0.6</version>
+    <title>TestRail Client</title>
+    <authors>TestRail Client Committers</authors>
+    <owners>TestRail Client Committers</owners>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0.html</licenseUrl>
     <projectUrl>https://github.com/zoosk/testrail-client</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>$description$</description>
+    <description>C# implementation of the TestRail API</description>
     <releaseNotes>
     ##1.0.0.6
       - Bug 
