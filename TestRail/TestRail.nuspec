@@ -24,6 +24,9 @@
     </releaseNotes>
     <copyright>Copyright 2013</copyright>
   </metadata>
+  <dependencies>
+    <dependency id="Newtonsoft.Json" version="6.0.6"/>
+  </dependencies>
   <files>
     <file src="..\TestRail\*.*" target=""/>
     <file src="..\TestRail\Properties\*.*" target="Properties\"/>
