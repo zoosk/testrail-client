@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>TestRail</id>
-    <version>1.0.0.7</version>
+    <version>1.0.0.8</version>
     <title>TestRail Client</title>
     <authors>TestRail Client Committers</authors>
     <owners>TestRail Client Committers</owners>
@@ -11,6 +11,8 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>C# implementation of the TestRail API</description>
     <releaseNotes>
+    ##1.0.0.8
+      - Fix Nuget spec file 
     ##1.0.0.7
       - Update dependencies for this package
     ##1.0.0.6
@@ -34,6 +36,6 @@
     <file src="..\TestRail\*.*" target=""/>
     <file src="..\TestRail\Properties\*.*" target="Properties\"/>
     <file src="..\TestRail\Types\*.*" target="Types\"/>
-    <file src="..\TestRail\bin\Debug\*.pdb" target="lib\net45\"/>
+    <file src="..\TestRail\bin\Release\TestRail.*" target="lib\net45\"/>
   </files>
 </package>
