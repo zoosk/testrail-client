@@ -7,7 +7,7 @@ Solution was built using Visual Studio 2012 Update 3
 
 ### To Release a New Version
 - pull latest
-- update the assemblyInfo.cs file for the asembly with the new version 
+- update the assemblyInfo.cs file for the assembly with the new version 
 - Edit the file: `TestRail.nuspec`. (At least bump version and change release notes.)
 - commit and push changes
 - pull new code (just for sanity)
