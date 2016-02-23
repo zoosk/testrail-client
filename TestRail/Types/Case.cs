@@ -42,6 +42,10 @@ namespace TestRail.Types
 
         /// <summary>suite id for this case</summary>
         public ulong? SuiteID { get; set; }
+        
+        /// <summary>custom test case notes</summary>
+        public string Notes { get; set; }
+        
         #endregion Public Properties
 
         #region Public Methods
@@ -70,6 +74,7 @@ namespace TestRail.Types
             c.Estimate = (string)json["estimate"];
             c.EstimateForecast = (string)json["estimate_forecast"];
             c.SuiteID = (ulong)json["suite_id"];
+            c.Notes = (string)json["custom_testcase_notes"];
 
             return c;
         }
