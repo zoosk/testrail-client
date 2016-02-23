@@ -20,6 +20,12 @@ namespace TestRail.Types
         /// <summary>id of the milestone associated with the plan</summary>
         public ulong? MilestoneID { get; set; }
 
+        /// <summary>The ID of the user who created the test plan</summary>
+        public uint CreatedBy { get; set; }
+
+        /// <summary>The date/time when the test plan was created</summary>
+        public DateTime CreatedOn { get; set; }
+
         /// <summary>true if the plan has been completed</summary>
         public bool IsCompleted { get; set; }
 
@@ -92,6 +98,8 @@ namespace TestRail.Types
             p.Name = (string)json["name"];
             p.Description = (string)json["description"];
             p.MilestoneID = (ulong?)json["milestone_id"];
+            p.CreatedBy = (uint)json["created_by"];
+            p.CreatedOn = new DateTime(1970, 1, 1).AddSeconds((int)json["created_on"]);
             p.IsCompleted = (bool)json["is_completed"];
             p.CompletedOn = (null == (int?)json["completed_on"]) ? (DateTime?)null : new DateTime(1970, 1, 1).AddSeconds((int)json["completed_on"]);
             p.PassedCount = (uint)json["passed_count"];
