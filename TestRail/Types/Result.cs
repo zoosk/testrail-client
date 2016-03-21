@@ -4,7 +4,7 @@ using System;
 namespace TestRail.Types
 {
     /// <summary>stores information about the result of a test</summary>
-    public class Result
+    public class Result : BaseTestRailType
     {
         #region Public Properties
         /// <summary>ID of the result</summary>
@@ -47,22 +47,26 @@ namespace TestRail.Types
         {
             return string.Format("{0}:{1}", ID, Comment);
         }
+
         /// <summary>Parse the JSON into a Result</summary>
         /// <param name="json">json object to parse</param>
         /// <returns>a Result</returns>
         public static Result Parse(JObject json)
         {
-            Result r = new Result();
-            r.ID = (ulong)json["id"];
-            r.TestID = (ulong)json["test_id"];
-            r.StatusID = (ulong?)json["status_id"];
-            r.CreatedBy = (ulong?)json["created_by"];
-            r.CreatedOn = (null != (int?)json["created_on"]) ? new DateTime(1970, 1, 1).AddSeconds((int)json["created_on"]) : (DateTime?)null;
-            r.AssignedToID = (ulong?)json["assignedto_id"];
-            r.Comment = (string)json["comment"];
-            r.Version = (string)json["version"];
-            r.Elapsed = (null != (long?)json["elapsed"]) ? new TimeSpan((long)json["elapsed"]) : (TimeSpan?)null;
-            r.Defects = (string)json["defects"];
+            var r = new Result
+            {
+                JsonFromResponse = json,
+                ID = (ulong)json["id"],
+                TestID = (ulong)json["test_id"],
+                StatusID = (ulong?)json["status_id"],
+                CreatedBy = (ulong?)json["created_by"],
+                CreatedOn = (null != (int?)json["created_on"]) ? new DateTime(1970, 1, 1).AddSeconds((int)json["created_on"]) : (DateTime?)null,
+                AssignedToID = (ulong?)json["assignedto_id"],
+                Comment = (string)json["comment"],
+                Version = (string)json["version"],
+                Elapsed = (null != (long?)json["elapsed"]) ? new TimeSpan((long)json["elapsed"]) : (TimeSpan?)null,
+                Defects = (string)json["defects"],
+            };
             return r;
         }
 

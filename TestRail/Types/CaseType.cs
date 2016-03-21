@@ -3,7 +3,7 @@
 namespace TestRail.Types
 {
     /// <summary>stores information about a case type</summary>
-    public class CaseType
+    public class CaseType : BaseTestRailType
     {
         #region Public Properties
         /// <summary>ID of the case type</summary>
@@ -29,10 +29,13 @@ namespace TestRail.Types
         /// <returns>suite corresponding to the json</returns>
         public static CaseType Parse(JObject json)
         {
-            CaseType ct = new CaseType();
-            ct.ID = (ulong?)json["id"];
-            ct.Name = (string)json["name"];
-            ct.IsDefault = (bool?)json["is_default"];
+            var ct = new CaseType
+            {
+                JsonFromResponse = json,
+                ID = (ulong?) json["id"],
+                Name = (string) json["name"],
+                IsDefault = (bool?) json["is_default"],
+            };
             return ct;
         }
         #endregion Public Methods

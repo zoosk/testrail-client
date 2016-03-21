@@ -3,7 +3,7 @@
 namespace TestRail.Types
 {
     /// <summary>stores information about a user</summary>
-    public class User
+    public class User : BaseTestRailType
     {
         #region Public Properties
         /// <summary>
@@ -54,13 +54,16 @@ namespace TestRail.Types
         /// <returns>a user object corresponding to the json object</returns>
         public static User Parse(JObject json)
         {
-            User u = new User();
-            u.ID = (ulong)json["id"];
-            u.Name = (string)json["name"];
-            u.Email = (string)json["email"];
-            u.IsAdmin = json.Value<bool?>("is_admin") ?? false;
-            u.RoleID = (ulong?)json["role_id"];
-            u.IsActive = (bool)json["is_active"];
+            var u = new User
+            {
+                JsonFromResponse = json,
+                ID = (ulong)json["id"],
+                Name = (string)json["name"],
+                Email = (string)json["email"],
+                IsAdmin = json.Value<bool?>("is_admin") ?? false,
+                RoleID = (ulong?)json["role_id"],
+                IsActive = (bool)json["is_active"],
+            };
             return u;
         }
         #endregion Public Methods

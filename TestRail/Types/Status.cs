@@ -3,7 +3,7 @@
 namespace TestRail.Types
 {
     /// <summary>stores information about a status</summary>
-    public class Status
+    public class Status : BaseTestRailType
     {
         #region Public Properties
         /// <summary>id of the status</summary>
@@ -48,16 +48,19 @@ namespace TestRail.Types
         /// <returns>Status object corresponding to the json</returns>
         public static Status Parse(JObject json)
         {
-            Status s = new Status();
-            s.ID = (ulong)json["id"];
-            s.Name = (string)json["name"];
-            s.label = (string)json["label"];
-            s.ColorDark = (ulong)json["color_dark"];
-            s.ColorMedium = (ulong)json["color_medium"];
-            s.ColorBright = (ulong)json["color_bright"];
-            s.IsSystem = (bool)json["is_system"];
-            s.IsUntested = (bool)json["is_untested"];
-            s.IsFinal = (bool)json["is_final"];
+            var s = new Status
+            {
+                JsonFromResponse = json,
+                ID = (ulong)json["id"],
+                Name = (string)json["name"],
+                label = (string)json["label"],
+                ColorDark = (ulong)json["color_dark"],
+                ColorMedium = (ulong)json["color_medium"],
+                ColorBright = (ulong)json["color_bright"],
+                IsSystem = (bool)json["is_system"],
+                IsUntested = (bool)json["is_untested"],
+                IsFinal = (bool)json["is_final"],
+            };
             return s;
         }
         #endregion Public Methods

@@ -3,7 +3,7 @@
 namespace TestRail.Types
 {
     /// <summary>stores information about a test</summary>
-    public class Test
+    public class Test : BaseTestRailType
     {
         #region Public Properties
         /// <summary>id of the test</summary>
@@ -38,13 +38,16 @@ namespace TestRail.Types
         /// <returns>test corresponding to the json</returns>
         public static Test Parse(JObject json)
         {
-            Test t = new Test();
-            t.ID = (ulong?)json["id"];
-            t.CaseID = (ulong?)json["case_id"];
-            t.RunID = (ulong?)json["run_id"];
-            t.Status = (ResultStatus?)((int)json["status_id"]);
-            t.AssignedToID = (ulong?)json["assignedto_id"];
-            t.Title = (string)json["title"];
+            var t = new Test
+            {
+                JsonFromResponse = json,
+                ID = (ulong?)json["id"],
+                CaseID = (ulong?)json["case_id"],
+                RunID = (ulong?)json["run_id"],
+                Status = (ResultStatus?)((int)json["status_id"]),
+                AssignedToID = (ulong?)json["assignedto_id"],
+                Title = (string)json["title"],
+            };
             return t;
         }
         #endregion

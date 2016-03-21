@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using TestRail.Types;
 
 namespace TestRail
 {
@@ -36,8 +37,9 @@ namespace TestRail
         /// <param name="jarray">JArray to parse</param>
         /// <returns>returns a list of objects corresponding to the json, empty list if nothing exists</returns>
         internal static List<T> ConvertJArrayToList<T>(JArray jarray, Func<JObject, T> parse)
+            where T : BaseTestRailType
         {
-            List<T> list = new List<T>();
+            var list = new List<T>();
             if (null != jarray && null != parse)
             {
                 foreach (JObject json in jarray)

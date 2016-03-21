@@ -3,7 +3,7 @@
 namespace TestRail.Types
 {
     /// <summary>stores information about an option for a case field's configuration</summary>
-    public class ConfigOption
+    public class ConfigOption : BaseTestRailType
     {
         #region Public Properties
         /// <summary>is this option required</summary>
@@ -24,11 +24,14 @@ namespace TestRail.Types
         /// <param name="json">converts the json object to a ConfigOption</param>
         public static ConfigOption Parse(JObject json)
         {
-            ConfigOption co = new ConfigOption();
-            co.IsRequired = (bool?)json["is_required"];
-            co.DefaultValue = (string)json["default_value"];
-            co.Format = (string)json["format"];
-            co.Rows = (string)json["rows"];
+            var co = new ConfigOption
+            {
+                JsonFromResponse = json,
+                IsRequired = (bool?) json["is_required"],
+                DefaultValue = (string) json["default_value"],
+                Format = (string) json["format"],
+                Rows = (string) json["rows"],
+            };
             return co;
         }
         #endregion

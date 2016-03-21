@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace TestRail.Types
 {
     /// <summary>stores information about a case field</summary>
-    public class CaseField
+    public class CaseField : BaseTestRailType
     {
         #region Public Properties
         /// <summary>id of the field</summary>
@@ -54,17 +54,21 @@ namespace TestRail.Types
         /// <returns>CaseField corresponding to the json</returns>
         public static CaseField Parse(JObject json)
         {
-            CaseField cf = new CaseField();
-            cf.ID = (ulong?)json["id"];
-            cf.Name = (string)json["name"];
-            cf.SystemName = (string)json["system_name"];
-            cf.EntityID = (ulong?)json["entity_id"];
-            cf.Label = (string)json["label"];
-            cf.Description = (string)json["description"];
-            cf.TypeID = (ulong?)json["type_id"];
-            cf.LocationID = (ulong?)json["location_id"];
-            cf.DisplayOrder = (ulong?)json["display_order"];
-            JArray jarray = json["configs"] as JArray;
+            var cf = new CaseField
+            {
+                JsonFromResponse = json,
+                ID = (ulong?)json["id"],
+                Name = (string)json["name"],
+                SystemName = (string)json["system_name"],
+                EntityID = (ulong?)json["entity_id"],
+                Label = (string)json["label"],
+                Description = (string)json["description"],
+                TypeID = (ulong?)json["type_id"],
+                LocationID = (ulong?)json["location_id"],
+                DisplayOrder = (ulong?)json["display_order"],
+            };
+
+            var jarray = json["configs"] as JArray;
             if (null != jarray)
             {
                 cf.Configs = JsonUtility.ConvertJArrayToList<Config>(jarray, Config.Parse);
