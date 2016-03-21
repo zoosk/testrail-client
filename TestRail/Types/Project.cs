@@ -4,7 +4,7 @@ using System;
 namespace TestRail.Types
 {
     /// <summary>stores information about a project</summary>
-    public class Project
+    public class Project : BaseTestRailType
     {
         #region Public Properties
         /// <summary>id of the project</summary>
@@ -45,14 +45,17 @@ namespace TestRail.Types
         /// <returns>project corresponding to the json</returns>
         public static Project Parse(JObject json)
         {
-            Project p = new Project();
-            p.ID = (ulong)json["id"];
-            p.Name = (string)json["name"];
-            p.Announcement = (string)json["announcement"];
-            p.ShowAnnouncement = (bool?)json["show_announcement"];
-            p.IsCompleted = (bool?)json["is_completed"];
-            p.Url = (string)json["url"];
-            p.CompletedOn = (null == (int?)json["completed_on"]) ? (DateTime?)null : new DateTime(1970, 1, 1).AddSeconds((int)json["completed_on"]);
+            var p = new Project
+            {
+                JsonFromResponse = json,
+                ID = (ulong)json["id"],
+                Name = (string)json["name"],
+                Announcement = (string)json["announcement"],
+                ShowAnnouncement = (bool?)json["show_announcement"],
+                IsCompleted = (bool?)json["is_completed"],
+                Url = (string)json["url"],
+                CompletedOn = (null == (int?)json["completed_on"]) ? (DateTime?)null : new DateTime(1970, 1, 1).AddSeconds((int)json["completed_on"]),
+            };
             return p;
         }
 

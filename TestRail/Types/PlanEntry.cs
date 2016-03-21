@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace TestRail.Types
 {
     /// <summary>stores information about a plan entry</summary>
-    public class PlanEntry
+    public class PlanEntry : BaseTestRailType
     {
         #region Public Properties
         /// <summary>Guid of the plan entry</summary>
@@ -88,17 +88,20 @@ namespace TestRail.Types
         /// <returns>PlanEntry corresponding to a json object</returns>
         public static PlanEntry Parse(JObject json)
         {
-            PlanEntry pe = new PlanEntry();
-            pe.ID = (string)json["id"];
-            pe.SuiteID = (ulong?)json["suite_id"];
-            pe.Name = (string)json["name"];
-            pe.AssignedToID = (ulong?)json["assignedto_id"];
-            pe.IncludeAll = (bool?)json["include_all"];
+            var pe = new PlanEntry
+            {
+                JsonFromResponse = json,
+                ID = (string)json["id"],
+                SuiteID = (ulong?)json["suite_id"],
+                Name = (string)json["name"],
+                AssignedToID = (ulong?)json["assignedto_id"],
+                IncludeAll = (bool?)json["include_all"],
 
-            pe.RunIDList = _ConvertToRunIDs(json["runs"] as JArray);
-            pe.CaseIDs = _ConvertToCaseIDs(json["case_ids"] as JArray);
+                RunIDList = _ConvertToRunIDs(json["runs"] as JArray),
+                CaseIDs = _ConvertToCaseIDs(json["case_ids"] as JArray),
+            };
 
-            JArray jarray = json["runs"] as JArray;
+            var jarray = json["runs"] as JArray;
             if (null != jarray)
             {
                 pe.RunList = JsonUtility.ConvertJArrayToList<Run>(jarray, Run.Parse);

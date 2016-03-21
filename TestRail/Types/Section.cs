@@ -3,7 +3,7 @@
 namespace TestRail.Types
 {
     /// <summary>stores information about a section</summary>
-    public class Section
+    public class Section : BaseTestRailType
     {
         #region Public Properties
 
@@ -40,13 +40,16 @@ namespace TestRail.Types
         /// <returns>section corresponding to the json</returns>
         public static Section Parse(JObject json)
         {
-            Section s = new Section();
-            s.ID = (ulong?)json["id"];
-            s.Name = (string)json["name"];
-            s.ParentID = (ulong?)json["parent_id"];
-            s.Depth = (uint?)json["depth"];
-            s.DisplayOrder = (uint?)json["display_order"];
-            s.SuiteID = (ulong?)json["suite_id"];
+            var s = new Section
+            {
+                JsonFromResponse = json,
+                ID = (ulong?)json["id"],
+                Name = (string)json["name"],
+                ParentID = (ulong?)json["parent_id"],
+                Depth = (uint?)json["depth"],
+                DisplayOrder = (uint?)json["display_order"],
+                SuiteID = (ulong?)json["suite_id"],
+            };
             return s;
         }
 
