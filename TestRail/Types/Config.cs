@@ -3,7 +3,7 @@
 namespace TestRail.Types
 {
     /// <summary>stores information about a config</summary>
-    public class Config
+    public class Config : BaseTestRailType
     {
         #region Public Properties
         /// <summary>Options for this configuration</summary>
@@ -21,10 +21,13 @@ namespace TestRail.Types
         /// <param name="json">json object to parse into a Config</param>
         public static Config Parse(JObject json)
         {
-            Config c = new Config();
-            c.Option = ConfigOption.Parse((JObject)json["options"]);
-            c.Context = ConfigContext.Parse((JObject)json["context"]);
-            c.ID = (string)json["id"];
+            var c = new Config
+            {
+                JsonFromResponse = json,
+                Option = ConfigOption.Parse((JObject)json["options"]),
+                Context = ConfigContext.Parse((JObject)json["context"]),
+                ID = (string)json["id"],
+            };
             return c;
         }
         #endregion Public Methods

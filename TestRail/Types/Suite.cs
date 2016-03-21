@@ -3,7 +3,7 @@
 namespace TestRail.Types
 {
     /// <summary>stores information about a suite</summary>
-    public class Suite
+    public class Suite : BaseTestRailType
     {
         #region Public Properties
         /// <summary>id of the suite</summary>
@@ -35,12 +35,15 @@ namespace TestRail.Types
         /// <returns>suite corresponding to the json</returns>
         public static Suite Parse(JObject json)
         {
-            Suite s = new Suite();
-            s.ID = (ulong?)json["id"];
-            s.Name = (string)json["name"];
-            s.Description = (string)json["description"];
-            s.ProjectID = (ulong?)json["project_id"];
-            s.Url = (string)json["url"];
+            var s = new Suite
+            {
+                JsonFromResponse = json,
+                ID = (ulong?)json["id"],
+                Name = (string)json["name"],
+                Description = (string)json["description"],
+                ProjectID = (ulong?)json["project_id"],
+                Url = (string)json["url"],
+            };
             return s;
         }
 

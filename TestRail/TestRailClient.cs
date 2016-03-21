@@ -812,7 +812,7 @@ namespace TestRail
         /// <param name="id">the id of the item</param>
         /// <returns>object of the supplied type containing information about the item</returns>
         protected T _GetItem_<T>(string nodeName, string uri, Func<JObject, T> parse)
-            where T : new()
+            where T : BaseTestRailType, new()
         {
 
             var result = _CallTestRailGetEndpoint(uri);
@@ -822,7 +822,7 @@ namespace TestRail
                 return default(T);
             }
 
-            JObject json = JObject.Parse(result.Value);
+            var json = JObject.Parse(result.Value);
             return parse(json);
         }
 
@@ -835,9 +835,9 @@ namespace TestRail
         /// <param name="options">additional options to append to the get request</param>
         /// <returns>list of objects of the supplied type corresponding th supplied filters</returns>
         protected List<T> _GetItems_<T>(string nodeName, string uri, Func<JObject, T> parse)
-            where T : new()
+            where T : BaseTestRailType, new()
         {
-            List<T> items = new List<T>();
+            var items = new List<T>();
             var result = _CallTestRailGetEndpoint(uri);
 
             if (!result.WasSuccessful)
@@ -846,7 +846,7 @@ namespace TestRail
             }
             else
             {
-                JArray jarray = JArray.Parse(result.Value);
+                var jarray = JArray.Parse(result.Value);
                 if (null != jarray)
                 {
                     items = JsonUtility.ConvertJArrayToList<T>(jarray, parse);

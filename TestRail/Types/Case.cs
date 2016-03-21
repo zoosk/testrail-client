@@ -4,7 +4,7 @@ using System;
 namespace TestRail.Types
 {
     /// <summary>stores information about a case</summary>
-    public class Case
+    public class Case : BaseTestRailType
     {
         #region Public Properties
         /// <summary>id of the case</summary>
@@ -57,20 +57,22 @@ namespace TestRail.Types
         /// <returns>case corresponding to the json</returns>
         public static Case Parse(JObject json)
         {
-            Case c = new Case();
-            c.ID = (ulong?)json["id"];
-            c.Title = (string)json["title"];
-            c.SectionID = (ulong?)json["section_id"];
-            c.TypeID = (ulong?)json["type_id"];
-            c.PriorityID = (ulong?)json["priority_id"];
-            c.References = (string)json["refs"];
-            c.MilestoneID = (ulong?)json["milestone_id"];
-            c.CreatedBy = (ulong)json["created_by"];
-            c.CreatedOn = (null == (int?)json["created_on"]) ? (DateTime?)null : new DateTime(1970, 1, 1).AddSeconds((int)json["created_on"]);
-            c.Estimate = (string)json["estimate"];
-            c.EstimateForecast = (string)json["estimate_forecast"];
-            c.SuiteID = (ulong)json["suite_id"];
-
+            var c = new Case
+            {
+                JsonFromResponse = json,
+                ID = (ulong?) json["id"],
+                Title = (string) json["title"],
+                SectionID = (ulong?) json["section_id"],
+                TypeID = (ulong?) json["type_id"],
+                PriorityID = (ulong?) json["priority_id"],
+                References = (string) json["refs"],
+                MilestoneID = (ulong?) json["milestone_id"],
+                CreatedBy = (ulong) json["created_by"],
+                CreatedOn = (null == (int?) json["created_on"]) ? (DateTime?) null : new DateTime(1970, 1, 1).AddSeconds((int) json["created_on"]),
+                Estimate = (string) json["estimate"],
+                EstimateForecast = (string) json["estimate_forecast"],
+                SuiteID = (ulong) json["suite_id"],
+            };
             return c;
         }
 

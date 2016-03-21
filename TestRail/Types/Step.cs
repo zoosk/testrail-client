@@ -3,7 +3,7 @@
 namespace TestRail.Types
 {
     /// <summary>stores information about a step</summary>
-    public class Step
+    public class Step : BaseTestRailType
     {
         #region Public Properties
         /// <summary>description of the step</summary>
@@ -22,11 +22,14 @@ namespace TestRail.Types
         /// <returns>step corresponding to the json</returns>
         public static Step Parse(JObject json)
         {
-            Step s = new Step();
-            s.Description = (string)json["content"];
-            s.Expected = (string)json["expected"];
-            s.Actual = (string)json["actual"];
-            s.Status = (null != (int?)json["status_id"]) ? (ResultStatus)((int)json["status_id"]) : (ResultStatus?)null;
+            var s = new Step
+            {
+                JsonFromResponse = json,
+                Description = (string)json["content"],
+                Expected = (string)json["expected"],
+                Actual = (string)json["actual"],
+                Status = (null != (int?)json["status_id"]) ? (ResultStatus)((int)json["status_id"]) : (ResultStatus?)null,
+            };
             return s;
         }
 

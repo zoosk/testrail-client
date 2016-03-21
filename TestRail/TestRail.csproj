@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Types\BaseTestRailType.cs" />
     <Compile Include="Types\Case.cs" />
     <Compile Include="Types\CaseField.cs" />
     <Compile Include="Types\CaseType.cs" />
