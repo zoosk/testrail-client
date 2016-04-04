@@ -48,14 +48,14 @@ namespace TestRail.Types
             var m = new Milestone
             {
                 JsonFromResponse = json,
-                ID = (ulong) json["id"],
-                Name = (string) json["name"],
-                Description = (string) json["description"],
-                IsCompleted = (bool?) json["is_completed"],
-                DueOn = ((null == (int?) json["due_on"]) ? (DateTime?) null : new DateTime(1970, 1, 1).AddSeconds((int) json["due_on"])),
-                CompletedOn = ((null == (int?) json["completed_on"]) ? (DateTime?) null : new DateTime(1970, 1, 1).AddSeconds((int) json["completed_on"])),
-                ProjectID = (ulong) json["project_id"],
-                Url = (string) json["url"],
+                ID = (ulong)json["id"],
+                Name = (string)json["name"],
+                Description = (string)json["description"],
+                IsCompleted = (bool?)json["is_completed"],
+                DueOn = null == (int?)json["due_on"] ? (DateTime?)null : new DateTime(1970, 1, 1).AddSeconds((int)json["due_on"]),
+                CompletedOn = null == (int?)json["completed_on"] ? (DateTime?)null : new DateTime(1970, 1, 1).AddSeconds((int)json["completed_on"]),
+                ProjectID = (ulong)json["project_id"],
+                Url = (string)json["url"],
             };
             return m;
         }
@@ -72,6 +72,5 @@ namespace TestRail.Types
             return jsonParams;
         }
         #endregion Public Methods
-
     }
 }

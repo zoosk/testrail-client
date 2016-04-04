@@ -116,8 +116,7 @@ namespace TestRail.Types
                 MilestoneID = (ulong?)json["milestone_id"],
                 Config = (string)json["config"],
                 IsCompleted = (bool?)json["is_completed"],
-                CompletedOn = ((null == (int?)json["completed_on"]) ? (DateTime?)null : new DateTime(1970, 1, 1).AddSeconds((int)json["completed_on"])),
-                CreatedOn = new DateTime(1970, 1, 1).AddSeconds((int)json["created_on"]),
+                CompletedOn = null == (int?)json["completed_on"] ? (DateTime?)null : new DateTime(1970, 1, 1).AddSeconds((int)json["completed_on"]),
                 PassedCount = (uint?)json["passed_count"],
                 BlockedCount = (uint?)json["blocked_count"],
                 UntestedCount = (uint?)json["untested_count"],
@@ -170,7 +169,6 @@ namespace TestRail.Types
                 }
                 jsonParams.config_ids = jarray;
             }
-
             return jsonParams;
         }
         #endregion Public Methods

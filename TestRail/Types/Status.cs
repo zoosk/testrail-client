@@ -32,7 +32,6 @@ namespace TestRail.Types
 
         /// <summary></summary>
         public bool IsFinal { get; private set; }
-
         #endregion Public Properties
 
         #region Public Methods

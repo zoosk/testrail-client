@@ -27,10 +27,10 @@ namespace TestRail.Types
             var co = new ConfigOption
             {
                 JsonFromResponse = json,
-                IsRequired = (bool?) json["is_required"],
-                DefaultValue = (string) json["default_value"],
-                Format = (string) json["format"],
-                Rows = (string) json["rows"],
+                IsRequired = (bool?)json["is_required"],
+                DefaultValue = (string)json["default_value"],
+                Format = (string)json["format"],
+                Rows = (string)json["rows"],
             };
             return co;
         }

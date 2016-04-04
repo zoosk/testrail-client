@@ -28,7 +28,7 @@ namespace TestRail.Types
                 Description = (string)json["content"],
                 Expected = (string)json["expected"],
                 Actual = (string)json["actual"],
-                Status = (null != (int?)json["status_id"]) ? (ResultStatus)((int)json["status_id"]) : (ResultStatus?)null,
+                Status = null == (int?)json["status_id"] ? (ResultStatus?)null : (ResultStatus)(int)json["status_id"],
             };
             return s;
         }

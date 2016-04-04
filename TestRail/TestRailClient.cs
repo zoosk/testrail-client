@@ -17,13 +17,16 @@ namespace TestRail
         protected string _UserName_;
         /// <summary>testrail password</summary>
         protected string _Password_;
+
         /// <summary>projects in the test rail database</summary>
         public List<Project> Projects { get { return _Projects.Value; } }
 
         /// <summary>called when the client sends an http request</summary>
         public event EventHandler<HTTPRequestSentEventArgs> OnHTTPRequestSent = (s, e) => { };
+
         /// <summary>called when the client receives an http response</summary>
         public event EventHandler<string> OnHTTPResponseReceived = (s, e) => { };
+
         /// <summary>called when an operation fails</summary>
         public event EventHandler<string> OnOperationFailed = (s, e) => { };
 
@@ -99,7 +102,6 @@ namespace TestRail
         #endregion Constructor
 
         #region Public Methods
-
         /// <summary>
         /// Get the priority for the case if we can
         /// </summary>
@@ -129,7 +131,7 @@ namespace TestRail
             TimeSpan? elapsed = null, string defects = null, ulong? assignedToID = null, JObject customs = null)
         {
             string uri = _CreateUri_(_CommandType_.add, "result", testID);
-            Result r = new Result() { TestID = testID, StatusID = (ulong?)status, Comment = comment, Version = version, Elapsed = elapsed, Defects = defects, AssignedToID = assignedToID };
+            Result r = new Result { TestID = testID, StatusID = (ulong?)status, Comment = comment, Version = version, Elapsed = elapsed, Defects = defects, AssignedToID = assignedToID };
             JObject jsonParams = JsonUtility.Merge(r.GetJson(), customs);
             return _SendCommand(uri, jsonParams);
         }
@@ -149,11 +151,10 @@ namespace TestRail
         {
             string uri = _CreateUri_(_CommandType_.add, "result_for_case", runID, caseID);
 
-            Result r = new Result() { StatusID = (ulong?)status, Comment = comment, Version = version, Elapsed = elapsed, Defects = defects, AssignedToID = assignedToID };
+            Result r = new Result { StatusID = (ulong?)status, Comment = comment, Version = version, Elapsed = elapsed, Defects = defects, AssignedToID = assignedToID };
             JObject jsonParams = JsonUtility.Merge(r.GetJson(), customs);
             //JObject jsonParams = JsonHelper.Merge(_CreateJsonForResult(status, comment, version, elapsed, defects, assignedToID), customs);
             return _SendCommand(uri, jsonParams);
-
         }
 
         /// <summary>adds a run</summary>
@@ -184,7 +185,7 @@ namespace TestRail
             }
 
             string uri = _CreateUri_(_CommandType_.add, _NODE_RUN_, projectID);
-            Run r = new Run() { SuiteID = suiteID, Name = name, Description = description, MilestoneID = milestoneID, AssignedTo = assignedToID, IncludeAll = includeAll, CaseIDs = caseIDs };
+            Run r = new Run { SuiteID = suiteID, Name = name, Description = description, MilestoneID = milestoneID, AssignedTo = assignedToID, IncludeAll = includeAll, CaseIDs = caseIDs };
             return _SendCommand(uri, r.GetJson());
         }
 
@@ -215,7 +216,7 @@ namespace TestRail
             }
 
             string uri = _CreateUri_(_CommandType_.add, _NODE_PROJECT_);
-            Project p = new Project() { Name = projectName, Announcement = announcement, ShowAnnouncement = showAnnouncement };
+            Project p = new Project { Name = projectName, Announcement = announcement, ShowAnnouncement = showAnnouncement };
             return _SendCommand(uri, p.GetJson());
         }
 
@@ -233,7 +234,7 @@ namespace TestRail
             }
 
             string uri = _CreateUri_(_CommandType_.add, _NODE_SECTION_, projectID);
-            Section s = new Section() { SuiteID = suiteID, ParentID = parentID, Name = name };
+            Section s = new Section { SuiteID = suiteID, ParentID = parentID, Name = name };
             return _SendCommand(uri, s.GetJson());
         }
 
@@ -250,7 +251,7 @@ namespace TestRail
             }
 
             string uri = _CreateUri_(_CommandType_.add, _NODE_SUITE_, projectID);
-            Suite s = new Suite() { Name = name, Description = description };
+            Suite s = new Suite { Name = name, Description = description };
             return _SendCommand(uri, s.GetJson());
         }
 
@@ -270,7 +271,7 @@ namespace TestRail
             }
 
             string uri = _CreateUri_(_CommandType_.add, _NODE_PLAN_, projectID);
-            Plan p = new Plan() { Name = name, Description = description, MilestoneID = milestoneID, Entries = entries };
+            Plan p = new Plan { Name = name, Description = description, MilestoneID = milestoneID, Entries = entries };
             JObject jsonParams = p.GetJson();
             return _SendCommand(uri, jsonParams);
         }
@@ -285,7 +286,7 @@ namespace TestRail
         public CommandResult<ulong> AddPlanEntry(ulong planID, ulong suiteID, string name = null, ulong? assignedToID = null, List<ulong> caseIDs = null)
         {
             string uri = _CreateUri_(_CommandType_.add, _NODE_PLAN_ENTRY_, planID);
-            PlanEntry pe = new PlanEntry() { AssignedToID = assignedToID, SuiteID = suiteID, Name = name, CaseIDs = caseIDs };
+            PlanEntry pe = new PlanEntry { AssignedToID = assignedToID, SuiteID = suiteID, Name = name, CaseIDs = caseIDs };
             JObject jsonParams = pe.GetJson();
             return _SendCommand(uri, jsonParams);
         }
@@ -299,10 +300,9 @@ namespace TestRail
         public CommandResult<ulong> AddMilestone(ulong projectID, string name, string description = null, DateTime? dueOn = null)
         {
             string uri = _CreateUri_(_CommandType_.add, _NODE_MILESTONE_, projectID);
-            Milestone m = new Milestone() { Name = name, Description = description, DueOn = dueOn };
+            Milestone m = new Milestone { Name = name, Description = description, DueOn = dueOn };
             return _SendCommand(uri, m.GetJson());
         }
-
         #endregion Add Commands
 
         #region Update Commands
@@ -320,7 +320,6 @@ namespace TestRail
             return _UpdateCase_(caseID, title, typeID, priorityID, estimate, milestoneID, refs, null);
         }
 
-
         /// <summary>update an existing milestone</summary>
         /// <param name="milestoneID">id of the milestone</param>
         /// <param name="name">(optional)name of the milestone</param>
@@ -330,7 +329,7 @@ namespace TestRail
         public CommandResult<ulong> UpdateMilestone(ulong milestoneID, string name = null, string description = null, DateTime? dueOn = null, bool? isCompleted = null)
         {
             string uri = _CreateUri_(_CommandType_.update, _NODE_MILESTONE_, milestoneID);
-            Milestone m = new Milestone() { Name = name, Description = description, DueOn = dueOn, IsCompleted = isCompleted };
+            Milestone m = new Milestone { Name = name, Description = description, DueOn = dueOn, IsCompleted = isCompleted };
             return _SendCommand(uri, m.GetJson());
         }
 
@@ -343,7 +342,7 @@ namespace TestRail
         public CommandResult<ulong> UpdatePlan(ulong planID, string name = null, string description = null, ulong? milestoneID = null)
         {
             string uri = _CreateUri_(_CommandType_.update, _NODE_PLAN_, planID);
-            Plan p = new Plan() { Name = name, Description = description, MilestoneID = milestoneID };
+            Plan p = new Plan { Name = name, Description = description, MilestoneID = milestoneID };
             JObject jsonParams = p.GetJson();
             return _SendCommand(uri, jsonParams);
         }
@@ -358,7 +357,7 @@ namespace TestRail
         public CommandResult<ulong> UpdatePlanEntry(ulong planID, string entryID, string name = null, ulong? assignedToID = null, List<ulong> caseIDs = null)
         {
             string uri = _CreateUri_(_CommandType_.update, _NODE_PLAN_ENTRY_, planID, null, null, entryID);
-            PlanEntry pe = new PlanEntry() { AssignedToID = assignedToID, Name = name, CaseIDs = caseIDs };
+            PlanEntry pe = new PlanEntry { AssignedToID = assignedToID, Name = name, CaseIDs = caseIDs };
             JObject jsonParams = pe.GetJson();
             return _SendCommand(uri, jsonParams);
         }
@@ -373,7 +372,7 @@ namespace TestRail
         public CommandResult<ulong> UpdateProject(ulong projectID, string projectName, string announcement = null, bool? showAnnouncement = null, bool? isCompleted = null)
         {
             string uri = _CreateUri_(_CommandType_.update, _NODE_PROJECT_, projectID);
-            Project p = new Project() { Name = projectName, Announcement = announcement, ShowAnnouncement = showAnnouncement, IsCompleted = isCompleted };
+            Project p = new Project { Name = projectName, Announcement = announcement, ShowAnnouncement = showAnnouncement, IsCompleted = isCompleted };
             return _SendCommand(uri, p.GetJson());
         }
 
@@ -405,10 +404,9 @@ namespace TestRail
             }
 
             string uri = _CreateUri_(_CommandType_.update, _NODE_RUN_, runID);
-            Run r = new Run() { Name = name, Description = description, MilestoneID = milestoneID, IncludeAll = includeAll, CaseIDs = caseIDs };
+            Run r = new Run { Name = name, Description = description, MilestoneID = milestoneID, IncludeAll = includeAll, CaseIDs = caseIDs };
             return _SendCommand(uri, r.GetJson());
         }
-
 
         /// <summary>Updates an existing section</summary>
         /// <param name="sectionID">id of the section to update</param>
@@ -422,7 +420,7 @@ namespace TestRail
             }
 
             string uri = _CreateUri_(_CommandType_.update, _NODE_SECTION_, sectionID);
-            Section s = new Section() { ID = sectionID, Name = name };
+            Section s = new Section { ID = sectionID, Name = name };
             return _SendCommand(uri, s.GetJson());
         }
 
@@ -434,7 +432,7 @@ namespace TestRail
         public CommandResult<ulong> UpdateSuite(ulong suiteID, string name = null, string description = null)
         {
             string uri = _CreateUri_(_CommandType_.update, _NODE_SUITE_, suiteID);
-            Suite s = new Suite() { Name = name, Description = description };
+            Suite s = new Suite { Name = name, Description = description };
             return _SendCommand(uri, s.GetJson());
         }
         #endregion Update Commands
@@ -801,7 +799,6 @@ namespace TestRail
             return _GetItems_<ConfigurationGroup>(nodeName, uri, ConfigurationGroup.Parse);
         }
         #endregion Get Commands
-
         #endregion Public Methods
 
         #region Protected Methods
@@ -814,7 +811,6 @@ namespace TestRail
         protected T _GetItem_<T>(string nodeName, string uri, Func<JObject, T> parse)
             where T : BaseTestRailType, new()
         {
-
             var result = _CallTestRailGetEndpoint(uri);
             if (!result.WasSuccessful)
             {
@@ -890,7 +886,7 @@ namespace TestRail
                 return new CommandResult<ulong>(false, 0, new ArgumentNullException("title"));
             }
             string uri = _CreateUri_(_CommandType_.add, _NODE_CASE_, sectionID);
-            Case tmpCase = new Case() { Title = title, TypeID = typeID, PriorityID = priorityID, Estimate = estimate, MilestoneID = milestoneID, References = refs };
+            Case tmpCase = new Case { Title = title, TypeID = typeID, PriorityID = priorityID, Estimate = estimate, MilestoneID = milestoneID, References = refs };
             JObject jsonParams = JsonUtility.Merge(tmpCase.GetJson(), customs);
             return _SendCommand(uri, jsonParams);
         }
@@ -912,7 +908,7 @@ namespace TestRail
                 return new CommandResult<ulong>(false, 0, new ArgumentNullException("title"));
             }
             string uri = _CreateUri_(_CommandType_.update, _NODE_CASE_, caseID);
-            Case tmpCase = new Case() { Title = title, TypeID = typeID, PriorityID = priorityID, Estimate = estimate, MilestoneID = milestoneID, References = refs };
+            Case tmpCase = new Case { Title = title, TypeID = typeID, PriorityID = priorityID, Estimate = estimate, MilestoneID = milestoneID, References = refs };
             JObject jsonParams = JsonUtility.Merge(tmpCase.GetJson(), customs);
             return _SendCommand(uri, jsonParams);
         }
@@ -928,7 +924,6 @@ namespace TestRail
             delete,
             close
         }
-
         #endregion Protected Methods
 
         #region Private Methods
@@ -1082,7 +1077,6 @@ namespace TestRail
             {
                 exe = e;
             }
-
             return new CommandResult<ulong>(wasSuccessful, resultValue, exe);
         }
 

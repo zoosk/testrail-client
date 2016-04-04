@@ -32,9 +32,9 @@ namespace TestRail.Types
             var ct = new CaseType
             {
                 JsonFromResponse = json,
-                ID = (ulong?) json["id"],
-                Name = (string) json["name"],
-                IsDefault = (bool?) json["is_default"],
+                ID = (ulong?)json["id"],
+                Name = (string)json["name"],
+                IsDefault = (bool?)json["is_default"],
             };
             return ct;
         }

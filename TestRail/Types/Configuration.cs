@@ -5,7 +5,9 @@ namespace TestRail.Types
     public class Configuration : BaseTestRailType
     {
         public ulong ID { get; set; }
+
         public ulong ConfigurationGroupID { get; set; }
+
         public string Name { get; set; }
 
         /// <summary>parses json into a Configuration</summary>

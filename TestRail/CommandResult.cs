@@ -18,8 +18,10 @@ namespace TestRail
     {
         /// <summary>true if the command was successful</summary>
         public bool WasSuccessful { get; set; }
+
         /// <summary>result of the command</summary>
         public T Value { get; set; }
+
         /// <summary>exception thrown by the command</summary>
         public Exception Exception { get; set; }
 
@@ -35,7 +37,7 @@ namespace TestRail
         /// <param name="wasSuccessful">true if the command was successful</param>
         /// <param name="result">result of the command</param>
         /// <param name="e">exception thrown by the command</param>
-        public CommandResult(bool wasSuccessful, T result, Exception e=null)
+        public CommandResult(bool wasSuccessful, T result, Exception e = null)
         {
             WasSuccessful = wasSuccessful;
             Value = result;

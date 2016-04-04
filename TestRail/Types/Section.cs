@@ -6,7 +6,6 @@ namespace TestRail.Types
     public class Section : BaseTestRailType
     {
         #region Public Properties
-
         /// <summary>id of the section</summary>
         public ulong? ID { get; set; }
 
@@ -24,7 +23,6 @@ namespace TestRail.Types
 
         /// <summary>id of the suite associated with the section</summary>
         public ulong? SuiteID { get; set; }
-
         #endregion Public Properties
 
         #region Public Methods
@@ -63,7 +61,6 @@ namespace TestRail.Types
             if (!string.IsNullOrWhiteSpace(Name)) { jsonParams.name = Name; }
             return jsonParams;
         }
-
         #endregion Public Methods
     }
 }

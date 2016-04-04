@@ -22,7 +22,7 @@ namespace TestRail.Types
             var cc = new ConfigContext
             {
                 JsonFromResponse = json,
-                IsGlobal = (bool?) json["is_global"],
+                IsGlobal = (bool?)json["is_global"],
             };
 
             // check to see if the project ids is empty 

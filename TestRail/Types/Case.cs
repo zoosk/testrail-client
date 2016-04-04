@@ -60,18 +60,18 @@ namespace TestRail.Types
             var c = new Case
             {
                 JsonFromResponse = json,
-                ID = (ulong?) json["id"],
-                Title = (string) json["title"],
-                SectionID = (ulong?) json["section_id"],
-                TypeID = (ulong?) json["type_id"],
-                PriorityID = (ulong?) json["priority_id"],
-                References = (string) json["refs"],
-                MilestoneID = (ulong?) json["milestone_id"],
-                CreatedBy = (ulong) json["created_by"],
-                CreatedOn = (null == (int?) json["created_on"]) ? (DateTime?) null : new DateTime(1970, 1, 1).AddSeconds((int) json["created_on"]),
-                Estimate = (string) json["estimate"],
-                EstimateForecast = (string) json["estimate_forecast"],
-                SuiteID = (ulong) json["suite_id"],
+                ID = (ulong?)json["id"],
+                Title = (string)json["title"],
+                SectionID = (ulong?)json["section_id"],
+                TypeID = (ulong?)json["type_id"],
+                PriorityID = (ulong?)json["priority_id"],
+                References = (string)json["refs"],
+                MilestoneID = (ulong?)json["milestone_id"],
+                CreatedBy = (ulong)json["created_by"],
+                CreatedOn = null == (int?)json["created_on"] ? (DateTime?)null : new DateTime(1970, 1, 1).AddSeconds((int)json["created_on"]),
+                Estimate = (string)json["estimate"],
+                EstimateForecast = (string)json["estimate_forecast"],
+                SuiteID = (ulong)json["suite_id"],
             };
             return c;
         }
