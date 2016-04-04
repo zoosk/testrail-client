@@ -14,7 +14,7 @@ namespace TestRail.Types
         public string Actual;
         /// <summary>result of the step</summary>
         public ResultStatus? Status;
-        #endregion
+        #endregion Public Properties
 
         #region Public Methods
         /// <summary>parses json into a step</summary>
@@ -44,6 +44,6 @@ namespace TestRail.Types
             if (null != Status) { json.status_id = (int)Status; }
             return json;
         }
-        #endregion
+        #endregion Public Methods
     }
 }

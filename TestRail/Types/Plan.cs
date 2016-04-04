@@ -124,7 +124,7 @@ namespace TestRail.Types
             var jarray = json["entries"] as JArray;
             if (null != jarray)
             {
-                p.Entries = JsonUtility.ConvertJArrayToList<PlanEntry>(jarray, PlanEntry.Parse);
+                p.Entries = JsonUtility.ConvertJArrayToList(jarray, PlanEntry.Parse);
             }
             return p;
         }
@@ -139,8 +139,8 @@ namespace TestRail.Types
             if (null != MilestoneID) { jsonParams.milestone_id = MilestoneID; }
             if (null != Entries && 0 < Entries.Count)
             {
-                JArray jarray = new JArray();
-                foreach (PlanEntry pe in Entries)
+                var jarray = new JArray();
+                foreach (var pe in Entries)
                 {
                     if (null != pe)
                     {

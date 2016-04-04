@@ -76,7 +76,6 @@ namespace TestRail.Types
             cf.IsMulti = (bool?)json["is_multi"];
             return cf;
         }
-
         #endregion Public Methods
     }
 }

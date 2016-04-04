@@ -29,7 +29,7 @@ namespace TestRail.Types
             var jarray = json["configs"] as JArray;
             if (null != jarray)
             {
-                configurationGroup.Configurations = JsonUtility.ConvertJArrayToList<Configuration>(jarray, Configuration.Parse);
+                configurationGroup.Configurations = JsonUtility.ConvertJArrayToList(jarray, Configuration.Parse);
             }
             return configurationGroup;
         }

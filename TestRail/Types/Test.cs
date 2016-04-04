@@ -23,7 +23,7 @@ namespace TestRail.Types
 
         /// <summary>title of the test</summary>
         public string Title;
-        #endregion
+        #endregion Public Properties
 
         #region Public Methods
         /// <summary>string representation of the object</summary>
@@ -50,6 +50,6 @@ namespace TestRail.Types
             };
             return t;
         }
-        #endregion
+        #endregion Public Methods
     }
 }

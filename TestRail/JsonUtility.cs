@@ -23,7 +23,7 @@ namespace TestRail
 
             if (null != obj2)
             {
-                JToken token = obj2.First;
+                var token = obj2.First;
                 while (null != token)
                 {
                     obj1.Add(token);
@@ -42,8 +42,9 @@ namespace TestRail
             var list = new List<T>();
             if (null != jarray && null != parse)
             {
-                foreach (JObject json in jarray)
+                foreach (var jtoken in jarray)
                 {
+                    var json = (JObject)jtoken;
                     list.Add(parse(json));
                 }
             }

@@ -45,7 +45,7 @@ namespace TestRail.Types
         /// <returns>string representation of the object</returns>
         public override string ToString()
         {
-            return string.Format("{0}:{1}", ID, Comment);
+            return $"{ID}:{Comment}";
         }
 
         /// <summary>Parse the JSON into a Result</summary>
@@ -64,7 +64,7 @@ namespace TestRail.Types
                 AssignedToID = (ulong?)json["assignedto_id"],
                 Comment = (string)json["comment"],
                 Version = (string)json["version"],
-                Elapsed = null != (long?)json["elapsed"] ? (TimeSpan?)null : new TimeSpan((long)json["elapsed"]),
+                Elapsed = null == (long?)json["elapsed"] ? (TimeSpan?)null : new TimeSpan((long)json["elapsed"]),
                 Defects = (string)json["defects"],
             };
             return r;

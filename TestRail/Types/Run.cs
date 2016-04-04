@@ -7,7 +7,7 @@ namespace TestRail.Types
     /// <summary>stores information about a run</summary>
     public class Run : BaseTestRailType
     {
-        #region Properties
+        #region Public Properties
         /// <summary>id of the run</summary>
         public ulong? ID { get; private set; }
 
@@ -91,7 +91,7 @@ namespace TestRail.Types
 
         /// <summary>an array of case IDs for the custom case selection</summary>
         public List<ulong> ConfigIDs { get; set; }
-        #endregion Properties
+        #endregion Public Properties
 
         #region Public Methods
         /// <summary>string representation of the object</summary>
@@ -152,8 +152,8 @@ namespace TestRail.Types
 
             if (null != CaseIDs && 0 < CaseIDs.Count)
             {
-                JArray jarray = new JArray();
-                foreach (ulong caseID in CaseIDs)
+                var jarray = new JArray();
+                foreach (var caseID in CaseIDs)
                 {
                     jarray.Add(caseID);
                 }
@@ -162,8 +162,8 @@ namespace TestRail.Types
 
             if (null != ConfigIDs && 0 < ConfigIDs.Count)
             {
-                JArray jarray = new JArray();
-                foreach (ulong configID in ConfigIDs)
+                var jarray = new JArray();
+                foreach (var configID in ConfigIDs)
                 {
                     jarray.Add(configID);
                 }
