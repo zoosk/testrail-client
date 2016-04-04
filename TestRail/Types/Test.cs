@@ -44,7 +44,7 @@ namespace TestRail.Types
                 ID = (ulong?)json["id"],
                 CaseID = (ulong?)json["case_id"],
                 RunID = (ulong?)json["run_id"],
-                Status = (ResultStatus?)((int)json["status_id"]),
+                Status = (ResultStatus?)(int)json["status_id"],
                 AssignedToID = (ulong?)json["assignedto_id"],
                 Title = (string)json["title"],
             };

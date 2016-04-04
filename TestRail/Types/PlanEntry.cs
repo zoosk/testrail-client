@@ -11,6 +11,7 @@ namespace TestRail.Types
         public string ID { get; set; }
 
         public List<ulong> RunIDList { get; private set; }
+
         public List<Run> RunList { get; set; }
 
         /// <summary>the id of the test suite for the test run</summary>
@@ -33,6 +34,33 @@ namespace TestRail.Types
         #endregion Public Properties
 
         #region Public Methods
+
+        /// <summary>Parse a json object to a PlanEntry</summary>
+        /// <param name="json">json object to parse</param>
+        /// <returns>PlanEntry corresponding to a json object</returns>
+        public static PlanEntry Parse(JObject json)
+        {
+            var pe = new PlanEntry
+            {
+                JsonFromResponse = json,
+                ID = (string)json["id"],
+                SuiteID = (ulong?)json["suite_id"],
+                Name = (string)json["name"],
+                AssignedToID = (ulong?)json["assignedto_id"],
+                IncludeAll = (bool?)json["include_all"],
+
+                RunIDList = _ConvertToRunIDs(json["runs"] as JArray),
+                CaseIDs = _ConvertToCaseIDs(json["case_ids"] as JArray),
+            };
+
+            var jarray = json["runs"] as JArray;
+            if (null != jarray)
+            {
+                pe.RunList = JsonUtility.ConvertJArrayToList<Run>(jarray, Run.Parse);
+            }
+            return pe;
+        }
+
         /// <summary>Returns a json Object that represents this class</summary>
         /// <returns>Json object that corresponds to this class</returns>
         public JObject GetJson()
@@ -79,34 +107,7 @@ namespace TestRail.Types
 
                 jsonParams.runs = jarray;
             }
-
             return jsonParams;
-        }
-
-        /// <summary>Parse a json object to a PlanEntry</summary>
-        /// <param name="json">json object to parse</param>
-        /// <returns>PlanEntry corresponding to a json object</returns>
-        public static PlanEntry Parse(JObject json)
-        {
-            var pe = new PlanEntry
-            {
-                JsonFromResponse = json,
-                ID = (string)json["id"],
-                SuiteID = (ulong?)json["suite_id"],
-                Name = (string)json["name"],
-                AssignedToID = (ulong?)json["assignedto_id"],
-                IncludeAll = (bool?)json["include_all"],
-
-                RunIDList = _ConvertToRunIDs(json["runs"] as JArray),
-                CaseIDs = _ConvertToCaseIDs(json["case_ids"] as JArray),
-            };
-
-            var jarray = json["runs"] as JArray;
-            if (null != jarray)
-            {
-                pe.RunList = JsonUtility.ConvertJArrayToList<Run>(jarray, Run.Parse);
-            }
-            return pe;
         }
         #endregion Public Methods
 

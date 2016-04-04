@@ -1,5 +1,5 @@
-﻿
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
+
 namespace TestRail.Types
 {
     public abstract class BaseTestRailType

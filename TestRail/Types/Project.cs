@@ -54,7 +54,7 @@ namespace TestRail.Types
                 ShowAnnouncement = (bool?)json["show_announcement"],
                 IsCompleted = (bool?)json["is_completed"],
                 Url = (string)json["url"],
-                CompletedOn = (null == (int?)json["completed_on"]) ? (DateTime?)null : new DateTime(1970, 1, 1).AddSeconds((int)json["completed_on"]),
+                CompletedOn = null == (int?)json["completed_on"] ? (DateTime?)null : new DateTime(1970, 1, 1).AddSeconds((int)json["completed_on"]),
             };
             return p;
         }
@@ -70,7 +70,6 @@ namespace TestRail.Types
             if (null != IsCompleted) { jsonParams.is_completed = IsCompleted.Value; }
             return jsonParams;
         }
-
         #endregion Public Methods
     }
 }

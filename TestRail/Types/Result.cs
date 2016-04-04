@@ -60,11 +60,11 @@ namespace TestRail.Types
                 TestID = (ulong)json["test_id"],
                 StatusID = (ulong?)json["status_id"],
                 CreatedBy = (ulong?)json["created_by"],
-                CreatedOn = (null != (int?)json["created_on"]) ? new DateTime(1970, 1, 1).AddSeconds((int)json["created_on"]) : (DateTime?)null,
+                CreatedOn = null == (int?)json["created_on"] ? (DateTime?)null : new DateTime(1970, 1, 1).AddSeconds((int)json["created_on"]),
                 AssignedToID = (ulong?)json["assignedto_id"],
                 Comment = (string)json["comment"],
                 Version = (string)json["version"],
-                Elapsed = (null != (long?)json["elapsed"]) ? new TimeSpan((long)json["elapsed"]) : (TimeSpan?)null,
+                Elapsed = null != (long?)json["elapsed"] ? (TimeSpan?)null : new TimeSpan((long)json["elapsed"]),
                 Defects = (string)json["defects"],
             };
             return r;

@@ -6,8 +6,11 @@ namespace TestRail.Types
     public class ConfigurationGroup : BaseTestRailType
     {
         public ulong ID { get; set; }
+
         public ulong ProjectID { get; set; }
+
         public string Name { get; set; }
+
         public List<Configuration> Configurations { get; set; }
 
         /// <summary>parses json into a ConfigurationGroup</summary>
@@ -18,9 +21,9 @@ namespace TestRail.Types
             var configurationGroup = new ConfigurationGroup
             {
                 JsonFromResponse = json,
-                ID = (ulong) json["id"],
-                Name = (string) json["name"],
-                ProjectID = (ulong) json["project_id"],
+                ID = (ulong)json["id"],
+                Name = (string)json["name"],
+                ProjectID = (ulong)json["project_id"],
             };
 
             var jarray = json["configs"] as JArray;
@@ -29,6 +32,6 @@ namespace TestRail.Types
                 configurationGroup.Configurations = JsonUtility.ConvertJArrayToList<Configuration>(jarray, Configuration.Parse);
             }
             return configurationGroup;
-        }        
+        }
     }
 }
