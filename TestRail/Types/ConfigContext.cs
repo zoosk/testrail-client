@@ -40,6 +40,6 @@ namespace TestRail.Types
             }
             return cc;
         }
-        #endregion
+        #endregion Public Methods
     }
 }

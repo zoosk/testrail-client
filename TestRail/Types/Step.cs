@@ -5,7 +5,7 @@ namespace TestRail.Types
     /// <summary>stores information about a step</summary>
     public class Step : BaseTestRailType
     {
-        #region Public Properties
+        #region Public Fields
         /// <summary>description of the step</summary>
         public string Description;
         /// <summary>expected result for the step</summary>
@@ -14,7 +14,7 @@ namespace TestRail.Types
         public string Actual;
         /// <summary>result of the step</summary>
         public ResultStatus? Status;
-        #endregion Public Properties
+        #endregion Public Fields
 
         #region Public Methods
         /// <summary>parses json into a step</summary>

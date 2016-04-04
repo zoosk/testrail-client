@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TestRail.Types;
 
 namespace TestRail
@@ -42,11 +43,7 @@ namespace TestRail
             var list = new List<T>();
             if (null != jarray && null != parse)
             {
-                foreach (var jtoken in jarray)
-                {
-                    var json = (JObject)jtoken;
-                    list.Add(parse(json));
-                }
+                list.AddRange(from JObject json in jarray select parse(json));
             }
             return list;
         }
