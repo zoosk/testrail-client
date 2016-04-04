@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TestRail.Types
 {
@@ -77,6 +78,7 @@ namespace TestRail.Types
         /// <summary>Custom Status 7 Count</summary>
         public ulong CustomStatus7Count { get; set; }
 
+        // TODO: Add summary
         public List<PlanEntry> Entries { get; set; }
         #endregion Public Properties
 
@@ -140,12 +142,9 @@ namespace TestRail.Types
             if (null != Entries && 0 < Entries.Count)
             {
                 var jarray = new JArray();
-                foreach (var pe in Entries)
+                foreach (var pe in Entries.Where(pe => null != pe))
                 {
-                    if (null != pe)
-                    {
-                        jarray.Add(pe.GetJson());
-                    }
+                    jarray.Add(pe.GetJson());
                 }
                 jsonParams.entries = jarray;
             }

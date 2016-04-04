@@ -6,7 +6,7 @@ namespace TestRail.Types
     /// <summary>stores information about a milestone</summary>
     public class Milestone : BaseTestRailType
     {
-        #region Properties
+        #region Public Properties
         /// <summary>id of the milestone</summary>
         public ulong ID { get; private set; }
 
@@ -30,7 +30,7 @@ namespace TestRail.Types
 
         /// <summary>the url for to view the milestone</summary>
         public string Url { get; private set; }
-        #endregion Properties
+        #endregion Public Properties
 
         #region Public Methods
         /// <summary>string representation of the object</summary>

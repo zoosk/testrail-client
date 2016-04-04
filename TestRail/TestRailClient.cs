@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using TestRail.Types;
@@ -52,10 +53,13 @@ namespace TestRail
             }
         }
 
+        // TODO: Add summary
         private readonly Lazy<List<Project>> _Projects;
 
+        // TODO: Add summary
         private Dictionary<ulong, int> _PriorityIDToLevel => _LazyPriorityIDToLevel.Value;
 
+        // TODO: Add summary
         private Lazy<Dictionary<ulong, int>> _LazyPriorityIDToLevel { get; set; }
 
         #region Constants
@@ -579,12 +583,14 @@ namespace TestRail
             return _GetItems_(_NODE_CASES_, uri, Case.Parse);
         }
 
+        // TODO: Add summary
         public List<CaseField> GetCaseFields()
         {
             var uri = _CreateUri_(_CommandType_.get, _NODE_CASE_FIELDS_);
             return _GetItems_(_NODE_CASE_TYPES_, uri, CaseField.Parse);
         }
 
+        // TODO: Add summary
         public List<CaseType> GetCaseTypes()
         {
             var uri = _CreateUri_(_CommandType_.get, _NODE_CASE_TYPES_);
@@ -877,6 +883,7 @@ namespace TestRail
             {
                 return new CommandResult<ulong>(false, 0, new ArgumentNullException(nameof(title)));
             }
+
             var uri = _CreateUri_(_CommandType_.add, _NODE_CASE_, sectionID);
             var tmpCase = new Case { Title = title, TypeID = typeID, PriorityID = priorityID, Estimate = estimate, MilestoneID = milestoneID, References = refs };
             var jsonParams = JsonUtility.Merge(tmpCase.GetJson(), customs);
@@ -899,6 +906,7 @@ namespace TestRail
             {
                 return new CommandResult<ulong>(false, 0, new ArgumentNullException(nameof(title)));
             }
+
             var uri = _CreateUri_(_CommandType_.update, _NODE_CASE_, caseID);
             var tmpCase = new Case { Title = title, TypeID = typeID, PriorityID = priorityID, Estimate = estimate, MilestoneID = milestoneID, References = refs };
             var jsonParams = JsonUtility.Merge(tmpCase.GetJson(), customs);
@@ -1081,17 +1089,8 @@ namespace TestRail
         /// <returns></returns>
         private bool _CasesFoundInSuite(ulong projectID, ulong suiteID, ICollection<ulong> caseIDs)
         {
-            var atLeastOneCaseFoundInSuite = false;
             var validCases = GetCases(projectID, suiteID);
-            foreach (var tmpCase in validCases)
-            {
-                if (tmpCase.ID.HasValue && caseIDs.Contains(tmpCase.ID.Value))
-                {
-                    atLeastOneCaseFoundInSuite = true;
-                    break;
-                }
-            }
-            return atLeastOneCaseFoundInSuite;
+            return validCases.Any(tmpCase => tmpCase.ID.HasValue && caseIDs.Contains(tmpCase.ID.Value));
         }
 
         /// <summary>
@@ -1102,12 +1101,9 @@ namespace TestRail
         {
             var tmpDict = new Dictionary<ulong, int>();
             var priorityList = GetPriorities();
-            foreach (var priority in priorityList)
+            foreach (var priority in priorityList.Where(priority => null != priority))
             {
-                if (null != priority)
-                {
-                    tmpDict[priority.ID] = priority.PriorityLevel;
-                }
+                tmpDict[priority.ID] = priority.PriorityLevel;
             }
             return tmpDict;
         }

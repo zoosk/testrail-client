@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TestRail.Types
 {
@@ -10,8 +11,10 @@ namespace TestRail.Types
         /// <summary>Guid of the plan entry</summary>
         public string ID { get; set; }
 
+        // TODO: Add summary
         public List<ulong> RunIDList { get; private set; }
 
+        // TODO: Add summary
         public List<Run> RunList { get; set; }
 
         /// <summary>the id of the test suite for the test run</summary>
@@ -120,13 +123,7 @@ namespace TestRail.Types
             var list = new List<ulong>();
             if (null != jarray)
             {
-                foreach (var jt in jarray)
-                {
-                    if (null != (ulong?)jt["id"])
-                    {
-                        list.Add((ulong)jt["id"]);
-                    }
-                }
+                list.AddRange(from jt in jarray where null != (ulong?) jt["id"] select (ulong) jt["id"]);
             }
             return list;
         }
@@ -141,11 +138,7 @@ namespace TestRail.Types
             var list = new List<ulong>();
             if (null != jarray)
             {
-                foreach (var jtoken in jarray)
-                {
-                    var jsonItem = (JValue)jtoken;
-                    list.Add((ulong)jsonItem);
-                }
+                list.AddRange(from JValue jsonItem in jarray select (ulong) jsonItem);
             }
             return list;
         }
