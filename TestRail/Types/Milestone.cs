@@ -4,7 +4,7 @@ using System;
 namespace TestRail.Types
 {
     /// <summary>stores information about a milestone</summary>
-    public class Milestone
+    public class Milestone : BaseTestRailType
     {
         #region Properties
         /// <summary>id of the milestone</summary>
@@ -45,15 +45,18 @@ namespace TestRail.Types
         /// <returns>milestone corresponding to the json</returns>
         public static Milestone Parse(JObject json)
         {
-            Milestone m = new Milestone();
-            m.ID = (ulong)json["id"];
-            m.Name = (string)json["name"];
-            m.Description = (string)json["description"];
-            m.IsCompleted = (bool?)json["is_completed"];
-            m.DueOn = ((null == (int?)json["due_on"]) ? (DateTime?)null : new DateTime(1970, 1, 1).AddSeconds((int)json["due_on"]));
-            m.CompletedOn = ((null == (int?)json["completed_on"]) ? (DateTime?)null : new DateTime(1970, 1, 1).AddSeconds((int)json["completed_on"]));
-            m.ProjectID = (ulong)json["project_id"];
-            m.Url = (string)json["url"];
+            var m = new Milestone
+            {
+                JsonFromResponse = json,
+                ID = (ulong) json["id"],
+                Name = (string) json["name"],
+                Description = (string) json["description"],
+                IsCompleted = (bool?) json["is_completed"],
+                DueOn = ((null == (int?) json["due_on"]) ? (DateTime?) null : new DateTime(1970, 1, 1).AddSeconds((int) json["due_on"])),
+                CompletedOn = ((null == (int?) json["completed_on"]) ? (DateTime?) null : new DateTime(1970, 1, 1).AddSeconds((int) json["completed_on"])),
+                ProjectID = (ulong) json["project_id"],
+                Url = (string) json["url"],
+            };
             return m;
         }
 

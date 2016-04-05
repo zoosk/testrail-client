@@ -2,7 +2,7 @@
 
 namespace TestRail.Types
 {
-    public class Configuration
+    public class Configuration : BaseTestRailType
     {
         public ulong ID { get; set; }
         public ulong ConfigurationGroupID { get; set; }
@@ -13,10 +13,13 @@ namespace TestRail.Types
         /// <returns>Configuration corresponding to the json</returns>
         public static Configuration Parse(JObject json)
         {
-            Configuration configuration = new Configuration();
-            configuration.ID = (ulong)json["id"];
-            configuration.Name = (string)json["name"];
-            configuration.ConfigurationGroupID = (ulong)json["group_id"];
+            var configuration = new Configuration
+            {
+                JsonFromResponse = json,
+                ID = (ulong)json["id"],
+                Name = (string)json["name"],
+                ConfigurationGroupID = (ulong)json["group_id"],
+            };
             return configuration;
         }
     }

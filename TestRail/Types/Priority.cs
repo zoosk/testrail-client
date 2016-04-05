@@ -3,7 +3,7 @@
 namespace TestRail.Types
 {
     /// <summary>stores information about a priority</summary>
-    public class Priority
+    public class Priority : BaseTestRailType
     {
         #region Public Properties
         /// <summary>id of the priority</summary>
@@ -35,12 +35,15 @@ namespace TestRail.Types
         /// <returns>plan corresponding to the json</returns>
         public static Priority Parse(JObject json)
         {
-            Priority p = new Priority();
-            p.ID = (ulong)json["id"];
-            p.Name = (string)json["name"];
-            p.ShortName = (string)json["short_name"];
-            p.IsDefault = (bool)json["is_default"];
-            p.PriorityLevel = (int)json["priority"];
+            var p = new Priority
+            {
+                JsonFromResponse = json,
+                ID = (ulong)json["id"],
+                Name = (string)json["name"],
+                ShortName = (string)json["short_name"],
+                IsDefault = (bool)json["is_default"],
+                PriorityLevel = (int)json["priority"],
+            };
             return p;
         }
         #endregion Public Methods

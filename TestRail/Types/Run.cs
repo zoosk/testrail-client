@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace TestRail.Types
 {
     /// <summary>stores information about a run</summary>
-    public class Run
+    public class Run : BaseTestRailType
     {
         #region Properties
         /// <summary>id of the run</summary>
@@ -103,32 +103,35 @@ namespace TestRail.Types
         /// <returns>run corresponding to the json</returns>
         public static Run Parse(JObject json)
         {
-            Run r = new Run();
-            r.ID = (ulong?)json["id"];
-            r.Name = (string)json["name"];
-            r.Description = (string)json["description"];
-            r.SuiteID = (ulong?)json["suite_id"];
-            r.MilestoneID = (ulong?)json["milestone_id"];
-            r.Config = (string)json["config"];
-            r.IsCompleted = (bool?)json["is_completed"];
-            r.CompletedOn = ((null == (int?)json["completed_on"]) ? (DateTime?)null : new DateTime(1970, 1, 1).AddSeconds((int)json["completed_on"]));
-            r.PassedCount = (uint?)json["passed_count"];
-            r.BlockedCount = (uint?)json["blocked_count"];
-            r.UntestedCount = (uint?)json["untested_count"];
-            r.RetestCount = (uint?)json["retest_count"];
-            r.FailedCount = (uint?)json["failed_count"];
-            r.ProjectID = (ulong?)json["project_id"];
-            r.PlanID = (ulong?)json["plan_id"];
-            r.CustomStatus1Count = (ulong)json["custom_status1_count"];
-            r.CustomStatus2Count = (ulong)json["custom_status2_count"];
-            r.CustomStatus3Count = (ulong)json["custom_status3_count"];
-            r.CustomStatus4Count = (ulong)json["custom_status4_count"];
-            r.CustomStatus5Count = (ulong)json["custom_status5_count"];
-            r.CustomStatus6Count = (ulong)json["custom_status6_count"];
-            r.CustomStatus7Count = (ulong)json["custom_status7_count"];
-            r.AssignedTo = (ulong?)json["assignedto_id"];
-            r.IncludeAll = (bool)json["include_all"];
-            r.Url = (string)json["url"];
+            var r = new Run
+            {
+                JsonFromResponse = json,
+                ID = (ulong?)json["id"],
+                Name = (string)json["name"],
+                Description = (string)json["description"],
+                SuiteID = (ulong?)json["suite_id"],
+                MilestoneID = (ulong?)json["milestone_id"],
+                Config = (string)json["config"],
+                IsCompleted = (bool?)json["is_completed"],
+                CompletedOn = ((null == (int?)json["completed_on"]) ? (DateTime?)null : new DateTime(1970, 1, 1).AddSeconds((int)json["completed_on"])),
+                PassedCount = (uint?)json["passed_count"],
+                BlockedCount = (uint?)json["blocked_count"],
+                UntestedCount = (uint?)json["untested_count"],
+                RetestCount = (uint?)json["retest_count"],
+                FailedCount = (uint?)json["failed_count"],
+                ProjectID = (ulong?)json["project_id"],
+                PlanID = (ulong?)json["plan_id"],
+                CustomStatus1Count = (ulong)json["custom_status1_count"],
+                CustomStatus2Count = (ulong)json["custom_status2_count"],
+                CustomStatus3Count = (ulong)json["custom_status3_count"],
+                CustomStatus4Count = (ulong)json["custom_status4_count"],
+                CustomStatus5Count = (ulong)json["custom_status5_count"],
+                CustomStatus6Count = (ulong)json["custom_status6_count"],
+                CustomStatus7Count = (ulong)json["custom_status7_count"],
+                AssignedTo = (ulong?)json["assignedto_id"],
+                IncludeAll = (bool)json["include_all"],
+                Url = (string)json["url"],
+            };
             return r;
         }
 

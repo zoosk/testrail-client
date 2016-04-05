@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace TestRail.Types
 {
     /// <summary>stores information about a plan</summary>
-    public class Plan
+    public class Plan : BaseTestRailType
     {
         #region Public Properties
         /// <summary>id of the plan</summary>
@@ -19,6 +19,12 @@ namespace TestRail.Types
 
         /// <summary>id of the milestone associated with the plan</summary>
         public ulong? MilestoneID { get; set; }
+
+        /// <summary>The ID of the user who created the test plan</summary>
+        public uint CreatedBy { get; set; }
+
+        /// <summary>The date/time when the test plan was created</summary>
+        public DateTime CreatedOn { get; set; }
 
         /// <summary>true if the plan has been completed</summary>
         public bool IsCompleted { get; set; }
@@ -87,30 +93,35 @@ namespace TestRail.Types
         /// <returns>plan corresponding to the json</returns>
         public static Plan Parse(JObject json)
         {
-            Plan p = new Plan();
-            p.ID = (ulong)json["id"];
-            p.Name = (string)json["name"];
-            p.Description = (string)json["description"];
-            p.MilestoneID = (ulong?)json["milestone_id"];
-            p.IsCompleted = (bool)json["is_completed"];
-            p.CompletedOn = (null == (int?)json["completed_on"]) ? (DateTime?)null : new DateTime(1970, 1, 1).AddSeconds((int)json["completed_on"]);
-            p.PassedCount = (uint)json["passed_count"];
-            p.BlockedCount = (uint)json["blocked_count"];
-            p.UntestedCount = (uint)json["untested_count"];
-            p.RetestCount = (uint)json["retest_count"];
-            p.FailedCount = (uint)json["failed_count"];
-            p.ProjectID = (ulong)json["project_id"];
-            p.AssignedToID = (ulong?)json["assignedto_id"];
-            p.Url = (string)json["url"];
-            p.CustomStatus1Count = (ulong)json["custom_status1_count"];
-            p.CustomStatus2Count = (ulong)json["custom_status2_count"];
-            p.CustomStatus3Count = (ulong)json["custom_status3_count"];
-            p.CustomStatus4Count = (ulong)json["custom_status4_count"];
-            p.CustomStatus5Count = (ulong)json["custom_status5_count"];
-            p.CustomStatus6Count = (ulong)json["custom_status6_count"];
-            p.CustomStatus7Count = (ulong)json["custom_status7_count"];
+            var p = new Plan
+            {
+                JsonFromResponse = json,
+                ID = (ulong) json["id"],
+                Name = (string) json["name"],
+                Description = (string) json["description"],
+                MilestoneID = (ulong?) json["milestone_id"],
+                CreatedBy = (uint) json["created_by"],
+                CreatedOn = new DateTime(1970, 1, 1).AddSeconds((int) json["created_on"]),
+                IsCompleted = (bool) json["is_completed"],
+                CompletedOn = (null == (int?) json["completed_on"]) ? (DateTime?) null : new DateTime(1970, 1, 1).AddSeconds((int) json["completed_on"]),
+                PassedCount = (uint) json["passed_count"],
+                BlockedCount = (uint) json["blocked_count"],
+                UntestedCount = (uint) json["untested_count"],
+                RetestCount = (uint) json["retest_count"],
+                FailedCount = (uint) json["failed_count"],
+                ProjectID = (ulong) json["project_id"],
+                AssignedToID = (ulong?) json["assignedto_id"],
+                Url = (string) json["url"],
+                CustomStatus1Count = (ulong) json["custom_status1_count"],
+                CustomStatus2Count = (ulong) json["custom_status2_count"],
+                CustomStatus3Count = (ulong) json["custom_status3_count"],
+                CustomStatus4Count = (ulong) json["custom_status4_count"],
+                CustomStatus5Count = (ulong) json["custom_status5_count"],
+                CustomStatus6Count = (ulong) json["custom_status6_count"],
+                CustomStatus7Count = (ulong) json["custom_status7_count"],
+            };
 
-            JArray jarray = json["entries"] as JArray;
+            var jarray = json["entries"] as JArray;
             if (null != jarray)
             {
                 p.Entries = JsonUtility.ConvertJArrayToList<PlanEntry>(jarray, PlanEntry.Parse);

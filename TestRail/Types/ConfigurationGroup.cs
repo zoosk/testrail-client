@@ -3,7 +3,7 @@ using Newtonsoft.Json.Linq;
 
 namespace TestRail.Types
 {
-    public class ConfigurationGroup
+    public class ConfigurationGroup : BaseTestRailType
     {
         public ulong ID { get; set; }
         public ulong ProjectID { get; set; }
@@ -15,12 +15,15 @@ namespace TestRail.Types
         /// <returns>ConfigurationGroup corresponding to the json</returns>
         public static ConfigurationGroup Parse(JObject json)
         {
-            ConfigurationGroup configurationGroup = new ConfigurationGroup();
-            configurationGroup.ID = (ulong)json["id"];
-            configurationGroup.Name = (string)json["name"];
-            configurationGroup.ProjectID = (ulong)json["project_id"];
+            var configurationGroup = new ConfigurationGroup
+            {
+                JsonFromResponse = json,
+                ID = (ulong) json["id"],
+                Name = (string) json["name"],
+                ProjectID = (ulong) json["project_id"],
+            };
 
-            JArray jarray = json["configs"] as JArray;
+            var jarray = json["configs"] as JArray;
             if (null != jarray)
             {
                 configurationGroup.Configurations = JsonUtility.ConvertJArrayToList<Configuration>(jarray, Configuration.Parse);
