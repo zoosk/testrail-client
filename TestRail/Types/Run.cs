@@ -32,6 +32,9 @@ namespace TestRail.Types
         /// <summary>date on which the run which was completed</summary>
         public DateTime? CompletedOn { get; private set; }
 
+        /// <summary>date on which the run which was created</summary>
+        public DateTime CreatedOn { get; private set; }
+
         /// <summary>number of tests in the plan that passed</summary>
         public uint? PassedCount { get; private set; }
 
@@ -114,6 +117,7 @@ namespace TestRail.Types
                 Config = (string)json["config"],
                 IsCompleted = (bool?)json["is_completed"],
                 CompletedOn = null == (int?)json["completed_on"] ? (DateTime?)null : new DateTime(1970, 1, 1).AddSeconds((int)json["completed_on"]),
+                CreatedOn = new DateTime(1970, 1, 1).AddSeconds((int)json["created_on"]),
                 PassedCount = (uint?)json["passed_count"],
                 BlockedCount = (uint?)json["blocked_count"],
                 UntestedCount = (uint?)json["untested_count"],
