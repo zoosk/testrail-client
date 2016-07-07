@@ -20,7 +20,7 @@ namespace TestRail.Types
 
         /// <summary>Priority level</summary>
         public int PriorityLevel { get; private set; }
-        #endregion Properties
+        #endregion Public Properties
 
         #region Public Methods
         /// <summary>string representation of the object</summary>

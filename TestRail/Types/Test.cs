@@ -23,7 +23,7 @@ namespace TestRail.Types
 
         /// <summary>title of the test</summary>
         public string Title;
-        #endregion
+        #endregion Public Properties
 
         #region Public Methods
         /// <summary>string representation of the object</summary>
@@ -44,12 +44,12 @@ namespace TestRail.Types
                 ID = (ulong?)json["id"],
                 CaseID = (ulong?)json["case_id"],
                 RunID = (ulong?)json["run_id"],
-                Status = (ResultStatus?)((int)json["status_id"]),
+                Status = (ResultStatus?)(int)json["status_id"],
                 AssignedToID = (ulong?)json["assignedto_id"],
                 Title = (string)json["title"],
             };
             return t;
         }
-        #endregion
+        #endregion Public Methods
     }
 }

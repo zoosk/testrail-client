@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TestRail.Types
 {
@@ -10,7 +11,10 @@ namespace TestRail.Types
         /// <summary>Guid of the plan entry</summary>
         public string ID { get; set; }
 
+        // TODO: Add summary
         public List<ulong> RunIDList { get; private set; }
+
+        // TODO: Add summary
         public List<Run> RunList { get; set; }
 
         /// <summary>the id of the test suite for the test run</summary>
@@ -33,6 +37,31 @@ namespace TestRail.Types
         #endregion Public Properties
 
         #region Public Methods
+        /// <summary>Parse a json object to a PlanEntry</summary>
+        /// <param name="json">json object to parse</param>
+        /// <returns>PlanEntry corresponding to a json object</returns>
+        public static PlanEntry Parse(JObject json)
+        {
+            var pe = new PlanEntry
+            {
+                JsonFromResponse = json,
+                ID = (string)json["id"],
+                SuiteID = (ulong?)json["suite_id"],
+                Name = (string)json["name"],
+                AssignedToID = (ulong?)json["assignedto_id"],
+                IncludeAll = (bool?)json["include_all"],
+                RunIDList = _ConvertToRunIDs(json["runs"] as JArray),
+                CaseIDs = _ConvertToCaseIDs(json["case_ids"] as JArray),
+            };
+
+            var jarray = json["runs"] as JArray;
+            if (null != jarray)
+            {
+                pe.RunList = JsonUtility.ConvertJArrayToList(jarray, Run.Parse);
+            }
+            return pe;
+        }
+
         /// <summary>Returns a json Object that represents this class</summary>
         /// <returns>Json object that corresponds to this class</returns>
         public JObject GetJson()
@@ -44,8 +73,8 @@ namespace TestRail.Types
 
             if (null != CaseIDs && 0 < CaseIDs.Count)
             {
-                JArray jarray = new JArray();
-                foreach (ulong caseID in CaseIDs)
+                var jarray = new JArray();
+                foreach (var caseID in CaseIDs)
                 {
                     jarray.Add(caseID);
                 }
@@ -60,8 +89,8 @@ namespace TestRail.Types
 
             if (null != ConfigIDs && 0 < ConfigIDs.Count)
             {
-                JArray jarray = new JArray();
-                foreach (ulong configID in ConfigIDs)
+                var jarray = new JArray();
+                foreach (var configID in ConfigIDs)
                 {
                     jarray.Add(configID);
                 }
@@ -71,42 +100,15 @@ namespace TestRail.Types
 
             if (null != RunList && 0 < RunList.Count)
             {
-                JArray jarray = new JArray();
-                foreach (Run run in RunList)
+                var jarray = new JArray();
+                foreach (var run in RunList)
                 {
                     jarray.Add(run.GetJson());
                 }
 
                 jsonParams.runs = jarray;
             }
-
             return jsonParams;
-        }
-
-        /// <summary>Parse a json object to a PlanEntry</summary>
-        /// <param name="json">json object to parse</param>
-        /// <returns>PlanEntry corresponding to a json object</returns>
-        public static PlanEntry Parse(JObject json)
-        {
-            var pe = new PlanEntry
-            {
-                JsonFromResponse = json,
-                ID = (string)json["id"],
-                SuiteID = (ulong?)json["suite_id"],
-                Name = (string)json["name"],
-                AssignedToID = (ulong?)json["assignedto_id"],
-                IncludeAll = (bool?)json["include_all"],
-
-                RunIDList = _ConvertToRunIDs(json["runs"] as JArray),
-                CaseIDs = _ConvertToCaseIDs(json["case_ids"] as JArray),
-            };
-
-            var jarray = json["runs"] as JArray;
-            if (null != jarray)
-            {
-                pe.RunList = JsonUtility.ConvertJArrayToList<Run>(jarray, Run.Parse);
-            }
-            return pe;
         }
         #endregion Public Methods
 
@@ -118,16 +120,10 @@ namespace TestRail.Types
         /// <returns>a list of run IDs, list of size 0 if none exist</returns>
         private static List<ulong> _ConvertToRunIDs(JArray jarray)
         {
-            List<ulong> list = new List<ulong>();
+            var list = new List<ulong>();
             if (null != jarray)
             {
-                foreach (JToken jt in jarray)
-                {
-                    if (null != (ulong?)jt["id"])
-                    {
-                        list.Add((ulong)jt["id"]);
-                    }
-                }
+                list.AddRange(from jt in jarray where null != (ulong?) jt["id"] select (ulong) jt["id"]);
             }
             return list;
         }
@@ -139,13 +135,10 @@ namespace TestRail.Types
         /// <returns>a list of case IDs, list of size 0 if none exist</returns>
         private static List<ulong> _ConvertToCaseIDs(JArray jarray)
         {
-            List<ulong> list = new List<ulong>();
+            var list = new List<ulong>();
             if (null != jarray)
             {
-                foreach (JValue jsonItem in jarray)
-                {
-                    list.Add((ulong)jsonItem);
-                }
+                list.AddRange(from JValue jsonItem in jarray select (ulong) jsonItem);
             }
             return list;
         }

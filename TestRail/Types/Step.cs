@@ -5,7 +5,7 @@ namespace TestRail.Types
     /// <summary>stores information about a step</summary>
     public class Step : BaseTestRailType
     {
-        #region Public Properties
+        #region Public Fields
         /// <summary>description of the step</summary>
         public string Description;
         /// <summary>expected result for the step</summary>
@@ -14,7 +14,7 @@ namespace TestRail.Types
         public string Actual;
         /// <summary>result of the step</summary>
         public ResultStatus? Status;
-        #endregion
+        #endregion Public Fields
 
         #region Public Methods
         /// <summary>parses json into a step</summary>
@@ -28,7 +28,7 @@ namespace TestRail.Types
                 Description = (string)json["content"],
                 Expected = (string)json["expected"],
                 Actual = (string)json["actual"],
-                Status = (null != (int?)json["status_id"]) ? (ResultStatus)((int)json["status_id"]) : (ResultStatus?)null,
+                Status = null == (int?)json["status_id"] ? (ResultStatus?)null : (ResultStatus)(int)json["status_id"],
             };
             return s;
         }
@@ -44,6 +44,6 @@ namespace TestRail.Types
             if (null != Status) { json.status_id = (int)Status; }
             return json;
         }
-        #endregion
+        #endregion Public Methods
     }
 }

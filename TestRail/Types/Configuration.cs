@@ -4,10 +4,18 @@ namespace TestRail.Types
 {
     public class Configuration : BaseTestRailType
     {
+        #region Public Properties
+        // TODO: Add summary
         public ulong ID { get; set; }
-        public ulong ConfigurationGroupID { get; set; }
-        public string Name { get; set; }
 
+        // TODO: Add summary
+        public ulong ConfigurationGroupID { get; set; }
+
+        // TODO: Add summary
+        public string Name { get; set; }
+        #endregion Public Properties
+
+        #region Public Methods
         /// <summary>parses json into a Configuration</summary>
         /// <param name="json">json to parse</param>
         /// <returns>Configuration corresponding to the json</returns>
@@ -22,5 +30,6 @@ namespace TestRail.Types
             };
             return configuration;
         }
+        #endregion Public Methods
     }
 }

@@ -3,7 +3,7 @@ testrail-client
 
 C# implementation of the TestRail API
 
-Solution was built using Visual Studio 2012 Update 3
+Solution was built using Visual Studio 2015 Update 1
 
 ### To Release a New Version
 - pull latest

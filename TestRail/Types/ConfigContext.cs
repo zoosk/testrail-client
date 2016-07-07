@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TestRail.Types
 {
@@ -22,7 +23,7 @@ namespace TestRail.Types
             var cc = new ConfigContext
             {
                 JsonFromResponse = json,
-                IsGlobal = (bool?) json["is_global"],
+                IsGlobal = (bool?)json["is_global"],
             };
 
             // check to see if the project ids is empty 
@@ -32,13 +33,13 @@ namespace TestRail.Types
                 // add values to the list if not empty
                 cc.ProjectIDs = new List<string>();
                 var jarray = (JArray)jval;
-                foreach (JValue jsonItem in jarray)
+                foreach (var jsonItem in jarray.Cast<JValue>())
                 {
                     cc.ProjectIDs.Add((string)jsonItem);
                 }
             }
             return cc;
         }
-        #endregion
+        #endregion Public Methods
     }
 }

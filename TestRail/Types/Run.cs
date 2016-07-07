@@ -7,7 +7,7 @@ namespace TestRail.Types
     /// <summary>stores information about a run</summary>
     public class Run : BaseTestRailType
     {
-        #region Properties
+        #region Public Properties
         /// <summary>id of the run</summary>
         public ulong? ID { get; private set; }
 
@@ -91,7 +91,7 @@ namespace TestRail.Types
 
         /// <summary>an array of case IDs for the custom case selection</summary>
         public List<ulong> ConfigIDs { get; set; }
-        #endregion Properties
+        #endregion Public Properties
 
         #region Public Methods
         /// <summary>string representation of the object</summary>
@@ -116,7 +116,7 @@ namespace TestRail.Types
                 MilestoneID = (ulong?)json["milestone_id"],
                 Config = (string)json["config"],
                 IsCompleted = (bool?)json["is_completed"],
-                CompletedOn = ((null == (int?)json["completed_on"]) ? (DateTime?)null : new DateTime(1970, 1, 1).AddSeconds((int)json["completed_on"])),
+                CompletedOn = null == (int?)json["completed_on"] ? (DateTime?)null : new DateTime(1970, 1, 1).AddSeconds((int)json["completed_on"]),
                 CreatedOn = new DateTime(1970, 1, 1).AddSeconds((int)json["created_on"]),
                 PassedCount = (uint?)json["passed_count"],
                 BlockedCount = (uint?)json["blocked_count"],
@@ -153,8 +153,8 @@ namespace TestRail.Types
 
             if (null != CaseIDs && 0 < CaseIDs.Count)
             {
-                JArray jarray = new JArray();
-                foreach (ulong caseID in CaseIDs)
+                var jarray = new JArray();
+                foreach (var caseID in CaseIDs)
                 {
                     jarray.Add(caseID);
                 }
@@ -163,14 +163,13 @@ namespace TestRail.Types
 
             if (null != ConfigIDs && 0 < ConfigIDs.Count)
             {
-                JArray jarray = new JArray();
-                foreach (ulong configID in ConfigIDs)
+                var jarray = new JArray();
+                foreach (var configID in ConfigIDs)
                 {
                     jarray.Add(configID);
                 }
                 jsonParams.config_ids = jarray;
             }
-
             return jsonParams;
         }
         #endregion Public Methods

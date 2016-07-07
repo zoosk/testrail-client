@@ -6,34 +6,22 @@ namespace TestRail.Types
     public class User : BaseTestRailType
     {
         #region Public Properties
-        /// <summary>
-        /// id of the user 
-        /// </summary>
+        /// <summary>id of the user</summary>
         public ulong ID { get; private set; }
 
-        /// <summary>
-        /// name of the user
-        /// </summary>
+        /// <summary>name of the user</summary>
         public string Name { get; private set; }
 
-        /// <summary>
-        /// email of the user
-        /// </summary>
+        /// <summary>email of the user</summary>
         public string Email { get; private set; }
 
-        /// <summary>
-        /// is the user an admin
-        /// </summary>
+        /// <summary>is the user an admin</summary>
         public bool IsAdmin { get; private set; }
 
-        /// <summary>
-        /// role id of the user
-        /// </summary>
+        /// <summary>role id of the user</summary>
         public ulong? RoleID { get; private set; }
 
-        /// <summary>
-        /// Is the user active 
-        /// </summary>
+        /// <summary>Is the user active</summary>
         public bool IsActive { get; private set; }
         #endregion Public Properties
 
@@ -44,7 +32,7 @@ namespace TestRail.Types
         /// <returns></returns>
         public override string ToString()
         {
-            return string.Format("{0}:{1}", ID, Name);
+            return $"{ID}:{Name}";
         }
 
         /// <summary>

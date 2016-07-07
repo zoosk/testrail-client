@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TestRail.Types
 {
@@ -77,6 +78,7 @@ namespace TestRail.Types
         /// <summary>Custom Status 7 Count</summary>
         public ulong CustomStatus7Count { get; set; }
 
+        // TODO: Add summary
         public List<PlanEntry> Entries { get; set; }
         #endregion Public Properties
 
@@ -96,37 +98,36 @@ namespace TestRail.Types
             var p = new Plan
             {
                 JsonFromResponse = json,
-                ID = (ulong) json["id"],
-                Name = (string) json["name"],
-                Description = (string) json["description"],
-                MilestoneID = (ulong?) json["milestone_id"],
-                CreatedBy = (uint) json["created_by"],
-                CreatedOn = new DateTime(1970, 1, 1).AddSeconds((int) json["created_on"]),
-                IsCompleted = (bool) json["is_completed"],
-                CompletedOn = (null == (int?) json["completed_on"]) ? (DateTime?) null : new DateTime(1970, 1, 1).AddSeconds((int) json["completed_on"]),
-                PassedCount = (uint) json["passed_count"],
-                BlockedCount = (uint) json["blocked_count"],
-                UntestedCount = (uint) json["untested_count"],
-                RetestCount = (uint) json["retest_count"],
-                FailedCount = (uint) json["failed_count"],
-                ProjectID = (ulong) json["project_id"],
-                AssignedToID = (ulong?) json["assignedto_id"],
-                Url = (string) json["url"],
-                CustomStatus1Count = (ulong) json["custom_status1_count"],
-                CustomStatus2Count = (ulong) json["custom_status2_count"],
-                CustomStatus3Count = (ulong) json["custom_status3_count"],
-                CustomStatus4Count = (ulong) json["custom_status4_count"],
-                CustomStatus5Count = (ulong) json["custom_status5_count"],
-                CustomStatus6Count = (ulong) json["custom_status6_count"],
-                CustomStatus7Count = (ulong) json["custom_status7_count"],
+                ID = (ulong)json["id"],
+                Name = (string)json["name"],
+                Description = (string)json["description"],
+                MilestoneID = (ulong?)json["milestone_id"],
+                CreatedBy = (uint)json["created_by"],
+                CreatedOn = new DateTime(1970, 1, 1).AddSeconds((int)json["created_on"]),
+                IsCompleted = (bool)json["is_completed"],
+                CompletedOn = null == (int?)json["completed_on"] ? (DateTime?)null : new DateTime(1970, 1, 1).AddSeconds((int)json["completed_on"]),
+                PassedCount = (uint)json["passed_count"],
+                BlockedCount = (uint)json["blocked_count"],
+                UntestedCount = (uint)json["untested_count"],
+                RetestCount = (uint)json["retest_count"],
+                FailedCount = (uint)json["failed_count"],
+                ProjectID = (ulong)json["project_id"],
+                AssignedToID = (ulong?)json["assignedto_id"],
+                Url = (string)json["url"],
+                CustomStatus1Count = (ulong)json["custom_status1_count"],
+                CustomStatus2Count = (ulong)json["custom_status2_count"],
+                CustomStatus3Count = (ulong)json["custom_status3_count"],
+                CustomStatus4Count = (ulong)json["custom_status4_count"],
+                CustomStatus5Count = (ulong)json["custom_status5_count"],
+                CustomStatus6Count = (ulong)json["custom_status6_count"],
+                CustomStatus7Count = (ulong)json["custom_status7_count"],
             };
 
             var jarray = json["entries"] as JArray;
             if (null != jarray)
             {
-                p.Entries = JsonUtility.ConvertJArrayToList<PlanEntry>(jarray, PlanEntry.Parse);
+                p.Entries = JsonUtility.ConvertJArrayToList(jarray, PlanEntry.Parse);
             }
-
             return p;
         }
 
@@ -140,17 +141,13 @@ namespace TestRail.Types
             if (null != MilestoneID) { jsonParams.milestone_id = MilestoneID; }
             if (null != Entries && 0 < Entries.Count)
             {
-                JArray jarray = new JArray();
-                foreach (PlanEntry pe in Entries)
+                var jarray = new JArray();
+                foreach (var pe in Entries.Where(pe => null != pe))
                 {
-                    if (null != pe)
-                    {
-                        jarray.Add(pe.GetJson());
-                    }
+                    jarray.Add(pe.GetJson());
                 }
                 jsonParams.entries = jarray;
             }
-
             return jsonParams;
         }
         #endregion Public Methods
