@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>TestRail</id>
-    <version>1.0.0.10</version>
+    <version>1.0.0.11</version>
     <title>TestRail Client</title>
     <authors>TestRail Client Committers</authors>
     <owners>TestRail Client Committers</owners>
@@ -11,6 +11,11 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>C# implementation of the TestRail API</description>
     <releaseNotes>
+    ##1.0.0.11
+      - Update for VS 2015 and C# 6
+      - Update Nuget packages
+      - Features
+        - Add CreatedOn property to Run class
     ##1.0.0.10
       - TestRail types contain the Raw JSON object received
     ##1.0.0.9
@@ -34,7 +39,7 @@
     <copyright>Copyright 2016</copyright>
   
     <dependencies>
-      <dependency id="Newtonsoft.Json" version="8.0.3"/>
+      <dependency id="Newtonsoft.Json" version="9.0.1"/>
     </dependencies>
   </metadata>
   <files>
