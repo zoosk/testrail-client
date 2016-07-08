@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>TestRail</id>
-    <version>1.0.0.11</version>
+    <version>1.0.0.12</version>
     <title>TestRail Client</title>
     <authors>TestRail Client Committers</authors>
     <owners>TestRail Client Committers</owners>
@@ -11,6 +11,9 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>C# implementation of the TestRail API</description>
     <releaseNotes>
+    ##1.0.0.12
+      - Bug Fix
+        - Run's JSON Parse method threw possible ArgumentNullException on created_on field
     ##1.0.0.11
       - Update for VS 2015 and C# 6
       - Update Nuget packages
