@@ -75,6 +75,7 @@ namespace TestRail
         protected const string _NODE_PROJECT_ = "project";
         protected const string _NODE_RESULTS_ = "results";
         protected const string _NODE_RESULTS_FOR_CASE_ = "results_for_case";
+        protected const string _NODE_RESULTS_FOR_RUN_ = "results_for_run";
         protected const string _NODE_RUN_ = "run";
         protected const string _NODE_RUNS_ = "runs";
         protected const string _NODE_SECTION_ = "section";
@@ -757,7 +758,7 @@ namespace TestRail
         /// <summary>
         /// Return the list of test results for a test run and the case combination
         /// </summary>
-        /// <param name="runID">id of the rest run</param>
+        /// <param name="runID">id of the test run</param>
         /// <param name="caseID">id of the test case</param>
         /// <param name="limit">(optional) maximum amount of test results to return, latest first</param>
         /// <returns>list of test results for a case</returns>
@@ -766,6 +767,19 @@ namespace TestRail
             var optional = limit.HasValue ? $"&limit={limit.Value}" : string.Empty;
             var uri = _CreateUri_(_CommandType_.get, _NODE_RESULTS_FOR_CASE_, runID, caseID, optional);
             return _GetItems_(_NODE_RESULTS_FOR_CASE_, uri, Result.Parse);
+        }
+
+        /// <summary>
+        /// Return the list of test results for a test run
+        /// </summary>
+        /// <param name="runID">id of the rest run</param>
+        /// <param name="limit">(optional) maximum amount of test results to return, latest first</param>
+        /// <returns>list of test results for a test run</returns>
+        public List<Result> GetResultsForRun(ulong runID, ulong? limit = null)
+        {
+            var optional = limit.HasValue ? $"&limit={limit.Value}" : string.Empty;
+            var uri = _CreateUri_(_CommandType_.get, _NODE_RESULTS_FOR_RUN_, runID, runID, optional);
+            return _GetItems_(_NODE_RESULTS_FOR_RUN_, uri, Result.Parse);
         }
 
         /// <summary>
