@@ -778,7 +778,7 @@ namespace TestRail
         public List<Result> GetResultsForRun(ulong runID, ulong? limit = null)
         {
             var optional = limit.HasValue ? $"&limit={limit.Value}" : string.Empty;
-            var uri = _CreateUri_(_CommandType_.get, _NODE_RESULTS_FOR_RUN_, runID, runID, optional);
+            var uri = _CreateUri_(_CommandType_.get, _NODE_RESULTS_FOR_RUN_, runID, null, optional);
             return _GetItems_(_NODE_RESULTS_FOR_RUN_, uri, Result.Parse);
         }
 
