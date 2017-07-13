@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
+using System.Globalization;
 
 namespace TestRail.Types
 {
@@ -64,9 +65,11 @@ namespace TestRail.Types
                 AssignedToID = (ulong?)json["assignedto_id"],
                 Comment = (string)json["comment"],
                 Version = (string)json["version"],
-                Elapsed = null == (long?)json["elapsed"] ? (TimeSpan?)null : new TimeSpan((long)json["elapsed"]),
                 Defects = (string)json["defects"],
             };
+
+            // separate for easier debugging if necessary
+            r.Elapsed = TimeSpanUtility.FromString((string)json["elapsed"]);
             return r;
         }
 
