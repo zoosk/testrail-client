@@ -200,10 +200,11 @@ namespace TestRail
         /// <param name="estimate">(optional)the estimate, e.g. "30s" or "1m 45s"</param>
         /// <param name="milestoneID">(optional)the ID of the milestone to link to the test case</param>
         /// <param name="refs">(optional)a comma-separated list of references/requirements</param>
+        /// <param name="customFields">(optional)a json object for custom fields</param>
         /// <returns>result of the command</returns>
-        public CommandResult<ulong> AddCase(ulong sectionID, string title, ulong? typeID = null, ulong? priorityID = null, string estimate = null, ulong? milestoneID = null, string refs = null)
+        public CommandResult<ulong> AddCase(ulong sectionID, string title, ulong? typeID = null, ulong? priorityID = null, string estimate = null, ulong? milestoneID = null, string refs = null, JObject customFields = null)
         {
-            return _AddCase_(sectionID, title, typeID, priorityID, estimate, milestoneID, refs, null);
+            return _AddCase_(sectionID, title, typeID, priorityID, estimate, milestoneID, refs, customFields);
         }
 
         /// <summary>Add a project</summary>
