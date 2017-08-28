@@ -19,6 +19,9 @@ namespace TestRail.Types
         /// <summary>true if the milestone is completed</summary>
         public bool? IsCompleted { get; set; }
 
+        /// <summary>true if the milestone is started</summary>
+        public bool? IsStarted { get; set; }
+
         /// <summary>date on which the milestone is due</summary>
         public DateTime? DueOn { get; set; }
 
@@ -52,6 +55,7 @@ namespace TestRail.Types
                 Name = (string)json["name"],
                 Description = (string)json["description"],
                 IsCompleted = (bool?)json["is_completed"],
+                IsStarted = (bool?)json["is_started"],
                 DueOn = null == (int?)json["due_on"] ? (DateTime?)null : new DateTime(1970, 1, 1).AddSeconds((int)json["due_on"]),
                 CompletedOn = null == (int?)json["completed_on"] ? (DateTime?)null : new DateTime(1970, 1, 1).AddSeconds((int)json["completed_on"]),
                 ProjectID = (ulong)json["project_id"],
