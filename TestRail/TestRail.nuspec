@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>TestRail</id>
-    <version>1.0.0.14</version>
+    <version>1.0.0.15</version>
     <title>TestRail Client</title>
     <authors>TestRail Client Committers</authors>
     <owners>TestRail Client Committers</owners>
@@ -11,10 +11,9 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>C# implementation of the TestRail API</description>
     <releaseNotes>
-    ##1.0.0.14
+    ##1.0.0.15
       - Bug Fix
         - Timespan field for Result class
-    ##1.0.0.13
       - Add isStarted property to Milestone class 
       - Update Newtonsoft.Json NuGet package 
     ##1.0.0.12
