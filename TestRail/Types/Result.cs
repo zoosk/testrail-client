@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
+using System.Globalization;
 
 namespace TestRail.Types
 {
@@ -64,9 +65,11 @@ namespace TestRail.Types
                 AssignedToID = (ulong?)json["assignedto_id"],
                 Comment = (string)json["comment"],
                 Version = (string)json["version"],
-                Elapsed = null == (long?)json["elapsed"] ? (TimeSpan?)null : new TimeSpan((long)json["elapsed"]),
                 Defects = (string)json["defects"],
             };
+
+            // separate for easier debugging if necessary
+            r.Elapsed = TimeSpanUtility.FromString((string)json["elapsed"]);
             return r;
         }
 
@@ -78,7 +81,7 @@ namespace TestRail.Types
             if (null != StatusID) { jsonParams.status_id = (int)StatusID; }
             if (null != Comment) { jsonParams.comment = Comment; }
             if (null != Version) { jsonParams.version = Version; }
-            if (null != Elapsed) { jsonParams.elapsed = Elapsed.Value.Ticks; }
+            if (null != Elapsed) { jsonParams.elapsed = $"{Elapsed.Value.Days}d {Elapsed.Value.Hours}h {Elapsed.Value.Minutes}m {Elapsed.Value.Seconds}s" ; }
             if (null != Defects) { jsonParams.defects = Defects; }
             if (null != AssignedToID) { jsonParams.assignedto_id = AssignedToID.Value; }
             return jsonParams;
