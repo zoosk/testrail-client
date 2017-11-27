@@ -2,7 +2,7 @@
 using System.Linq;
 using Newtonsoft.Json.Linq;
 
-namespace TestRailStandard.Types
+namespace TestRail.Types
 {
     /// <summary>stores informations about the context for a case field's config section</summary>
     public class ConfigContext : BaseTestRailType

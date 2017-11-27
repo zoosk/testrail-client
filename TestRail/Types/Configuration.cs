@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 
-namespace TestRailStandard.Types
+namespace TestRail.Types
 {
     public class Configuration : BaseTestRailType
     {

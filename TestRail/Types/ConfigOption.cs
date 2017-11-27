@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 
-namespace TestRailStandard.Types
+namespace TestRail.Types
 {
     /// <summary>stores information about an option for a case field's configuration</summary>
     public class ConfigOption : BaseTestRailType

@@ -1,4 +1,4 @@
-﻿namespace TestRailStandard.Types
+﻿namespace TestRail.Types
 {
     /// <summary>the enumeration represents the status of a test result</summary>
     public enum ResultStatus

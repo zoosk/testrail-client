@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 
-namespace TestRailStandard.Types
+namespace TestRail.Types
 {
     /// <summary>stores information about a case field</summary>
     public class CaseField : BaseTestRailType

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 
-namespace TestRailStandard
+namespace TestRail
 {
     /// <summary>
     /// TimeSpan Utility methods

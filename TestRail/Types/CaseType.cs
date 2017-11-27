@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 
-namespace TestRailStandard.Types
+namespace TestRail.Types
 {
     /// <summary>stores information about a case type</summary>
     public class CaseType : BaseTestRailType

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TestRailStandard
+namespace TestRail
 {
     /// <summary>extension methods for the datetime class</summary>
     public static class DateTimeExtensions

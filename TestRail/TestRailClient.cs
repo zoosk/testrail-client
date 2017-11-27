@@ -5,9 +5,9 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using Newtonsoft.Json.Linq;
-using TestRailStandard.Types;
+using TestRail.Types;
 
-namespace TestRailStandard
+namespace TestRail
 {
     /// <summary>client used to access test case data in testrail</summary>
     public class TestRailClient

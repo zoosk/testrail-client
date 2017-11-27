@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json.Linq;
 
-namespace TestRailStandard.Types
+namespace TestRail.Types
 {
     /// <summary>stores information about a project</summary>
     public class Project : BaseTestRailType

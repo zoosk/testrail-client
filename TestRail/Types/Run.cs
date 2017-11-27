@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 
-namespace TestRailStandard.Types
+namespace TestRail.Types
 {
     /// <summary>stores information about a run</summary>
     public class Run : BaseTestRailType

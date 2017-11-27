@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <PackageId>TestRail</PackageId>
     <PackageVersion>1.0.0.15</PackageVersion>
     <Title>TestRail Client</Title>
@@ -52,11 +52,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <Folder Include="Types\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Types\" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
   </ItemGroup>
 
 </Project>

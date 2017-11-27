@@ -2,7 +2,7 @@
 using System.Linq;
 using Newtonsoft.Json.Linq;
 
-namespace TestRailStandard.Types
+namespace TestRail.Types
 {
     /// <summary>stores information about a plan entry</summary>
     public class PlanEntry : BaseTestRailType
