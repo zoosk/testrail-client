@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net461;net45</TargetFrameworks>
     <PackageId>TestRail</PackageId>
     <PackageVersion>2.0</PackageVersion>
     <Title>TestRail Client</Title>
@@ -13,6 +13,7 @@
     <PackageReleaseNotes>
     ##2.0
       - Converted the application to .Net Standard 2.0
+        - The client should work with any project on: .Net Framework 4.5, 4.6.1 .Net Core >= 2.0, and .Net Standard >= 2.0.
     ##1.0.0.15
       - Bug Fix
         - Timespan field for Result class
@@ -52,6 +53,18 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DocumentationFile>bin\Release\netstandard2.0\TestRailStandard.xml</DocumentationFile>
   </PropertyGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' Or  '$(TargetFramework)' == 'net45'">
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Reflection" />
+    <Reference Include="System.Runtime" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web" />
+    <Reference Include="System" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Types\" />
