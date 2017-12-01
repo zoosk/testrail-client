@@ -1,16 +1,17 @@
 testrail-client
 ===============
 
-C# implementation of the TestRail API
+.Net Standard 2.0 implementation of the TestRail API.
 
-Solution was built using Visual Studio 2015 Update 2
+Solution was built using Visual Studio 2017 (make sure you have the latest version).
 
 ### To Release a New Version
 - pull latest
-- update the assemblyInfo.cs file for the assembly with the new version 
-- Edit the file: `TestRail.nuspec`. (At least bump version and change release notes.)
+- update the [TestRail.csproj](TestRail/TestRail.csproj) file with the new `PackageVersion` version 
 - commit and push changes
 - pull new code (just for sanity)
-- `Rebuild All` with `Release` target
-- `NuGet pack TestRail.nuspec`
+- restore nuget dependencies: `.nuget\nuget.exe restore`
+- rebuild the project using MS Build with the following command: `msbuild /t:pack /p:Configuration=Release`
+  - Make sure that you have msbuild in your path
+  - The new .nupkg file will be in the `TestRail\bin\Release\` directory.
 - `NuGet push TestRail.<version>.nupkg`
