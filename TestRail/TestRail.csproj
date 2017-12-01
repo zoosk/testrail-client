@@ -48,10 +48,7 @@
       - Update Json.net Nuget Package
     </PackageReleaseNotes>
     <Copyright>Copyright 2017</Copyright>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard2.0\TestRailStandard.xml</DocumentationFile>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net461' Or  '$(TargetFramework)' == 'net45'">
