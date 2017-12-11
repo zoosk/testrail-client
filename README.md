@@ -7,7 +7,7 @@ Solution was built using Visual Studio 2017 (make sure you have the latest versi
 
 ### To Release a New Version
 - pull latest
-- update the [TestRail.csproj](TestRail/TestRail.csproj) file with the new `PackageVersion` version 
+- update the [TestRail.csproj](TestRail/TestRail.csproj) file with the new `Version` and `Release Notes`
 - commit and push changes
 - pull new code (just for sanity)
 - restore nuget dependencies: `.nuget\nuget.exe restore`

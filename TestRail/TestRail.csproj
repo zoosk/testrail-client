@@ -3,7 +3,8 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net461;net45</TargetFrameworks>
     <PackageId>TestRail</PackageId>
-    <PackageVersion>2.0</PackageVersion>
+    <Version>2.0</Version>
+    <PackageVersion>$(Version)</PackageVersion>
     <Title>TestRail Client</Title>
     <Authors>TestRail Client Committers</Authors>
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0.html</PackageLicenseUrl>
@@ -13,7 +14,7 @@
     <PackageReleaseNotes>
     ##2.0
       - Converted the application to .Net Standard 2.0
-        - The client should work with any project on: .Net Framework 4.5, 4.6.1 .Net Core >= 2.0, and .Net Standard >= 2.0.
+        - The client should work with any project on: .Net Framework 4.5, 4.6.1, .Net Core &gt;= 2.0, and .Net Standard &gt;= 2.0.
     ##1.0.0.15
       - Bug Fix
         - Timespan field for Result class
