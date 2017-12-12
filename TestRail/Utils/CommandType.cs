@@ -1,14 +1,31 @@
 ﻿namespace TestRail.Utils
 {
-    /// <summary>
-    /// Command type's available
-    /// </summary>
+    /// <summary>Command type's available</summary>
     public enum CommandType
     {
-        get,
-        add,
-        update,
-        delete,
-        close
+        /// <summary>
+        /// TODO - Add summary
+        /// </summary>
+        Get,
+
+        /// <summary>
+        /// TODO - Add summary
+        /// </summary>
+        Add,
+
+        /// <summary>
+        /// TODO - Add summary
+        /// </summary>
+        Update,
+
+        /// <summary>
+        /// TODO - Add summary
+        /// </summary>
+        Delete,
+
+        /// <summary>
+        /// TODO - Add summary
+        /// </summary>
+        Close
     }
 }
