@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TestRail
+namespace TestRail.Utils
 {
     /// <summary>represents the result of a command </summary>
     public class CommandResult : CommandResult<string>

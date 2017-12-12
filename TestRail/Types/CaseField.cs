@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
+using TestRail.Utils;
 
 namespace TestRail.Types
 {

@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using Newtonsoft.Json.Linq;
 using TestRail.Types;
+using TestRail.Utils;
 
 namespace TestRail
 {

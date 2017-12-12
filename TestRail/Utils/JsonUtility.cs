@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 using TestRail.Types;
+using Newtonsoft.Json.Linq;
 
-namespace TestRail
+namespace TestRail.Utils
 {
     /// <summary>
     /// Helper class for Json Objects
