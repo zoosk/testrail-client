@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using TestRail.Utils;
+using Newtonsoft.Json.Linq;
 
 namespace TestRail.Types
 {
