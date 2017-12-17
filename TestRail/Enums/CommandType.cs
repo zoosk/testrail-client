@@ -18,7 +18,7 @@ namespace TestRail.Enums
         Update,
 
         /// <summary>For delete commands.</summary>
-        [StringValue("Delete")]
+        [StringValue("delete")]
         Delete,
 
         /// <summary>For close commands.</summary>

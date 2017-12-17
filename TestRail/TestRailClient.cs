@@ -16,39 +16,45 @@ namespace TestRail
     public class TestRailClient
     {
         /// <summary>url for testrail</summary>
-        protected string _URL_;
+        protected string Url;
+
         /// <summary>testrail username</summary>
-        protected string _UserName_;
+        protected string UserName;
+
         /// <summary>testrail password</summary>
-        protected string _Password_;
+        protected string Password;
 
         /// <summary>projects in the test rail database</summary>
-        public List<Project> Projects => _Projects.Value;
+        public List<Project> Projects => _projects.Value;
 
         /// <summary>called when the client sends an http request</summary>
-        public event EventHandler<HTTPRequestSentEventArgs> OnHTTPRequestSent = (s, e) => { };
+        public event EventHandler<HttpRequestSentEventArgs> OnHttpRequestSent = (s, e) => { };
 
         /// <summary>called when the client receives an http response</summary>
-        public event EventHandler<string> OnHTTPResponseReceived = (s, e) => { };
+        public event EventHandler<string> OnHttpResponseReceived = (s, e) => { };
 
         /// <summary>called when an operation fails</summary>
         public event EventHandler<string> OnOperationFailed = (s, e) => { };
 
+        /// <inheritdoc />
         /// <summary>event args for http request sent</summary>
-        public class HTTPRequestSentEventArgs : EventArgs
+        public class HttpRequestSentEventArgs : EventArgs
         {
             /// <summary>http method (GET, POST, PUT, DELETE, etc.)</summary>
             public string Method;
+
             /// <summary>uri</summary>
             public Uri Uri;
+
             /// <summary>post data</summary>
             public string PostContent;
 
+            /// <inheritdoc />
             /// <summary>constructor</summary>
             /// <param name="method">http method used</param>
             /// <param name="uri">uri used</param>
             /// <param name="postContent">post content sent (if any)</param>
-            public HTTPRequestSentEventArgs(string method, Uri uri, string postContent = null)
+            public HttpRequestSentEventArgs(string method, Uri uri, string postContent = null)
             {
                 Method = method;
                 Uri = uri;
@@ -56,14 +62,20 @@ namespace TestRail
             }
         }
 
-        // TODO: Add summary
-        private readonly Lazy<List<Project>> _Projects;
+        /// <summary>
+        /// TODO - Add summary
+        /// </summary>
+        private readonly Lazy<List<Project>> _projects;
 
-        // TODO: Add summary
-        private Dictionary<ulong, int> _PriorityIDToLevel => _LazyPriorityIDToLevel.Value;
+        /// <summary>
+        /// TODO - Add summary
+        /// </summary>
+        private Dictionary<ulong, int> PriorityIdToLevel => LazyPriorityIdToLevel.Value;
 
-        // TODO: Add summary
-        private Lazy<Dictionary<ulong, int>> _LazyPriorityIDToLevel { get; set; }
+        /// <summary>
+        /// TODO - Add summary
+        /// </summary>
+        private Lazy<Dictionary<ulong, int>> LazyPriorityIdToLevel { get; set; }
 
         #region Constructor
         /// <summary>constructor</summary>
@@ -72,116 +84,124 @@ namespace TestRail
         /// <param name="password">password</param>
         public TestRailClient(string url, string username, string password)
         {
-            _URL_ = url;
-            _UserName_ = username;
-            _Password_ = password;
+            Url = url;
+            UserName = username;
+            Password = password;
 
-            _Projects = new Lazy<List<Project>>(GetProjects);
+            _projects = new Lazy<List<Project>>(GetProjects);
 
             // set up the lazy loading of the priority dictionary (priority id to priority value)
-            _LazyPriorityIDToLevel = new Lazy<Dictionary<ulong, int>>(_CreatePrioritiesDict);
+            LazyPriorityIdToLevel = new Lazy<Dictionary<ulong, int>>(_CreatePrioritiesDict);
         }
         #endregion Constructor
 
         #region Public Methods
-        /// <summary>
-        /// Get the priority for the case if we can
-        /// </summary>
+        /// <summary>Get the priority for the case if we can</summary>
         /// <param name="c">case to get the priority from</param>
         /// <returns>int value of priority if possible, null if not found</returns>
         public int? GetPriorityForCase(Case c)
         {
             int? priority = null;
-            if (null != c?.PriorityId && null != _PriorityIDToLevel && _PriorityIDToLevel.ContainsKey(c.PriorityId.Value))
-            {
-                priority = _PriorityIDToLevel[c.PriorityId.Value];
-            }
+
+            if (null != c?.PriorityId && null != PriorityIdToLevel && PriorityIdToLevel.ContainsKey(c.PriorityId.Value))
+                priority = PriorityIdToLevel[c.PriorityId.Value];
+
             return priority;
         }
 
         #region Add Commands
         /// <summary>adds a result for a test</summary>
-        /// <param name="testID">id of the test</param>
+        /// <param name="testId">id of the test</param>
         /// <param name="status">status of the result</param>
         /// <param name="comment">comment to log</param>
         /// <param name="version">version</param>
         /// <param name="elapsed">time elapsed to complete the test</param>
         /// <param name="defects">defects associated with the result</param>
-        /// <param name="assignedToID">id of the user the result is assigned to</param>
+        /// <param name="assignedToId">id of the user the result is assigned to</param>
+        /// <param name="customs">
+        /// TODO - Add param text
+        /// </param>
         /// <returns>result of the command</returns>
-        public CommandResult<ulong> AddResult(ulong testID, ResultStatus? status, string comment = null, string version = null,
-            TimeSpan? elapsed = null, string defects = null, ulong? assignedToID = null, JObject customs = null)
+        public CommandResult<ulong> AddResult(ulong testId, ResultStatus? status, string comment = null, string version = null,
+            TimeSpan? elapsed = null, string defects = null, ulong? assignedToId = null, JObject customs = null)
         {
-            var uri = _CreateUri_(CommandType.Add, CommandAction.Result, testID);
-            var r = new Result { TestId = testID, StatusId = (ulong?)status, Comment = comment, Version = version, Elapsed = elapsed, Defects = defects, AssignedToId = assignedToID };
-            var jsonParams = JsonUtility.Merge(r.GetJson(), customs);
+            var uri = _CreateUri_(CommandType.Add, CommandAction.Result, testId);
+            var result = new Result { TestId = testId, StatusId = (ulong?)status, Comment = comment, Version = version, Elapsed = elapsed, Defects = defects, AssignedToId = assignedToId };
+            var jsonParams = JsonUtility.Merge(result.GetJson(), customs);
+
             return _SendCommand(uri, jsonParams);
         }
 
         /// <summary>creates a new test result for a test run and case combination</summary>
-        /// <param name="runID">the id of the test run</param>
-        /// <param name="CaseID">the id of the test case</param>
+        /// <param name="runId">the id of the test run</param>
+        /// <param name="caseId">the id of the test case</param>
         /// <param name="status">status of the result</param>
         /// <param name="comment">comment to log</param>
         /// <param name="version">version</param>
         /// <param name="elapsed">time elapsed to complete the test</param>
         /// <param name="defects">defects associated with the result</param>
-        /// <param name="assignedToID">id of the user the result is assigned to</param>
-        /// <returns></returns>
-        public CommandResult<ulong> AddResultForCase(ulong runID, ulong caseID, ResultStatus? status, string comment = null, string version = null,
-            TimeSpan? elapsed = null, string defects = null, ulong? assignedToID = null, JObject customs = null)
+        /// <param name="assignedToId">id of the user the result is assigned to</param>
+        /// <param name="customs">
+        /// TODO - Add param text
+        /// </param>
+        /// <returns>
+        /// TODO - Add returns text
+        /// </returns>
+        public CommandResult<ulong> AddResultForCase(ulong runId, ulong caseId, ResultStatus? status, string comment = null, string version = null,
+            TimeSpan? elapsed = null, string defects = null, ulong? assignedToId = null, JObject customs = null)
         {
-            var uri = _CreateUri_(CommandType.Add, CommandAction.ResultForCase, runID, caseID);
-            var r = new Result { StatusId = (ulong?)status, Comment = comment, Version = version, Elapsed = elapsed, Defects = defects, AssignedToId = assignedToID };
-            var jsonParams = JsonUtility.Merge(r.GetJson(), customs);
+            var uri = _CreateUri_(CommandType.Add, CommandAction.ResultForCase, runId, caseId);
+            var result = new Result { StatusId = (ulong?)status, Comment = comment, Version = version, Elapsed = elapsed, Defects = defects, AssignedToId = assignedToId };
+            var jsonParams = JsonUtility.Merge(result.GetJson(), customs);
+
             return _SendCommand(uri, jsonParams);
         }
 
         /// <summary>adds a run</summary>
-        /// <param name="projectID">id of the project</param>
-        /// <param name="suiteID">id of the suite</param>
+        /// <param name="projectId">id of the project</param>
+        /// <param name="suiteId">id of the suite</param>
         /// <param name="name">name of the run</param>
         /// <param name="description">description of the run</param>
-        /// <param name="milestoneID">id of the milestone</param>
-        /// <param name="assignedToID">id of the user the run should be assigned to</param>
-        ///<param name="caseIDs">(optional)an array of case IDs for the custom case selection, if null, then will include all case ids from the suite </param>
+        /// <param name="milestoneId">id of the milestone</param>
+        /// <param name="assignedToId">id of the user the run should be assigned to</param>
+        /// <param name="caseIds">(optional)an array of case IDs for the custom case selection, if null, then will include all case ids from the suite </param>
         /// <returns>result of the command</returns>
-        public CommandResult<ulong> AddRun(ulong projectID, ulong suiteID, string name, string description, ulong milestoneID, ulong? assignedToID = null, HashSet<ulong> caseIDs = null)
+        public CommandResult<ulong> AddRun(ulong projectId, ulong suiteId, string name, string description, ulong milestoneId, ulong? assignedToId = null, HashSet<ulong> caseIds = null)
         {
             var includeAll = true;
 
             // validates whether we are in include all or custom case selection mode
-            if (null != caseIDs)
+            if (null != caseIds)
             {
-                var atLeastOneCaseFoundInSuite = _CasesFoundInSuite(projectID, suiteID, caseIDs);
+                var atLeastOneCaseFoundInSuite = _CasesFoundInSuite(projectId, suiteId, caseIds);
+
                 if (atLeastOneCaseFoundInSuite)
-                {
                     includeAll = false;
-                }
+
                 else
-                {
                     return new CommandResult<ulong>(false, 0, new Exception("Case IDs not found in the Suite"));
-                }
             }
 
-            var uri = _CreateUri_(CommandType.Add, CommandAction.Run, projectID);
-            var r = new Run { SuiteId = suiteID, Name = name, Description = description, MilestoneId = milestoneID, AssignedTo = assignedToID, IncludeAll = includeAll, CaseIds = caseIDs };
-            return _SendCommand(uri, r.GetJson());
+            var uri = _CreateUri_(CommandType.Add, CommandAction.Run, projectId);
+            var run = new Run { SuiteId = suiteId, Name = name, Description = description, MilestoneId = milestoneId, AssignedTo = assignedToId, IncludeAll = includeAll, CaseIds = caseIds };
+
+            return _SendCommand(uri, run.GetJson());
         }
 
         /// <summary>Add a case</summary>
-        /// <param name="sectionID">section id to add the case to</param>
+        /// <param name="sectionId">section id to add the case to</param>
         /// <param name="title">title of the case</param>
-        /// <param name="typeID">(optional)the ID of the case type</param>
-        /// <param name="priorityID">(optional)the id of the case priority</param>
+        /// <param name="typeId">(optional)the ID of the case type</param>
+        /// <param name="priorityId">(optional)the id of the case priority</param>
         /// <param name="estimate">(optional)the estimate, e.g. "30s" or "1m 45s"</param>
-        /// <param name="milestoneID">(optional)the ID of the milestone to link to the test case</param>
+        /// <param name="milestoneId">(optional)the ID of the milestone to link to the test case</param>
         /// <param name="refs">(optional)a comma-separated list of references/requirements</param>
         /// <param name="customFields">(optional)a json object for custom fields</param>
         /// <returns>result of the command</returns>
-        public CommandResult<ulong> AddCase(ulong sectionID, string title, ulong? typeID = null, ulong? priorityID = null, string estimate = null, ulong? milestoneID = null, string refs = null, JObject customFields = null)
+        public CommandResult<ulong> AddCase(ulong sectionId, string title, ulong? typeId = null, ulong? priorityId = null, string estimate = null, ulong? milestoneId = null, string refs = null,
+            JObject customFields = null)
         {
-            return _AddCase_(sectionID, title, typeID, priorityID, estimate, milestoneID, refs, customFields);
+            return _AddCase_(sectionId, title, typeId, priorityId, estimate, milestoneId, refs, customFields);
         }
 
         /// <summary>Add a project</summary>
@@ -192,505 +212,569 @@ namespace TestRail
         public CommandResult<ulong> AddProject(string projectName, string announcement = null, bool? showAnnouncement = null)
         {
             if (string.IsNullOrWhiteSpace(projectName))
-            {
                 return new CommandResult<ulong>(false, 0, new ArgumentNullException(nameof(projectName)));
-            }
 
             var uri = _CreateUri_(CommandType.Add, CommandAction.Project);
-            var p = new Project { Name = projectName, Announcement = announcement, ShowAnnouncement = showAnnouncement };
-            return _SendCommand(uri, p.GetJson());
+            var project = new Project { Name = projectName, Announcement = announcement, ShowAnnouncement = showAnnouncement };
+
+            return _SendCommand(uri, project.GetJson());
         }
 
         /// <summary>creates a new section</summary>
-        /// <param name="projectID">the ID of the project</param>
-        /// <param name="suiteID">the ID of the test suite</param>
+        /// <param name="projectId">the ID of the project</param>
+        /// <param name="suiteId">the ID of the test suite</param>
         /// <param name="name">the name of the section</param>
-        /// <param name="parentID">(optional)the ID of the parent section (to build section hierarchies)</param>
+        /// <param name="parentId">(optional)the ID of the parent section (to build section hierarchies)</param>
         /// <returns>result of the command</returns>
-        public CommandResult<ulong> AddSection(ulong projectID, ulong suiteID, string name, ulong? parentID = null)
+        public CommandResult<ulong> AddSection(ulong projectId, ulong suiteId, string name, ulong? parentId = null)
         {
             if (string.IsNullOrWhiteSpace(name))
-            {
                 return new CommandResult<ulong>(false, 0, new ArgumentNullException(nameof(name)));
-            }
 
-            var uri = _CreateUri_(CommandType.Add, CommandAction.Section, projectID);
-            var s = new Section { SuiteId = suiteID, ParentId = parentID, Name = name };
-            return _SendCommand(uri, s.GetJson());
+            var uri = _CreateUri_(CommandType.Add, CommandAction.Section, projectId);
+            var section = new Section { SuiteId = suiteId, ParentId = parentId, Name = name };
+
+            return _SendCommand(uri, section.GetJson());
         }
 
         /// <summary>Creates a new test suite</summary>
-        /// <param name="projectID">the ID of the project the test suite should be added to</param>
+        /// <param name="projectId">the ID of the project the test suite should be added to</param>
         /// <param name="name">the name of the test suite</param>
         /// <param name="description">(optional)the description of the test suite</param>
         /// <returns>result of the command</returns>
-        public CommandResult<ulong> AddSuite(ulong projectID, string name, string description = null)
+        public CommandResult<ulong> AddSuite(ulong projectId, string name, string description = null)
         {
             if (string.IsNullOrWhiteSpace(name))
-            {
                 return new CommandResult<ulong>(false, 0, new ArgumentNullException(nameof(name)));
-            }
 
-            var uri = _CreateUri_(CommandType.Add, CommandAction.Suite, projectID);
-            var s = new Suite { Name = name, Description = description };
-            return _SendCommand(uri, s.GetJson());
+            var uri = _CreateUri_(CommandType.Add, CommandAction.Suite, projectId);
+            var suite = new Suite { Name = name, Description = description };
+
+            return _SendCommand(uri, suite.GetJson());
         }
 
         /// <summary>creates a new plan</summary>
-        /// <param name="projectID">id of the project the test plan should be added to</param>
+        /// <param name="projectId">id of the project the test plan should be added to</param>
         /// <param name="name">name of the test plan</param>
         /// <param name="description">(optional)description of the test plan</param>
-        /// <param name="milestoneID">(optional)id of the milestone to link the test plan</param>
+        /// <param name="milestoneId">(optional)id of the milestone to link the test plan</param>
         /// <param name="entries">an array of objects describing the test runs of the plan</param>
         /// <returns>result of the command</returns>
-        public CommandResult<ulong> AddPlan(ulong projectID, string name, string description = null, ulong? milestoneID = null, List<PlanEntry> entries = null)//todo:add config ids here
+        public CommandResult<ulong> AddPlan(ulong projectId, string name, string description = null, ulong? milestoneId = null, List<PlanEntry> entries = null)//todo:add config ids here
         // , params ulong[] suiteIDs)
         {
             if (string.IsNullOrWhiteSpace(name))
-            {
                 return new CommandResult<ulong>(false, 0, new ArgumentNullException(nameof(name)));
-            }
 
-            var uri = _CreateUri_(CommandType.Add, CommandAction.Plan, projectID);
-            var p = new Plan { Name = name, Description = description, MilestoneId = milestoneID, Entries = entries };
-            var jsonParams = p.GetJson();
+            var uri = _CreateUri_(CommandType.Add, CommandAction.Plan, projectId);
+            var plan = new Plan { Name = name, Description = description, MilestoneId = milestoneId, Entries = entries };
+            var jsonParams = plan.GetJson();
+
             return _SendCommand(uri, jsonParams);
         }
 
         /// <summary>Creates a new test run for a test plan</summary>
-        /// <param name="planID">the ID of the plan the test run should be added to</param>
-        /// <param name="suiteID">the ID of the test suite for the test run</param>
+        /// <param name="planId">the ID of the plan the test run should be added to</param>
+        /// <param name="suiteId">the ID of the test suite for the test run</param>
         /// <param name="name">(optional)the name of the test run</param>
-        /// <param name="assignedToID">(optional)the ID of the user the test run should be assigned to</param>
-        /// <param name="include_all">(optional)true for including all test cases of the test suite and false for a custom selection (default: true)</param>
-        /// <returns></returns>
-        public CommandResult<ulong> AddPlanEntry(ulong planID, ulong suiteID, string name = null, ulong? assignedToID = null, List<ulong> caseIDs = null)
+        /// <param name="assignedToId">(optional)the ID of the user the test run should be assigned to</param>
+        /// <param name="caseIds">
+        /// TODO - Add param text
+        /// </param>
+        /// <returns>
+        /// TODO - Add returns text
+        /// </returns>
+        public CommandResult<ulong> AddPlanEntry(ulong planId, ulong suiteId, string name = null, ulong? assignedToId = null, List<ulong> caseIds = null)
         {
-            var uri = _CreateUri_(CommandType.Add, CommandAction.PlanEntry, planID);
-            var pe = new PlanEntry { AssignedToId = assignedToID, SuiteId = suiteID, Name = name, CaseIDs = caseIDs };
-            var jsonParams = pe.GetJson();
+            var uri = _CreateUri_(CommandType.Add, CommandAction.PlanEntry, planId);
+            var planEntry = new PlanEntry { AssignedToId = assignedToId, SuiteId = suiteId, Name = name, CaseIDs = caseIds };
+            var jsonParams = planEntry.GetJson();
+
             return _SendCommand(uri, jsonParams);
         }
 
         /// <summary>adds a milestone</summary>
-        /// <param name="projectID">id of the project</param>
+        /// <param name="projectId">id of the project</param>
         /// <param name="name">name of the milestone</param>
         /// <param name="description">(optional)description of the milestone</param>
         /// <param name="dueOn">(optional)date on which the milestone is due</param>
         /// <returns>result of the command</returns>
-        public CommandResult<ulong> AddMilestone(ulong projectID, string name, string description = null, DateTime? dueOn = null)
+        public CommandResult<ulong> AddMilestone(ulong projectId, string name, string description = null, DateTime? dueOn = null)
         {
-            var uri = _CreateUri_(CommandType.Add, CommandAction.Milestone, projectID);
-            var m = new Milestone { Name = name, Description = description, DueOn = dueOn };
-            return _SendCommand(uri, m.GetJson());
+            var uri = _CreateUri_(CommandType.Add, CommandAction.Milestone, projectId);
+            var milestone = new Milestone { Name = name, Description = description, DueOn = dueOn };
+
+            return _SendCommand(uri, milestone.GetJson());
         }
         #endregion Add Commands
 
         #region Update Commands
         /// <summary>update an existing case</summary>
-        /// <param name="caseID">the ID of the test case</param>
+        /// <param name="caseId">the ID of the test case</param>
         /// <param name="title">title of the case</param>
-        /// <param name="typeID">(optional)the ID of the case type</param>
-        /// <param name="priorityID">(optional)the id of the case priority</param>
+        /// <param name="typeId">(optional)the ID of the case type</param>
+        /// <param name="priorityId">(optional)the id of the case priority</param>
         /// <param name="estimate">(optional)the estimate, e.g. "30s" or "1m 45s"</param>
-        /// <param name="milestoneID">(optional)the ID of the milestone to link to the test case</param>
+        /// <param name="milestoneId">(optional)the ID of the milestone to link to the test case</param>
         /// <param name="refs">(optional)a comma-separated list of references/requirements</param>
         /// <returns>result of the command</returns>
-        public CommandResult<ulong> UpdateCase(ulong caseID, string title, ulong? typeID = null, ulong? priorityID = null, string estimate = null, ulong? milestoneID = null, string refs = null)
+        public CommandResult<ulong> UpdateCase(ulong caseId, string title, ulong? typeId = null, ulong? priorityId = null, string estimate = null, ulong? milestoneId = null, string refs = null)
         {
-            return _UpdateCase_(caseID, title, typeID, priorityID, estimate, milestoneID, refs, null);
+            return _UpdateCase_(caseId, title, typeId, priorityId, estimate, milestoneId, refs);
         }
 
         /// <summary>update an existing milestone</summary>
-        /// <param name="milestoneID">id of the milestone</param>
+        /// <param name="milestoneId">id of the milestone</param>
         /// <param name="name">(optional)name of the milestone</param>
         /// <param name="description">(optional)description of the milestone</param>
         /// <param name="dueOn">(optional)date on which the milestone is due</param>
+        /// <param name="isCompleted">
+        /// TODO - Add param text
+        /// </param>
         /// <returns>result of the command</returns>
-        public CommandResult<ulong> UpdateMilestone(ulong milestoneID, string name = null, string description = null, DateTime? dueOn = null, bool? isCompleted = null)
+        public CommandResult<ulong> UpdateMilestone(ulong milestoneId, string name = null, string description = null, DateTime? dueOn = null, bool? isCompleted = null)
         {
-            var uri = _CreateUri_(CommandType.Update, CommandAction.Milestone, milestoneID);
-            var m = new Milestone { Name = name, Description = description, DueOn = dueOn, IsCompleted = isCompleted };
-            return _SendCommand(uri, m.GetJson());
+            var uri = _CreateUri_(CommandType.Update, CommandAction.Milestone, milestoneId);
+            var milestone = new Milestone { Name = name, Description = description, DueOn = dueOn, IsCompleted = isCompleted };
+
+            return _SendCommand(uri, milestone.GetJson());
         }
 
         /// <summary>Update an existing plan</summary>
-        /// <param name="planID">id of the plan</param>
+        /// <param name="planId">id of the plan</param>
         /// <param name="name">(optional)name of the test plan </param>
         /// <param name="description">(optional)the description of the test plan</param>
-        /// <param name="milestoneID">(optional)the id of the milestone to link to the test plan</param>
-        /// <returns></returns>
-        public CommandResult<ulong> UpdatePlan(ulong planID, string name = null, string description = null, ulong? milestoneID = null)
+        /// <param name="milestoneId">(optional)the id of the milestone to link to the test plan</param>
+        /// <returns>
+        /// TODO - Add returns text
+        /// </returns>
+        public CommandResult<ulong> UpdatePlan(ulong planId, string name = null, string description = null, ulong? milestoneId = null)
         {
-            var uri = _CreateUri_(CommandType.Update, CommandAction.Plan, planID);
-            var p = new Plan { Name = name, Description = description, MilestoneId = milestoneID };
-            var jsonParams = p.GetJson();
+            var uri = _CreateUri_(CommandType.Update, CommandAction.Plan, planId);
+            var plan = new Plan { Name = name, Description = description, MilestoneId = milestoneId };
+            var jsonParams = plan.GetJson();
+
             return _SendCommand(uri, jsonParams);
         }
 
         /// <summary>Creates a new test run for a test plan</summary>
-        /// <param name="planID">the ID of the plan the test run should be added to</param>
-        /// <param name="entryID">the ID of the test plan entry</param>
+        /// <param name="planId">the ID of the plan the test run should be added to</param>
+        /// <param name="entryId">the ID of the test plan entry</param>
         /// <param name="name">(optional)the name of the test run</param>
-        /// <param name="assignedToID">(optional)the ID of the user the test run should be assigned to</param>
-        /// <param name="include_all">(optional)true for including all test cases of the test suite and false for a custom selection (default: true)</param>
-        /// <returns></returns>
-        public CommandResult<ulong> UpdatePlanEntry(ulong planID, string entryID, string name = null, ulong? assignedToID = null, List<ulong> caseIDs = null)
+        /// <param name="assignedToId">(optional)the ID of the user the test run should be assigned to</param>
+        /// <param name="caseIDs">
+        /// TODO - Add param text
+        /// </param>
+        /// <returns>
+        /// TODO - Add returns text
+        /// </returns>
+        public CommandResult<ulong> UpdatePlanEntry(ulong planId, string entryId, string name = null, ulong? assignedToId = null, List<ulong> caseIDs = null)
         {
-            var uri = _CreateUri_(CommandType.Update, CommandAction.PlanEntry, planID, null, null, entryID);
-            var pe = new PlanEntry { AssignedToId = assignedToID, Name = name, CaseIDs = caseIDs };
-            var jsonParams = pe.GetJson();
+            var uri = _CreateUri_(CommandType.Update, CommandAction.PlanEntry, planId, null, null, entryId);
+            var planEntry = new PlanEntry { AssignedToId = assignedToId, Name = name, CaseIDs = caseIDs };
+            var jsonParams = planEntry.GetJson();
+
             return _SendCommand(uri, jsonParams);
         }
 
         /// <summary>Update an existing project</summary>
-        /// <param name="projectID">the id of the project</param>
+        /// <param name="projectId">the id of the project</param>
         /// <param name="projectName">the name of the project</param>
         /// <param name="announcement">(optional)the description of the project</param>
         /// <param name="showAnnouncement">(optional)true if the announcement should be displayed on the project's overview page and false otherwise</param>
         /// <param name="isCompleted">(optional)specifies whether a project is considered completed or not</param>
-        /// <returns></returns>
-        public CommandResult<ulong> UpdateProject(ulong projectID, string projectName, string announcement = null, bool? showAnnouncement = null, bool? isCompleted = null)
+        /// <returns>
+        /// TODO - Add returns text
+        /// </returns>
+        public CommandResult<ulong> UpdateProject(ulong projectId, string projectName, string announcement = null, bool? showAnnouncement = null, bool? isCompleted = null)
         {
-            var uri = _CreateUri_(CommandType.Update, CommandAction.Project, projectID);
-            var p = new Project { Name = projectName, Announcement = announcement, ShowAnnouncement = showAnnouncement, IsCompleted = isCompleted };
-            return _SendCommand(uri, p.GetJson());
+            var uri = _CreateUri_(CommandType.Update, CommandAction.Project, projectId);
+            var project = new Project { Name = projectName, Announcement = announcement, ShowAnnouncement = showAnnouncement, IsCompleted = isCompleted };
+
+            return _SendCommand(uri, project.GetJson());
         }
 
         /// <summary>update an existing test run</summary>
-        /// <param name="runID">the id of an existing run</param>
+        /// <param name="runId">the id of an existing run</param>
         /// <param name="name">(optional)name of the test run</param>
         /// <param name="description">(optional)description of the test run</param>
-        /// <param name="milestoneID">(optional)the id of the milestone to link to the test run</param>
-        /// <param name="include_all">(optional)true for including all test cases of the test suite and false for a custom case selection</param>
-        ///<param name="caseIDs">an array of case IDs for the custom case selection</param>
-        /// <returns></returns>
-        public CommandResult<ulong> UpdateRun(ulong runID, string name = null, string description = null, ulong? milestoneID = null, HashSet<ulong> caseIDs = null)
+        /// <param name="milestoneId">(optional)the id of the milestone to link to the test run</param>
+        /// <param name="caseIds">an array of case IDs for the custom case selection</param>
+        /// <returns>
+        /// TODO - Add returns text
+        /// </returns>
+        public CommandResult<ulong> UpdateRun(ulong runId, string name = null, string description = null, ulong? milestoneId = null, HashSet<ulong> caseIds = null)
         {
             var includeAll = true;
-            var run = GetRun(runID);
+            var existingRun = GetRun(runId);
 
             // validates whether we are in include all or custom case selection mode
-            if (null != run?.ProjectId && run.SuiteId.HasValue && null != caseIDs)
+            if (null != existingRun?.ProjectId && existingRun.SuiteId.HasValue && null != caseIds)
             {
-                var atLeastOneCaseFoundInSuite = _CasesFoundInSuite(run.ProjectId.Value, run.SuiteId.Value, caseIDs);
+                var atLeastOneCaseFoundInSuite = _CasesFoundInSuite(existingRun.ProjectId.Value, existingRun.SuiteId.Value, caseIds);
+
                 if (atLeastOneCaseFoundInSuite)
-                {
                     includeAll = false;
-                }
+
                 else
-                {
                     return new CommandResult<ulong>(false, 0, new Exception("Case IDs not found in the Suite"));
-                }
             }
 
-            var uri = _CreateUri_(CommandType.Update, CommandAction.Run, runID);
-            var r = new Run { Name = name, Description = description, MilestoneId = milestoneID, IncludeAll = includeAll, CaseIds = caseIDs };
-            return _SendCommand(uri, r.GetJson());
+            var uri = _CreateUri_(CommandType.Update, CommandAction.Run, runId);
+            var newRun = new Run { Name = name, Description = description, MilestoneId = milestoneId, IncludeAll = includeAll, CaseIds = caseIds };
+
+            return _SendCommand(uri, newRun.GetJson());
         }
 
         /// <summary>Updates an existing section</summary>
-        /// <param name="sectionID">id of the section to update</param>
+        /// <param name="sectionId">id of the section to update</param>
         /// <param name="name">name of the section</param>
-        /// <returns></returns>
-        public CommandResult<ulong> UpdateSection(ulong sectionID, string name)
+        /// <returns>
+        /// TODO - Add returns text
+        /// </returns>
+        public CommandResult<ulong> UpdateSection(ulong sectionId, string name)
         {
             if (string.IsNullOrWhiteSpace(name))
-            {
                 return new CommandResult<ulong>(false, 0, new ArgumentNullException(nameof(name)));
-            }
 
-            var uri = _CreateUri_(CommandType.Update, CommandAction.Section, sectionID);
-            var s = new Section { Id = sectionID, Name = name };
-            return _SendCommand(uri, s.GetJson());
+            var uri = _CreateUri_(CommandType.Update, CommandAction.Section, sectionId);
+            var section = new Section { Id = sectionId, Name = name };
+
+            return _SendCommand(uri, section.GetJson());
         }
 
         /// <summary>Update an existing suite</summary>
-        /// <param name="suiteID">id of the suite to update</param>
+        /// <param name="suiteId">id of the suite to update</param>
         /// <param name="name">(optional)new name to update to</param>
         /// <param name="description">(optional)new description to update to</param>
-        /// <returns></returns>
-        public CommandResult<ulong> UpdateSuite(ulong suiteID, string name = null, string description = null)
+        /// <returns>
+        /// TODO - Add returns text
+        /// </returns>
+        public CommandResult<ulong> UpdateSuite(ulong suiteId, string name = null, string description = null)
         {
-            var uri = _CreateUri_(CommandType.Update, CommandAction.Suite, suiteID);
+            var uri = _CreateUri_(CommandType.Update, CommandAction.Suite, suiteId);
             var s = new Suite { Name = name, Description = description };
+
             return _SendCommand(uri, s.GetJson());
         }
         #endregion Update Commands
 
         #region Close Commands
         /// <summary>closes a plan</summary>
-        /// <param name="planID">id of the plan</param>
+        /// <param name="planId">id of the plan</param>
         /// <returns>true if successful</returns>
-        public bool ClosePlan(ulong planID)
+        public bool ClosePlan(ulong planId)
         {
-            var uri = _CreateUri_(CommandType.Close, CommandAction.Plan, planID);
-
+            var uri = _CreateUri_(CommandType.Close, CommandAction.Plan, planId);
             var result = _CallPostEndpoint(uri);
+
             if (result.WasSuccessful)
             {
-                var json = JObject.Parse(result.Value);
+                var unused = JObject.Parse(result.Value);
+
                 return result.WasSuccessful;
             }
 
             OnOperationFailed(this, $"Could not close plan : {result.Value}");
+
             return false;
         }
 
         /// <summary>closes a run</summary>
-        /// <param name="runID">id of the run</param>
+        /// <param name="runId">id of the run</param>
         /// <returns>true if successful</returns>
-        public bool CloseRun(ulong runID)
+        public bool CloseRun(ulong runId)
         {
-            var uri = _CreateUri_(CommandType.Close, CommandAction.Run, runID);
+            var uri = _CreateUri_(CommandType.Close, CommandAction.Run, runId);
             var result = _CallPostEndpoint(uri);
+
             if (result.WasSuccessful)
             {
-                var json = JObject.Parse(result.Value);
+                var unused = JObject.Parse(result.Value);
+
                 return result.WasSuccessful;
             }
 
             OnOperationFailed(this, $"Could not close run : {result.Value}");
+
             return false;
         }
         #endregion Close Commands
 
         #region Delete Commands
         /// <summary>Delete a milestone</summary>
-        /// <param name="milestoneID">id of the milestone</param>
+        /// <param name="milestoneId">id of the milestone</param>
         /// <returns>result of the deletion</returns>
-        public CommandResult<ulong> DeleteMilestone(ulong milestoneID)
+        public CommandResult<ulong> DeleteMilestone(ulong milestoneId)
         {
-            var uri = _CreateUri_(CommandType.Delete, CommandAction.Milestone, milestoneID);
+            var uri = _CreateUri_(CommandType.Delete, CommandAction.Milestone, milestoneId);
+
             return _SendCommand(uri);
         }
 
         /// <summary>Delete a case</summary>
-        /// <param name="caseID">id of the case to delete</param>
+        /// <param name="caseId">id of the case to delete</param>
         /// <returns>result of the deletion</returns>
-        public CommandResult<ulong> DeleteCase(ulong caseID)
+        public CommandResult<ulong> DeleteCase(ulong caseId)
         {
-            var uri = _CreateUri_(CommandType.Delete, CommandAction.Case, caseID);
+            var uri = _CreateUri_(CommandType.Delete, CommandAction.Case, caseId);
+
             return _SendCommand(uri);
         }
 
         /// <summary>Delete a plan</summary>
-        /// <param name="planID">id of the plan to delete</param>
+        /// <param name="planId">id of the plan to delete</param>
         /// <returns>result of the deletion</returns>
-        public CommandResult<ulong> DeletePlan(ulong planID)
+        public CommandResult<ulong> DeletePlan(ulong planId)
         {
-            var uri = _CreateUri_(CommandType.Delete, CommandAction.Plan, planID);
+            var uri = _CreateUri_(CommandType.Delete, CommandAction.Plan, planId);
+
             return _SendCommand(uri);
         }
 
         /// <summary>Delete a specific plan entry for a plan id</summary>
-        /// <param name="planID">id of the plan</param>
-        /// <param name="entryID">string representation of the GUID for the entryID</param>
+        /// <param name="planId">id of the plan</param>
+        /// <param name="entryId">string representation of the GUID for the entryID</param>
         /// <returns>result of the deletion</returns>
-        public CommandResult<ulong> DeletePlanEntry(ulong planID, string entryID)
+        public CommandResult<ulong> DeletePlanEntry(ulong planId, string entryId)
         {
-            var uri = _CreateUri_(CommandType.Delete, CommandAction.PlanEntry, planID, null, null, entryID);
+            var uri = _CreateUri_(CommandType.Delete, CommandAction.PlanEntry, planId, null, null, entryId);
+
             return _SendCommand(uri);
         }
 
         /// <summary>Delete the Project</summary>
-        /// <param name="projectID">id of the project to delete</param>
+        /// <param name="projectId">id of the project to delete</param>
         /// <returns>result of the deletion</returns>
-        public CommandResult<ulong> DeleteProject(ulong projectID)
+        public CommandResult<ulong> DeleteProject(ulong projectId)
         {
-            var uri = _CreateUri_(CommandType.Delete, CommandAction.Project, projectID);
+            var uri = _CreateUri_(CommandType.Delete, CommandAction.Project, projectId);
+
             return _SendCommand(uri);
         }
 
         /// <summary>Delete the section</summary>
-        /// <param name="sectionID">id of the section to delete</param>
+        /// <param name="sectionId">id of the section to delete</param>
         /// <returns>result of the deletion</returns>
-        public CommandResult<ulong> DeleteSection(ulong sectionID)
+        public CommandResult<ulong> DeleteSection(ulong sectionId)
         {
-            var uri = _CreateUri_(CommandType.Delete, CommandAction.Section, sectionID);
+            var uri = _CreateUri_(CommandType.Delete, CommandAction.Section, sectionId);
+
             return _SendCommand(uri);
         }
 
         /// <summary>Delete the suite</summary>
-        /// <param name="suiteID">id of the suite to delete</param>
+        /// <param name="suiteId">id of the suite to delete</param>
         /// <returns>result of the deletion</returns>
-        public CommandResult<ulong> DeleteSuite(ulong suiteID)
+        public CommandResult<ulong> DeleteSuite(ulong suiteId)
         {
-            var uri = _CreateUri_(CommandType.Delete, CommandAction.Suite, suiteID);
+            var uri = _CreateUri_(CommandType.Delete, CommandAction.Suite, suiteId);
+
             return _SendCommand(uri);
         }
         #endregion Delete Commands
 
         #region Get Commands
         /// <summary>gets a test</summary>
-        /// <param name="testID">id of the test</param>
+        /// <param name="testId">id of the test</param>
         /// <returns>information about the test</returns>
-        public Test GetTest(ulong testID)
+        public Test GetTest(ulong testId)
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Test, testID);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Test, testId);
+
             return _GetItem_(CommandAction.Test, uri, Test.Parse);
         }
 
         /// <summary>gets tests associated with a run</summary>
-        /// <param name="runID">id of the run</param>
+        /// <param name="runId">id of the run</param>
         /// <returns>tests associated with the run</returns>
-        public List<Test> GetTests(ulong runID)
+        public List<Test> GetTests(ulong runId)
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Tests, runID);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Tests, runId);
+
             return _GetItems_(CommandAction.Tests, uri, Test.Parse);
         }
 
         /// <summary>gets a case</summary>
-        /// <param name="caseID">id of the case</param>
+        /// <param name="caseId">id of the case</param>
         /// <returns>information about the case</returns>
-        public Case GetCase(ulong caseID)
+        public Case GetCase(ulong caseId)
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Case, caseID);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Case, caseId);
+
             return _GetItem_(CommandAction.Case, uri, Case.Parse);
         }
 
         /// <summary>gets cases associated with a suite</summary>
-        /// <param name="proejctID">id of the project</param>
-        /// <param name="suiteID">id of the suite</param>
-        /// <param name="sectionID">(optional) id of the section</param>
+        /// <param name="projectId">id of the project</param>
+        /// <param name="suiteId">id of the suite</param>
+        /// <param name="sectionId">(optional) id of the section</param>
         /// <returns>cases associated with the suite</returns>
-        public List<Case> GetCases(ulong projectID, ulong suiteID, ulong? sectionID = null)
+        public List<Case> GetCases(ulong projectId, ulong suiteId, ulong? sectionId = null)
         {
-            var optionalSectionID = sectionID.HasValue ? $"&section_id={sectionID.Value}" : string.Empty;
-            var options = $"&suite_id={suiteID}{optionalSectionID}";
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Cases, projectID, null, options);
+            var optionalSectionId = sectionId.HasValue ? $"&section_id={sectionId.Value}" : string.Empty;
+            var options = $"&suite_id={suiteId}{optionalSectionId}";
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Cases, projectId, null, options);
+
             return _GetItems_(CommandAction.Cases, uri, Case.Parse);
         }
 
-        // TODO: Add summary
+        /// <summary>
+        /// TODO - Add summary
+        /// </summary>
+        /// <returns>
+        /// TODO - Add returns text
+        /// </returns>
         public List<CaseField> GetCaseFields()
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.CaseFields);
+
             return _GetItems_(CommandAction.CaseTypes, uri, CaseField.Parse);
         }
 
-        // TODO: Add summary
+        /// <summary>
+        /// TODO - Add summary
+        /// </summary>
+        /// <returns>
+        /// TODO - Add returns text
+        /// </returns>
         public List<CaseType> GetCaseTypes()
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.CaseTypes);
+
             return _GetItems_(CommandAction.CaseTypes, uri, CaseType.Parse);
         }
 
         /// <summary>gets a suite</summary>
-        /// <param name="suiteID">id of the suite</param>
+        /// <param name="suiteId">id of the suite</param>
         /// <returns>information about the suite</returns>
-        public Suite GetSuite(ulong suiteID)
+        public Suite GetSuite(ulong suiteId)
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Suite, suiteID);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Suite, suiteId);
+
             return _GetItem_(CommandAction.Suite, uri, Suite.Parse);
         }
 
         /// <summary>gets suites associated with a project</summary>
-        /// <param name="projectID">id of the project</param>
+        /// <param name="projectId">id of the project</param>
         /// <returns>suites associated with the project</returns>
-        public List<Suite> GetSuites(ulong projectID)
+        public List<Suite> GetSuites(ulong projectId)
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Suites, projectID);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Suites, projectId);
+
             return _GetItems_(CommandAction.Suites, uri, Suite.Parse);
         }
 
         /// <summary>gets a section</summary>
-        /// <param name="sectionID">id of the section</param>
+        /// <param name="sectionId">id of the section</param>
         /// <returns>information about the section</returns>
-        public Section GetSection(ulong sectionID)
+        public Section GetSection(ulong sectionId)
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Section, sectionID);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Section, sectionId);
+
             return _GetItem_(CommandAction.Section, uri, Section.Parse);
         }
 
         /// <summary>gets sections associated with a suite</summary>
-        /// <param name="projectID">id of the project</param>
-        /// <param name="suiteID">id of the suite</param>
+        /// <param name="projectId">id of the project</param>
+        /// <param name="suiteId">id of the suite</param>
         /// <returns>sections associated with the suite</returns>
-        public List<Section> GetSections(ulong projectID, ulong suiteID)
+        public List<Section> GetSections(ulong projectId, ulong suiteId)
         {
-            var options = $"&suite_id={suiteID}";
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Sections, projectID, null, options);
+            var options = $"&suite_id={suiteId}";
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Sections, projectId, null, options);
+
             return _GetItems_(CommandAction.Sections, uri, Section.Parse);
         }
 
         /// <summary>gets a run</summary>
-        /// <param name="runID">id of the run</param>
+        /// <param name="runId">id of the run</param>
         /// <returns>information about the run</returns>
-        public Run GetRun(ulong runID)
+        public Run GetRun(ulong runId)
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Run, runID);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Run, runId);
+
             return _GetItem_(CommandAction.Run, uri, Run.Parse);
         }
 
         /// <summary>gets runs associated with a project</summary>
-        /// <param name="projectID">id of the project</param>
+        /// <param name="projectId">id of the project</param>
         /// <returns>runs associated with the project</returns>
-        public List<Run> GetRuns(ulong projectID)
+        public List<Run> GetRuns(ulong projectId)
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Runs, projectID);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Runs, projectId);
+
             return _GetItems_(CommandAction.Runs, uri, Run.Parse);
         }
 
         /// <summary>gets a plan</summary>
-        /// <param name="planID">id of the plan</param>
+        /// <param name="planId">id of the plan</param>
         /// <returns>information about the plan</returns>
-        public Plan GetPlan(ulong planID)
+        public Plan GetPlan(ulong planId)
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Plan, planID);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Plan, planId);
+
             return _GetItem_(CommandAction.Plan, uri, Plan.Parse);
         }
 
         /// <summary>gets plans associated with a project</summary>
-        /// <param name="projectID">id of the project</param>
+        /// <param name="projectId">id of the project</param>
         /// <returns>plans associated with the project</returns>
-        public List<Plan> GetPlans(ulong projectID)
+        public List<Plan> GetPlans(ulong projectId)
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Plans, projectID);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Plans, projectId);
+
             return _GetItems_(CommandAction.Plans, uri, Plan.Parse);
         }
 
         /// <summary>gets a milestone</summary>
-        /// <param name="milestoneID">id of the milestone</param>
+        /// <param name="milestoneId">id of the milestone</param>
         /// <returns>information about the milestone</returns>
-        public Milestone GetMilestone(ulong milestoneID)
+        public Milestone GetMilestone(ulong milestoneId)
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Milestone, milestoneID);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Milestone, milestoneId);
+
             return _GetItem_(CommandAction.Milestone, uri, Milestone.Parse);
         }
 
         /// <summary>gets milestones associated with a project</summary>
-        /// <param name="projectID">id of the project</param>
+        /// <param name="projectId">id of the project</param>
         /// <returns>milestone associated with project</returns>
-        public List<Milestone> GetMilestones(ulong projectID)
+        public List<Milestone> GetMilestones(ulong projectId)
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Milestones, projectID);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Milestones, projectId);
+
             return _GetItems_(CommandAction.Milestones, uri, Milestone.Parse);
         }
 
         /// <summary>gets a project</summary>
-        /// <param name="projectID">id of the project</param>
+        /// <param name="projectId">id of the project</param>
         /// <returns>information about the project</returns>
-        public Project GetProject(ulong projectID)
+        public Project GetProject(ulong projectId)
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Project, projectID);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Project, projectId);
+
             return _GetItem_(CommandAction.Project, uri, Project.Parse);
         }
 
         /// <summary>gets all projects contained in the testrail instance</summary>
-        /// <returns></returns>
+        /// <returns>
+        /// TODO - Add returns text
+        /// </returns>
         public List<Project> GetProjects()
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Projects);
+
             return _GetItems_(CommandAction.Projects, uri, Project.Parse);
         }
 
         /// <summary>Get User for user id</summary>
-        /// <param name="userID">user id to search for</param>
+        /// <param name="userId">user id to search for</param>
         /// <returns>a User object</returns>
-        public User GetUser(ulong userID)
+        public User GetUser(ulong userId)
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.User, userID);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.User, userId);
+
             return _GetItem_(CommandAction.User, uri, User.Parse);
         }
 
@@ -701,12 +785,11 @@ namespace TestRail
         {
             // validate the email string
             if (string.IsNullOrWhiteSpace(email))
-            {
                 return default(User);
-            }
-            
-            var optional = $"&email={email}";
-            var uri = _CreateUri_(CommandType.Get, CommandAction.UserByEmail, null, null, optional);
+
+            var optionalParam = $"&email={email}";
+            var uri = _CreateUri_(CommandType.Get, CommandAction.UserByEmail, null, null, optionalParam);
+
             return _GetItem_(CommandAction.UserByEmail, uri, User.Parse);
         }
 
@@ -715,77 +798,74 @@ namespace TestRail
         public List<User> GetUsers()
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Users);
+
             return _GetItems_(CommandAction.Users, uri, User.Parse);
         }
 
-        /// <summary>
-        /// Returns a list of test results for a test 
-        /// </summary>
-        /// <param name="testID">id of the test</param>
+        /// <summary>Returns a list of test results for a test</summary>
+        /// <param name="testId">id of the test</param>
         /// <param name="limit">(optional) maximum amount of test results to return, latest first</param>
-        /// <returns></returns>
-        public List<Result> GetResults(ulong testID, ulong? limit = null)
+        /// <returns>
+        /// TODO - Add returns text
+        /// </returns>
+        public List<Result> GetResults(ulong testId, ulong? limit = null)
         {
             var optional = (limit.HasValue) ? $"&limit={limit.Value}" : string.Empty;
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Results, testID, null, optional);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Results, testId, null, optional);
+
             return _GetItems_(CommandAction.Results, uri, Result.Parse);
         }
 
-        /// <summary>
-        /// Return the list of test results for a test run and the case combination
-        /// </summary>
-        /// <param name="runID">id of the test run</param>
-        /// <param name="caseID">id of the test case</param>
+        /// <summary>Return the list of test results for a test run and the case combination</summary>
+        /// <param name="runId">id of the test run</param>
+        /// <param name="caseId">id of the test case</param>
         /// <param name="limit">(optional) maximum amount of test results to return, latest first</param>
         /// <returns>list of test results for a case</returns>
-        public List<Result> GetResultsForCase(ulong runID, ulong caseID, ulong? limit = null)
+        public List<Result> GetResultsForCase(ulong runId, ulong caseId, ulong? limit = null)
         {
             var optional = limit.HasValue ? $"&limit={limit.Value}" : string.Empty;
-            var uri = _CreateUri_(CommandType.Get, CommandAction.ResultsForCase, runID, caseID, optional);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.ResultsForCase, runId, caseId, optional);
+
             return _GetItems_(CommandAction.ResultsForCase, uri, Result.Parse);
         }
 
-        /// <summary>
-        /// Return the list of test results for a test run
-        /// </summary>
-        /// <param name="runID">id of the rest run</param>
+        /// <summary>Return the list of test results for a test run</summary>
+        /// <param name="runId">id of the rest run</param>
         /// <param name="limit">(optional) maximum amount of test results to return, latest first</param>
         /// <returns>list of test results for a test run</returns>
-        public List<Result> GetResultsForRun(ulong runID, ulong? limit = null)
+        public List<Result> GetResultsForRun(ulong runId, ulong? limit = null)
         {
             var optional = limit.HasValue ? $"&limit={limit.Value}" : string.Empty;
-            var uri = _CreateUri_(CommandType.Get, CommandAction.ResultsForRun, runID, null, optional);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.ResultsForRun, runId, null, optional);
+
             return _GetItems_(CommandAction.ResultsForRun, uri, Result.Parse);
         }
 
-        /// <summary>
-        /// Returns the list of statuses available to test rail
-        /// </summary>
+        /// <summary>Returns the list of statuses available to test rail</summary>
         /// <returns>list of possible statuses</returns>
         public List<Status> GetStatuses()
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Statuses);
+
             return _GetItems_(CommandAction.Statuses, uri, Status.Parse);
         }
 
-        /// <summary>
-        /// Get a list of all available priorities
-        /// </summary>
+        /// <summary>Get a list of all available priorities</summary>
         /// <returns>list of priorities</returns>
         public List<Priority> GetPriorities()
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Priorities);
+
             return _GetItems_(CommandAction.Priorities, uri, Priority.Parse);
         }
 
-        /// <summary>
-        /// Returns a list of Config Groups available in a Project
-        /// </summary>
-        /// <param name="projectID">ID of the Project to return the Config Groups for</param>
+        /// <summary>Returns a list of Config Groups available in a Project</summary>
+        /// <param name="projectId">ID of the Project to return the Config Groups for</param>
         /// <returns>list of ConfigurationGroup</returns>
-        public List<ConfigurationGroup> GetConfigurationGroups(ulong projectID)
+        public List<ConfigurationGroup> GetConfigurationGroups(ulong projectId)
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Configs, projectID);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Configs, projectId);
+
             return _GetItems_(CommandAction.Configs, uri, ConfigurationGroup.Parse);
         }
         #endregion Get Commands
@@ -795,58 +875,71 @@ namespace TestRail
         /// <summary>executes a get request for an item</summary>
         /// <typeparam name="T">the type of item</typeparam>
         /// <param name="actionName">the name of item's node</param>
+        /// <param name="uri">
+        /// TODO - Add param text
+        /// </param>
         /// <param name="parse">a method which parse json into the item</param>
-        /// <param name="id">the id of the item</param>
         /// <returns>object of the supplied type containing information about the item</returns>
-        protected T _GetItem_<T>(CommandAction actionName, string uri, Func<JObject, T> parse)
-            where T : BaseTestRailType, new()
+        protected T _GetItem_<T>(CommandAction actionName, string uri, Func<JObject, T> parse) where T : BaseTestRailType, new()
         {
             var result = _CallTestRailGetEndpoint(uri);
+
             if (!result.WasSuccessful)
             {
                 OnOperationFailed(this, $"Could not get {actionName}: {result.Value}");
+
                 return default(T);
             }
 
             var json = JObject.Parse(result.Value);
+
             return parse(json);
         }
 
         /// <summary>executes a get request for an item</summary>
         /// <typeparam name="T">the type of the item</typeparam>
         /// <param name="actionName">the name of the item's node</param>
+        /// <param name="uri">
+        /// TODO - Add param 
+        /// </param>
         /// <param name="parse">a method which parses the json into the item</param>
-        /// <param name="id1">the id of the first item on which to filter the get request</param>
-        /// <param name="id2">the id of the second item on which to filter the get request</param>
-        /// <param name="options">additional options to append to the get request</param>
         /// <returns>list of objects of the supplied type corresponding th supplied filters</returns>
-        protected List<T> _GetItems_<T>(CommandAction actionName, string uri, Func<JObject, T> parse)
-            where T : BaseTestRailType, new()
+        protected List<T> _GetItems_<T>(CommandAction actionName, string uri, Func<JObject, T> parse) where T : BaseTestRailType, new()
         {
             var items = new List<T>();
             var result = _CallTestRailGetEndpoint(uri);
 
             if (!result.WasSuccessful)
-            {
                 OnOperationFailed(this, $"Could not get {actionName}s: {result.Value}");
-            }
+
             else
             {
                 var jarray = JArray.Parse(result.Value);
+
                 if (null != jarray)
-                {
                     items = JsonUtility.ConvertJArrayToList(jarray, parse);
-                }
             }
+
             return items;
         }
 
         /// <summary>Creates a URI with the parameters given in the format</summary>
         /// <param name="uriType">the type of action the server is going to take (i.e. get, add, update, close)</param>
-        /// <param name="actionName"></param>
-        /// <param name="id1"></param>
-        /// <param name="id2"></param>
-        /// <param name="options"></param>
+        /// <param name="actionName">
+        /// TODO - Add param text
+        /// </param>
+        /// <param name="id1">
+        /// TODO - Add param text
+        /// </param>
+        /// <param name="id2">
+        /// TODO - Add param text
+        /// </param>
+        /// <param name="options">
+        /// TODO - Add param text
+        /// </param>
+        /// <param name="id2Str">
+        /// TODO - Add param text
+        /// </param>
         /// <returns>the uri</returns>
         protected static string _CreateUri_(CommandType uriType, CommandAction actionName, ulong? id1 = null, ulong? id2 = null, string options = null, string id2Str = null)
         {
@@ -858,48 +951,50 @@ namespace TestRail
         }
 
         /// <summary>Add a case</summary>
-        /// <param name="sectionID">section id to add the case to</param>
+        /// <param name="sectionId">section id to add the case to</param>
         /// <param name="title">title of the case</param>
-        /// <param name="typeID">(optional)the ID of the case type</param>
-        /// <param name="priorityID">(optional)the id of the case priority</param>
+        /// <param name="typeId">(optional)the ID of the case type</param>
+        /// <param name="priorityId">(optional)the id of the case priority</param>
         /// <param name="estimate">(optional)the estimate, e.g. "30s" or "1m 45s"</param>
-        /// <param name="milestoneID">(optional)the ID of the milestone to link to the test case</param>
+        /// <param name="milestoneId">(optional)the ID of the milestone to link to the test case</param>
         /// <param name="refs">(optional)a comma-separated list of references/requirements</param>
         /// <param name="customs">(optional)custom json params to add to the current json parameters</param>
         /// <returns>result of the command</returns>
-        protected CommandResult<ulong> _AddCase_(ulong sectionID, string title, ulong? typeID = null, ulong? priorityID = null, string estimate = null, ulong? milestoneID = null, string refs = null, JObject customs = null)
+        protected CommandResult<ulong> _AddCase_(ulong sectionId, string title, ulong? typeId = null, ulong? priorityId = null, string estimate = null,
+            ulong? milestoneId = null, string refs = null, JObject customs = null)
         {
             if (string.IsNullOrWhiteSpace(title))
-            {
                 return new CommandResult<ulong>(false, 0, new ArgumentNullException(nameof(title)));
-            }
 
-            var uri = _CreateUri_(CommandType.Add, CommandAction.Case, sectionID);
-            var tmpCase = new Case { Title = title, TypeId = typeID, PriorityId = priorityID, Estimate = estimate, MilestoneId = milestoneID, References = refs };
+            var uri = _CreateUri_(CommandType.Add, CommandAction.Case, sectionId);
+            var tmpCase = new Case { Title = title, TypeId = typeId, PriorityId = priorityId, Estimate = estimate, MilestoneId = milestoneId, References = refs };
             var jsonParams = JsonUtility.Merge(tmpCase.GetJson(), customs);
+
             return _SendCommand(uri, jsonParams);
         }
 
         /// <summary>update an existing case</summary>
-        /// <param name="caseID">the ID of the test case</param>
+        /// <param name="caseId">the ID of the test case</param>
         /// <param name="title">title of the case</param>
-        /// <param name="typeID">(optional)the ID of the case type</param>
-        /// <param name="priorityID">(optional)the id of the case priority</param>
+        /// <param name="typeId">(optional)the ID of the case type</param>
+        /// <param name="priorityId">(optional)the id of the case priority</param>
         /// <param name="estimate">(optional)the estimate, e.g. "30s" or "1m 45s"</param>
-        /// <param name="milestoneID">(optional)the ID of the milestone to link to the test case</param>
+        /// <param name="milestoneId">(optional)the ID of the milestone to link to the test case</param>
         /// <param name="refs">(optional)a comma-separated list of references/requirements</param>
-        /// <param name="customs">(optional)</param>
+        /// <param name="customs">(optional)
+        /// TODO - Add param text
+        /// </param>
         /// <returns>result of the command</returns>
-        protected CommandResult<ulong> _UpdateCase_(ulong caseID, string title, ulong? typeID = null, ulong? priorityID = null, string estimate = null, ulong? milestoneID = null, string refs = null, JObject customs = null)
+        protected CommandResult<ulong> _UpdateCase_(ulong caseId, string title, ulong? typeId = null, ulong? priorityId = null, string estimate = null,
+            ulong? milestoneId = null, string refs = null, JObject customs = null)
         {
             if (string.IsNullOrWhiteSpace(title))
-            {
                 return new CommandResult<ulong>(false, 0, new ArgumentNullException(nameof(title)));
-            }
 
-            var uri = _CreateUri_(CommandType.Update, CommandAction.Case, caseID);
-            var tmpCase = new Case { Title = title, TypeId = typeID, PriorityId = priorityID, Estimate = estimate, MilestoneId = milestoneID, References = refs };
+            var uri = _CreateUri_(CommandType.Update, CommandAction.Case, caseId);
+            var tmpCase = new Case { Title = title, TypeId = typeId, PriorityId = priorityId, Estimate = estimate, MilestoneId = milestoneId, References = refs };
             var jsonParams = JsonUtility.Merge(tmpCase.GetJson(), customs);
+
             return _SendCommand(uri, jsonParams);
         }
         #endregion Protected Methods
@@ -910,14 +1005,19 @@ namespace TestRail
         /// <returns>result of the call</returns>
         private CommandResult _CallTestRailGetEndpoint(string uri)
         {
-            uri = _URL_ + uri;
-            OnHTTPRequestSent(this, new HTTPRequestSentEventArgs("GET", new Uri(uri)));
-            CommandResult cr;
+            uri = Url + uri;
+            OnHttpRequestSent(this, new HttpRequestSentEventArgs("GET", new Uri(uri)));
+
+            CommandResult commandResult;
+
             try
             {
                 var request = (HttpWebRequest)WebRequest.Create(uri);
+
                 request.AllowAutoRedirect = true;
-                var authInfo = Convert.ToBase64String(Encoding.Default.GetBytes($"{_UserName_}:{_Password_}"));
+
+                var authInfo = Convert.ToBase64String(Encoding.Default.GetBytes($"{UserName}:{Password}"));
+
                 request.Headers["Authorization"] = $"Basic {authInfo}";
                 request.UserAgent = "TestRail Client for .NET";
                 request.Method = "GET";
@@ -929,42 +1029,54 @@ namespace TestRail
                 var responseDataStream = response.GetResponseStream();
                 var reader = new StreamReader(responseDataStream);
                 var responseFromServer = reader.ReadToEnd();
+
                 reader.Close();
                 response.Close();
-                cr = new CommandResult(response.StatusCode == HttpStatusCode.OK, responseFromServer);
+
+                commandResult = new CommandResult(response.StatusCode == HttpStatusCode.OK, responseFromServer);
             }
-            catch (Exception e) { cr = new CommandResult(false, e.ToString()); }
-            if (!cr.WasSuccessful)
+
+            catch (Exception e)
             {
-                OnOperationFailed(this, $"HTTP RESPONSE: {cr.Value}");
+                commandResult = new CommandResult(false, e.ToString());
             }
+
+            if (!commandResult.WasSuccessful)
+                OnOperationFailed(this, $"HTTP RESPONSE: {commandResult.Value}");
+
             else
-            {
-                OnHTTPResponseReceived(this, cr.Value);
-            }
-            return cr;
+                OnHttpResponseReceived(this, commandResult.Value);
+
+            return commandResult;
         }
 
         /// <summary>makes an http post call to the testrail</summary>
         /// <param name="uri">uri of the endpoint</param>
-        /// <param name="postParams">post parameters alternating between keys and values</param>
+        /// <param name="json">
+        /// TODO - Add param text
+        /// </param>
         /// <returns>result of the call</returns>
         private CommandResult _CallPostEndpoint(string uri, JObject json = null)
         {
-            uri = _URL_ + uri;
-            string postContent = null;
-            if (null != json)
-            {
-                postContent = json.ToString();
-            }
-            OnHTTPRequestSent(this, new HTTPRequestSentEventArgs("POST", new Uri(uri), postContent));
+            uri = Url + uri;
 
-            CommandResult cr;
+            string postContent = null;
+
+            if (null != json)
+                postContent = json.ToString();
+
+            OnHttpRequestSent(this, new HttpRequestSentEventArgs("POST", new Uri(uri), postContent));
+
+            CommandResult commandResult;
+
             try
             {
                 var request = (HttpWebRequest)WebRequest.Create(uri);
+
                 request.AllowAutoRedirect = true;
-                var authInfo = Convert.ToBase64String(Encoding.Default.GetBytes($"{_UserName_}:{_Password_}"));
+
+                var authInfo = Convert.ToBase64String(Encoding.Default.GetBytes($"{UserName}:{Password}"));
+
                 request.Headers["Authorization"] = $"Basic {authInfo}";
                 request.UserAgent = "TestRail Client for .NET";
                 request.Method = "POST";
@@ -976,8 +1088,11 @@ namespace TestRail
                 if (!string.IsNullOrWhiteSpace(postContent))
                 {
                     var byteArray = Encoding.UTF8.GetBytes(postContent);
+
                     request.ContentLength = byteArray.Length;
+
                     var requestDataStream = request.GetRequestStream();
+
                     requestDataStream.Write(byteArray, 0, byteArray.Length);
                     requestDataStream.Close();
                 }
@@ -987,36 +1102,45 @@ namespace TestRail
                 var responseDataStream = response.GetResponseStream();
                 var reader = new StreamReader(responseDataStream);
                 var responseFromServer = reader.ReadToEnd();
+
                 reader.Close();
                 response.Close();
-                cr = new CommandResult(response.StatusCode == HttpStatusCode.OK, responseFromServer);
+
+                commandResult = new CommandResult(response.StatusCode == HttpStatusCode.OK, responseFromServer);
             }
-            catch (Exception e) { cr = new CommandResult(false, e.ToString()); }
-            if (!cr.WasSuccessful)
+
+            catch (Exception e)
             {
-                OnOperationFailed(this, $"HTTP RESPONSE: {cr.Value}");
+                commandResult = new CommandResult(false, e.ToString());
             }
+
+            if (!commandResult.WasSuccessful)
+                OnOperationFailed(this, $"HTTP RESPONSE: {commandResult.Value}");
+
             else
-            {
-                OnHTTPResponseReceived(this, cr.Value);
-            }
-            return cr;
+                OnHttpResponseReceived(this, commandResult.Value);
+
+            return commandResult;
         }
 
         /// <summary>Send a command to the server</summary>
         /// <param name="uri">uri to send</param>
         /// <param name="jsonParams">parameter</param>
-        /// <returns></returns>
+        /// <returns>
+        /// TODO - Add returns text
+        /// </returns>
         private CommandResult<ulong> _SendCommand(string uri, JObject jsonParams = null)
         {
-            Exception exe = null;
+            Exception exception = null;
             ulong resultValue = 0;
             var wasSuccessful = false;
 
             try
             {
                 var result = _CallPostEndpoint(uri, jsonParams);
+
                 wasSuccessful = result.WasSuccessful;
+
                 if (wasSuccessful)
                 {
                     if (!string.IsNullOrWhiteSpace(result.Value))
@@ -1030,59 +1154,58 @@ namespace TestRail
                             {
                                 // do nothing
                             }
-                            else if (JTokenType.String == token.Type)
-                            {
-                                // for plan entry 
-                                resultValue = (ulong)(json["runs"][0]["id"]);
-                            }
+
+                            else if (JTokenType.String == token.Type) // for plan entry 
+                                resultValue = (ulong)json["runs"][0]["id"];
+
                             else if (JTokenType.Integer == token.Type)
-                            {
                                 resultValue = (ulong)json["id"];
-                            }
                         }
+
                         catch
                         {
                             // do nothing since result value is already 0 
                         }
                     }
                 }
+
                 else
-                {
-                    exe = new Exception(result.Value);
-                }
+                    exception = new Exception(result.Value);
             }
-            catch (Exception e)
+            catch (Exception caughtException)
             {
-                exe = e;
+                exception = caughtException;
             }
-            return new CommandResult<ulong>(wasSuccessful, resultValue, exe);
+
+            return new CommandResult<ulong>(wasSuccessful, resultValue, exception);
         }
 
-        /// <summary>
-        /// Determines if at least one of the case ids given is contained in the project and suite 
-        /// </summary>
-        /// <param name="projectID">id of the project</param>
-        /// <param name="suiteID">id of the suite</param>
-        /// <param name="caseIDs"></param>
-        /// <returns></returns>
-        private bool _CasesFoundInSuite(ulong projectID, ulong suiteID, ICollection<ulong> caseIDs)
+        /// <summary>Determines if at least one of the case ids given is contained in the project and suite</summary>
+        /// <param name="projectId">id of the project</param>
+        /// <param name="suiteId">id of the suite</param>
+        /// <param name="caseIds">
+        /// TODO - Add param text
+        /// </param>
+        /// <returns>
+        /// TODO - Add returns text
+        /// </returns>
+        private bool _CasesFoundInSuite(ulong projectId, ulong suiteId, ICollection<ulong> caseIds)
         {
-            var validCases = GetCases(projectID, suiteID);
-            return validCases.Any(tmpCase => tmpCase.Id.HasValue && caseIDs.Contains(tmpCase.Id.Value));
+            var validCases = GetCases(projectId, suiteId);
+
+            return validCases.Any(tmpCase => tmpCase.Id.HasValue && caseIds.Contains(tmpCase.Id.Value));
         }
 
-        /// <summary>
-        /// Create a priority dictionary 
-        /// </summary>
+        /// <summary>Create a priority dictionary</summary>
         /// <returns>dictionary of priority ID (from test rail) to priority levels(where Higher value means higher priority)</returns>
         private Dictionary<ulong, int> _CreatePrioritiesDict()
         {
             var tmpDict = new Dictionary<ulong, int>();
             var priorityList = GetPriorities();
+
             foreach (var priority in priorityList.Where(priority => null != priority))
-            {
                 tmpDict[priority.Id] = priority.PriorityLevel;
-            }
+
             return tmpDict;
         }
         #endregion Private Methods
