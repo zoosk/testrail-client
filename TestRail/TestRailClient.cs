@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using Newtonsoft.Json.Linq;
+using TestRail.Enums;
 using TestRail.Types;
 using TestRail.Utils;
 
