@@ -92,9 +92,9 @@ namespace TestRail
         public int? GetPriorityForCase(Case c)
         {
             int? priority = null;
-            if (null != c?.PriorityID && null != _PriorityIDToLevel && _PriorityIDToLevel.ContainsKey(c.PriorityID.Value))
+            if (null != c?.PriorityId && null != _PriorityIDToLevel && _PriorityIDToLevel.ContainsKey(c.PriorityId.Value))
             {
-                priority = _PriorityIDToLevel[c.PriorityID.Value];
+                priority = _PriorityIDToLevel[c.PriorityId.Value];
             }
             return priority;
         }
@@ -113,7 +113,7 @@ namespace TestRail
             TimeSpan? elapsed = null, string defects = null, ulong? assignedToID = null, JObject customs = null)
         {
             var uri = _CreateUri_(CommandType.Add, CommandAction.Result, testID);
-            var r = new Result { TestID = testID, StatusID = (ulong?)status, Comment = comment, Version = version, Elapsed = elapsed, Defects = defects, AssignedToID = assignedToID };
+            var r = new Result { TestId = testID, StatusId = (ulong?)status, Comment = comment, Version = version, Elapsed = elapsed, Defects = defects, AssignedToId = assignedToID };
             var jsonParams = JsonUtility.Merge(r.GetJson(), customs);
             return _SendCommand(uri, jsonParams);
         }
@@ -132,7 +132,7 @@ namespace TestRail
             TimeSpan? elapsed = null, string defects = null, ulong? assignedToID = null, JObject customs = null)
         {
             var uri = _CreateUri_(CommandType.Add, CommandAction.ResultForCase, runID, caseID);
-            var r = new Result { StatusID = (ulong?)status, Comment = comment, Version = version, Elapsed = elapsed, Defects = defects, AssignedToID = assignedToID };
+            var r = new Result { StatusId = (ulong?)status, Comment = comment, Version = version, Elapsed = elapsed, Defects = defects, AssignedToId = assignedToID };
             var jsonParams = JsonUtility.Merge(r.GetJson(), customs);
             return _SendCommand(uri, jsonParams);
         }
@@ -165,7 +165,7 @@ namespace TestRail
             }
 
             var uri = _CreateUri_(CommandType.Add, CommandAction.Run, projectID);
-            var r = new Run { SuiteID = suiteID, Name = name, Description = description, MilestoneID = milestoneID, AssignedTo = assignedToID, IncludeAll = includeAll, CaseIDs = caseIDs };
+            var r = new Run { SuiteId = suiteID, Name = name, Description = description, MilestoneId = milestoneID, AssignedTo = assignedToID, IncludeAll = includeAll, CaseIds = caseIDs };
             return _SendCommand(uri, r.GetJson());
         }
 
@@ -215,7 +215,7 @@ namespace TestRail
             }
 
             var uri = _CreateUri_(CommandType.Add, CommandAction.Section, projectID);
-            var s = new Section { SuiteID = suiteID, ParentID = parentID, Name = name };
+            var s = new Section { SuiteId = suiteID, ParentId = parentID, Name = name };
             return _SendCommand(uri, s.GetJson());
         }
 
@@ -252,7 +252,7 @@ namespace TestRail
             }
 
             var uri = _CreateUri_(CommandType.Add, CommandAction.Plan, projectID);
-            var p = new Plan { Name = name, Description = description, MilestoneID = milestoneID, Entries = entries };
+            var p = new Plan { Name = name, Description = description, MilestoneId = milestoneID, Entries = entries };
             var jsonParams = p.GetJson();
             return _SendCommand(uri, jsonParams);
         }
@@ -267,7 +267,7 @@ namespace TestRail
         public CommandResult<ulong> AddPlanEntry(ulong planID, ulong suiteID, string name = null, ulong? assignedToID = null, List<ulong> caseIDs = null)
         {
             var uri = _CreateUri_(CommandType.Add, CommandAction.PlanEntry, planID);
-            var pe = new PlanEntry { AssignedToID = assignedToID, SuiteID = suiteID, Name = name, CaseIDs = caseIDs };
+            var pe = new PlanEntry { AssignedToId = assignedToID, SuiteId = suiteID, Name = name, CaseIDs = caseIDs };
             var jsonParams = pe.GetJson();
             return _SendCommand(uri, jsonParams);
         }
@@ -323,7 +323,7 @@ namespace TestRail
         public CommandResult<ulong> UpdatePlan(ulong planID, string name = null, string description = null, ulong? milestoneID = null)
         {
             var uri = _CreateUri_(CommandType.Update, CommandAction.Plan, planID);
-            var p = new Plan { Name = name, Description = description, MilestoneID = milestoneID };
+            var p = new Plan { Name = name, Description = description, MilestoneId = milestoneID };
             var jsonParams = p.GetJson();
             return _SendCommand(uri, jsonParams);
         }
@@ -338,7 +338,7 @@ namespace TestRail
         public CommandResult<ulong> UpdatePlanEntry(ulong planID, string entryID, string name = null, ulong? assignedToID = null, List<ulong> caseIDs = null)
         {
             var uri = _CreateUri_(CommandType.Update, CommandAction.PlanEntry, planID, null, null, entryID);
-            var pe = new PlanEntry { AssignedToID = assignedToID, Name = name, CaseIDs = caseIDs };
+            var pe = new PlanEntry { AssignedToId = assignedToID, Name = name, CaseIDs = caseIDs };
             var jsonParams = pe.GetJson();
             return _SendCommand(uri, jsonParams);
         }
@@ -371,9 +371,9 @@ namespace TestRail
             var run = GetRun(runID);
 
             // validates whether we are in include all or custom case selection mode
-            if (null != run?.ProjectID && run.SuiteID.HasValue && null != caseIDs)
+            if (null != run?.ProjectId && run.SuiteId.HasValue && null != caseIDs)
             {
-                var atLeastOneCaseFoundInSuite = _CasesFoundInSuite(run.ProjectID.Value, run.SuiteID.Value, caseIDs);
+                var atLeastOneCaseFoundInSuite = _CasesFoundInSuite(run.ProjectId.Value, run.SuiteId.Value, caseIDs);
                 if (atLeastOneCaseFoundInSuite)
                 {
                     includeAll = false;
@@ -385,7 +385,7 @@ namespace TestRail
             }
 
             var uri = _CreateUri_(CommandType.Update, CommandAction.Run, runID);
-            var r = new Run { Name = name, Description = description, MilestoneID = milestoneID, IncludeAll = includeAll, CaseIDs = caseIDs };
+            var r = new Run { Name = name, Description = description, MilestoneId = milestoneID, IncludeAll = includeAll, CaseIds = caseIDs };
             return _SendCommand(uri, r.GetJson());
         }
 
@@ -401,7 +401,7 @@ namespace TestRail
             }
 
             var uri = _CreateUri_(CommandType.Update, CommandAction.Section, sectionID);
-            var s = new Section { ID = sectionID, Name = name };
+            var s = new Section { Id = sectionID, Name = name };
             return _SendCommand(uri, s.GetJson());
         }
 
@@ -875,7 +875,7 @@ namespace TestRail
             }
 
             var uri = _CreateUri_(CommandType.Add, CommandAction.Case, sectionID);
-            var tmpCase = new Case { Title = title, TypeID = typeID, PriorityID = priorityID, Estimate = estimate, MilestoneID = milestoneID, References = refs };
+            var tmpCase = new Case { Title = title, TypeId = typeID, PriorityId = priorityID, Estimate = estimate, MilestoneId = milestoneID, References = refs };
             var jsonParams = JsonUtility.Merge(tmpCase.GetJson(), customs);
             return _SendCommand(uri, jsonParams);
         }
@@ -898,7 +898,7 @@ namespace TestRail
             }
 
             var uri = _CreateUri_(CommandType.Update, CommandAction.Case, caseID);
-            var tmpCase = new Case { Title = title, TypeID = typeID, PriorityID = priorityID, Estimate = estimate, MilestoneID = milestoneID, References = refs };
+            var tmpCase = new Case { Title = title, TypeId = typeID, PriorityId = priorityID, Estimate = estimate, MilestoneId = milestoneID, References = refs };
             var jsonParams = JsonUtility.Merge(tmpCase.GetJson(), customs);
             return _SendCommand(uri, jsonParams);
         }
@@ -1068,7 +1068,7 @@ namespace TestRail
         private bool _CasesFoundInSuite(ulong projectID, ulong suiteID, ICollection<ulong> caseIDs)
         {
             var validCases = GetCases(projectID, suiteID);
-            return validCases.Any(tmpCase => tmpCase.ID.HasValue && caseIDs.Contains(tmpCase.ID.Value));
+            return validCases.Any(tmpCase => tmpCase.Id.HasValue && caseIDs.Contains(tmpCase.Id.Value));
         }
 
         /// <summary>
@@ -1081,7 +1081,7 @@ namespace TestRail
             var priorityList = GetPriorities();
             foreach (var priority in priorityList.Where(priority => null != priority))
             {
-                tmpDict[priority.ID] = priority.PriorityLevel;
+                tmpDict[priority.Id] = priority.PriorityLevel;
             }
             return tmpDict;
         }

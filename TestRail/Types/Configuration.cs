@@ -2,16 +2,26 @@
 
 namespace TestRail.Types
 {
+    /// <inheritdoc />
+    /// <summary>
+    /// TODO - Add summary
+    /// </summary>
     public class Configuration : BaseTestRailType
     {
         #region Public Properties
-        // TODO: Add summary
-        public ulong ID { get; set; }
+        /// <summary>
+        /// TODO - Add summary
+        /// </summary>
+        public ulong Id { get; set; }
 
-        // TODO: Add summary
-        public ulong ConfigurationGroupID { get; set; }
+        /// <summary>
+        /// TODO - Add summary
+        /// </summary>
+        public ulong ConfigurationGroupId { get; set; }
 
-        // TODO: Add summary
+        /// <summary>
+        /// TODO - Add summary
+        /// </summary>
         public string Name { get; set; }
         #endregion Public Properties
 
@@ -24,10 +34,11 @@ namespace TestRail.Types
             var configuration = new Configuration
             {
                 JsonFromResponse = json,
-                ID = (ulong)json["id"],
+                Id = (ulong)json["id"],
                 Name = (string)json["name"],
-                ConfigurationGroupID = (ulong)json["group_id"],
+                ConfigurationGroupId = (ulong)json["group_id"]
             };
+
             return configuration;
         }
         #endregion Public Methods

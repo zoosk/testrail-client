@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
+using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 
 namespace TestRail.Types
 {
+    /// <inheritdoc />
     /// <summary>stores informations about the context for a case field's config section</summary>
     public class ConfigContext : BaseTestRailType
     {
@@ -12,7 +13,7 @@ namespace TestRail.Types
         public bool? IsGlobal { get; private set; }
 
         /// <summary>List of project IDs</summary>
-        public List<string> ProjectIDs { get; private set; }
+        public List<string> ProjectIds { get; private set; }
         #endregion Public Properties
 
         #region Public Methods
@@ -28,16 +29,18 @@ namespace TestRail.Types
 
             // check to see if the project ids is empty 
             var jval = json["project_ids"];
+
             if (null != jval && jval.HasValues)
             {
                 // add values to the list if not empty
-                cc.ProjectIDs = new List<string>();
+                cc.ProjectIds = new List<string>();
+
                 var jarray = (JArray)jval;
+
                 foreach (var jsonItem in jarray.Cast<JValue>())
-                {
-                    cc.ProjectIDs.Add((string)jsonItem);
-                }
+                    cc.ProjectIds.Add((string)jsonItem);
             }
+
             return cc;
         }
         #endregion Public Methods

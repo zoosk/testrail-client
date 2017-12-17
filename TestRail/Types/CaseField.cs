@@ -1,15 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using TestRail.Utils;
 using Newtonsoft.Json.Linq;
-using TestRail.Utils;
+using System.Collections.Generic;
 
 namespace TestRail.Types
 {
+    /// <inheritdoc />
     /// <summary>stores information about a case field</summary>
     public class CaseField : BaseTestRailType
     {
         #region Public Properties
         /// <summary>id of the field</summary>
-        public ulong? ID { get; private set; }
+        public ulong? Id { get; private set; }
 
         /// <summary>easy name of the custom case field</summary>
         public string Name { get; private set; }
@@ -18,7 +19,7 @@ namespace TestRail.Types
         public string SystemName { get; private set; }
 
         /// <summary>entity id</summary>
-        public ulong? EntityID { get; private set; }
+        public ulong? EntityId { get; private set; }
 
         /// <summary>display label for the custom case field</summary>
         public string Label { get; private set; }
@@ -27,10 +28,10 @@ namespace TestRail.Types
         public string Description { get; private set; }
 
         /// <summary>type of custom case field as described by the case type</summary>
-        public ulong? TypeID { get; private set; }
+        public ulong? TypeId { get; private set; }
 
         /// <summary>location id</summary>
-        public ulong? LocationID { get; private set; }
+        public ulong? LocationId { get; private set; }
 
         /// <summary>display order</summary>
         public ulong? DisplayOrder { get; private set; }
@@ -55,27 +56,28 @@ namespace TestRail.Types
         /// <returns>CaseField corresponding to the json</returns>
         public static CaseField Parse(JObject json)
         {
-            var cf = new CaseField
+            var caseField = new CaseField
             {
                 JsonFromResponse = json,
-                ID = (ulong?)json["id"],
+                Id = (ulong?)json["id"],
                 Name = (string)json["name"],
                 SystemName = (string)json["system_name"],
-                EntityID = (ulong?)json["entity_id"],
+                EntityId = (ulong?)json["entity_id"],
                 Label = (string)json["label"],
                 Description = (string)json["description"],
-                TypeID = (ulong?)json["type_id"],
-                LocationID = (ulong?)json["location_id"],
-                DisplayOrder = (ulong?)json["display_order"],
+                TypeId = (ulong?)json["type_id"],
+                LocationId = (ulong?)json["location_id"],
+                DisplayOrder = (ulong?)json["display_order"]
             };
 
             var jarray = json["configs"] as JArray;
+
             if (null != jarray)
-            {
-                cf.Configs = JsonUtility.ConvertJArrayToList<Config>(jarray, Config.Parse);
-            }
-            cf.IsMulti = (bool?)json["is_multi"];
-            return cf;
+                caseField.Configs = JsonUtility.ConvertJArrayToList<Config>(jarray, Config.Parse);
+
+            caseField.IsMulti = (bool?)json["is_multi"];
+
+            return caseField;
         }
         #endregion Public Methods
     }

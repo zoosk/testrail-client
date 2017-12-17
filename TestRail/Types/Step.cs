@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 
 namespace TestRail.Types
 {
+    /// <inheritdoc />
     /// <summary>stores information about a step</summary>
     public class Step : BaseTestRailType
     {
@@ -23,15 +24,16 @@ namespace TestRail.Types
         /// <returns>step corresponding to the json</returns>
         public static Step Parse(JObject json)
         {
-            var s = new Step
+            var step = new Step
             {
                 JsonFromResponse = json,
                 Description = (string)json["content"],
                 Expected = (string)json["expected"],
                 Actual = (string)json["actual"],
-                Status = null == (int?)json["status_id"] ? (ResultStatus?)null : (ResultStatus)(int)json["status_id"],
+                Status = null == (int?)json["status_id"] ? (ResultStatus?)null : (ResultStatus)(int)json["status_id"]
             };
-            return s;
+
+            return step;
         }
 
         /// <summary>Get the json object that describes this class</summary>
@@ -39,10 +41,19 @@ namespace TestRail.Types
         public JObject GetJsonObject()
         {
             dynamic json = new JObject();
-            if (!string.IsNullOrWhiteSpace(Description)) { json.content = Description; }
-            if (!string.IsNullOrWhiteSpace(Expected)) { json.expected = Expected; }
-            if (!string.IsNullOrWhiteSpace(Actual)) { json.actual = Actual; }
-            if (null != Status) { json.status_id = (int)Status; }
+
+            if (!string.IsNullOrWhiteSpace(Description))
+                json.content = Description;
+
+            if (!string.IsNullOrWhiteSpace(Expected))
+                json.expected = Expected;
+
+            if (!string.IsNullOrWhiteSpace(Actual))
+                json.actual = Actual;
+
+            if (null != Status)
+                json.status_id = (int)Status;
+
             return json;
         }
         #endregion Public Methods
