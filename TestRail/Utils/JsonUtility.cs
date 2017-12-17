@@ -6,9 +6,7 @@ using Newtonsoft.Json.Linq;
 
 namespace TestRail.Utils
 {
-    /// <summary>
-    /// Helper class for Json Objects
-    /// </summary>
+    /// <summary>Helper class for Json Objects</summary>
     internal static class JsonUtility
     {
         /// <summary>Merge two Json Objects</summary>
@@ -18,33 +16,36 @@ namespace TestRail.Utils
         internal static JObject Merge(JObject obj1, JObject obj2)
         {
             if (null == obj1)
-            {
                 obj1 = new JObject();
+
+            if (null == obj2)
+                return obj1;
+
+            var token = obj2.First;
+
+            while (null != token)
+            {
+                obj1.Add(token);
+                token = token.Next;
             }
 
-            if (null != obj2)
-            {
-                var token = obj2.First;
-                while (null != token)
-                {
-                    obj1.Add(token);
-                    token = token.Next;
-                }
-            }
             return obj1;
         }
 
         /// <summary>Converts a JArray into a List of type T</summary>
         /// <param name="jarray">JArray to parse</param>
+        /// <param name="parse">
+        /// TODO - Add param text
+        /// </param>
         /// <returns>returns a list of objects corresponding to the json, empty list if nothing exists</returns>
         internal static List<T> ConvertJArrayToList<T>(JArray jarray, Func<JObject, T> parse)
             where T : BaseTestRailType
         {
             var list = new List<T>();
+
             if (null != jarray && null != parse)
-            {
                 list.AddRange(from JObject json in jarray select parse(json));
-            }
+
             return list;
         }
     }
