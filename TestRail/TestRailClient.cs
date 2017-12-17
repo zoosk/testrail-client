@@ -1,13 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
+using System.Linq;
 using System.Text;
-using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 using TestRail.Enums;
 using TestRail.Types;
 using TestRail.Utils;
+using EnumStringValues;
+using Newtonsoft.Json.Linq;
 
 namespace TestRail
 {
@@ -64,32 +65,6 @@ namespace TestRail
         // TODO: Add summary
         private Lazy<Dictionary<ulong, int>> _LazyPriorityIDToLevel { get; set; }
 
-        #region Constants
-        protected const string _NODE_CASE_ = "case";
-        protected const string _NODE_CASES_ = "cases";
-        protected const string _NODE_CASE_TYPES_ = "case_types";
-        protected const string _NODE_CASE_FIELDS_ = "case_fields";
-        protected const string _NODE_MILESTONE_ = "milestone";
-        protected const string _NODE_MILESTONES_ = "milestones";
-        protected const string _NODE_PLAN_ = "plan";
-        protected const string _NODE_PLANS_ = "plans";
-        protected const string _NODE_PLAN_ENTRY_ = "plan_entry";
-        protected const string _NODE_PROJECT_ = "project";
-        protected const string _NODE_RESULTS_ = "results";
-        protected const string _NODE_RESULTS_FOR_CASE_ = "results_for_case";
-        protected const string _NODE_RESULTS_FOR_RUN_ = "results_for_run";
-        protected const string _NODE_RUN_ = "run";
-        protected const string _NODE_RUNS_ = "runs";
-        protected const string _NODE_SECTION_ = "section";
-        protected const string _NODE_SECTIONS_ = "sections";
-        protected const string _NODE_SUITE_ = "suite";
-        protected const string _NODE_SUITES_ = "suites";
-        protected const string _NODE_TEST_ = "test";
-        protected const string _NODE_TESTS_ = "tests";
-        protected const string _NODE_USER_ = "user";
-        protected const string _NODE_USERS_ = "users";
-        #endregion Constants
-
         #region Constructor
         /// <summary>constructor</summary>
         /// <param name="url">url for test rail</param>
@@ -137,7 +112,7 @@ namespace TestRail
         public CommandResult<ulong> AddResult(ulong testID, ResultStatus? status, string comment = null, string version = null,
             TimeSpan? elapsed = null, string defects = null, ulong? assignedToID = null, JObject customs = null)
         {
-            var uri = _CreateUri_(CommandType.Add, "result", testID);
+            var uri = _CreateUri_(CommandType.Add, CommandAction.Result, testID);
             var r = new Result { TestID = testID, StatusID = (ulong?)status, Comment = comment, Version = version, Elapsed = elapsed, Defects = defects, AssignedToID = assignedToID };
             var jsonParams = JsonUtility.Merge(r.GetJson(), customs);
             return _SendCommand(uri, jsonParams);
@@ -156,7 +131,7 @@ namespace TestRail
         public CommandResult<ulong> AddResultForCase(ulong runID, ulong caseID, ResultStatus? status, string comment = null, string version = null,
             TimeSpan? elapsed = null, string defects = null, ulong? assignedToID = null, JObject customs = null)
         {
-            var uri = _CreateUri_(CommandType.Add, "result_for_case", runID, caseID);
+            var uri = _CreateUri_(CommandType.Add, CommandAction.ResultForCase, runID, caseID);
             var r = new Result { StatusID = (ulong?)status, Comment = comment, Version = version, Elapsed = elapsed, Defects = defects, AssignedToID = assignedToID };
             var jsonParams = JsonUtility.Merge(r.GetJson(), customs);
             return _SendCommand(uri, jsonParams);
@@ -189,7 +164,7 @@ namespace TestRail
                 }
             }
 
-            var uri = _CreateUri_(CommandType.Add, _NODE_RUN_, projectID);
+            var uri = _CreateUri_(CommandType.Add, CommandAction.Run, projectID);
             var r = new Run { SuiteID = suiteID, Name = name, Description = description, MilestoneID = milestoneID, AssignedTo = assignedToID, IncludeAll = includeAll, CaseIDs = caseIDs };
             return _SendCommand(uri, r.GetJson());
         }
@@ -221,7 +196,7 @@ namespace TestRail
                 return new CommandResult<ulong>(false, 0, new ArgumentNullException(nameof(projectName)));
             }
 
-            var uri = _CreateUri_(CommandType.Add, _NODE_PROJECT_);
+            var uri = _CreateUri_(CommandType.Add, CommandAction.Project);
             var p = new Project { Name = projectName, Announcement = announcement, ShowAnnouncement = showAnnouncement };
             return _SendCommand(uri, p.GetJson());
         }
@@ -239,7 +214,7 @@ namespace TestRail
                 return new CommandResult<ulong>(false, 0, new ArgumentNullException(nameof(name)));
             }
 
-            var uri = _CreateUri_(CommandType.Add, _NODE_SECTION_, projectID);
+            var uri = _CreateUri_(CommandType.Add, CommandAction.Section, projectID);
             var s = new Section { SuiteID = suiteID, ParentID = parentID, Name = name };
             return _SendCommand(uri, s.GetJson());
         }
@@ -256,7 +231,7 @@ namespace TestRail
                 return new CommandResult<ulong>(false, 0, new ArgumentNullException(nameof(name)));
             }
 
-            var uri = _CreateUri_(CommandType.Add, _NODE_SUITE_, projectID);
+            var uri = _CreateUri_(CommandType.Add, CommandAction.Suite, projectID);
             var s = new Suite { Name = name, Description = description };
             return _SendCommand(uri, s.GetJson());
         }
@@ -276,7 +251,7 @@ namespace TestRail
                 return new CommandResult<ulong>(false, 0, new ArgumentNullException(nameof(name)));
             }
 
-            var uri = _CreateUri_(CommandType.Add, _NODE_PLAN_, projectID);
+            var uri = _CreateUri_(CommandType.Add, CommandAction.Plan, projectID);
             var p = new Plan { Name = name, Description = description, MilestoneID = milestoneID, Entries = entries };
             var jsonParams = p.GetJson();
             return _SendCommand(uri, jsonParams);
@@ -291,7 +266,7 @@ namespace TestRail
         /// <returns></returns>
         public CommandResult<ulong> AddPlanEntry(ulong planID, ulong suiteID, string name = null, ulong? assignedToID = null, List<ulong> caseIDs = null)
         {
-            var uri = _CreateUri_(CommandType.Add, _NODE_PLAN_ENTRY_, planID);
+            var uri = _CreateUri_(CommandType.Add, CommandAction.PlanEntry, planID);
             var pe = new PlanEntry { AssignedToID = assignedToID, SuiteID = suiteID, Name = name, CaseIDs = caseIDs };
             var jsonParams = pe.GetJson();
             return _SendCommand(uri, jsonParams);
@@ -305,7 +280,7 @@ namespace TestRail
         /// <returns>result of the command</returns>
         public CommandResult<ulong> AddMilestone(ulong projectID, string name, string description = null, DateTime? dueOn = null)
         {
-            var uri = _CreateUri_(CommandType.Add, _NODE_MILESTONE_, projectID);
+            var uri = _CreateUri_(CommandType.Add, CommandAction.Milestone, projectID);
             var m = new Milestone { Name = name, Description = description, DueOn = dueOn };
             return _SendCommand(uri, m.GetJson());
         }
@@ -334,7 +309,7 @@ namespace TestRail
         /// <returns>result of the command</returns>
         public CommandResult<ulong> UpdateMilestone(ulong milestoneID, string name = null, string description = null, DateTime? dueOn = null, bool? isCompleted = null)
         {
-            var uri = _CreateUri_(CommandType.Update, _NODE_MILESTONE_, milestoneID);
+            var uri = _CreateUri_(CommandType.Update, CommandAction.Milestone, milestoneID);
             var m = new Milestone { Name = name, Description = description, DueOn = dueOn, IsCompleted = isCompleted };
             return _SendCommand(uri, m.GetJson());
         }
@@ -347,7 +322,7 @@ namespace TestRail
         /// <returns></returns>
         public CommandResult<ulong> UpdatePlan(ulong planID, string name = null, string description = null, ulong? milestoneID = null)
         {
-            var uri = _CreateUri_(CommandType.Update, _NODE_PLAN_, planID);
+            var uri = _CreateUri_(CommandType.Update, CommandAction.Plan, planID);
             var p = new Plan { Name = name, Description = description, MilestoneID = milestoneID };
             var jsonParams = p.GetJson();
             return _SendCommand(uri, jsonParams);
@@ -362,7 +337,7 @@ namespace TestRail
         /// <returns></returns>
         public CommandResult<ulong> UpdatePlanEntry(ulong planID, string entryID, string name = null, ulong? assignedToID = null, List<ulong> caseIDs = null)
         {
-            var uri = _CreateUri_(CommandType.Update, _NODE_PLAN_ENTRY_, planID, null, null, entryID);
+            var uri = _CreateUri_(CommandType.Update, CommandAction.PlanEntry, planID, null, null, entryID);
             var pe = new PlanEntry { AssignedToID = assignedToID, Name = name, CaseIDs = caseIDs };
             var jsonParams = pe.GetJson();
             return _SendCommand(uri, jsonParams);
@@ -377,7 +352,7 @@ namespace TestRail
         /// <returns></returns>
         public CommandResult<ulong> UpdateProject(ulong projectID, string projectName, string announcement = null, bool? showAnnouncement = null, bool? isCompleted = null)
         {
-            var uri = _CreateUri_(CommandType.Update, _NODE_PROJECT_, projectID);
+            var uri = _CreateUri_(CommandType.Update, CommandAction.Project, projectID);
             var p = new Project { Name = projectName, Announcement = announcement, ShowAnnouncement = showAnnouncement, IsCompleted = isCompleted };
             return _SendCommand(uri, p.GetJson());
         }
@@ -409,7 +384,7 @@ namespace TestRail
                 }
             }
 
-            var uri = _CreateUri_(CommandType.Update, _NODE_RUN_, runID);
+            var uri = _CreateUri_(CommandType.Update, CommandAction.Run, runID);
             var r = new Run { Name = name, Description = description, MilestoneID = milestoneID, IncludeAll = includeAll, CaseIDs = caseIDs };
             return _SendCommand(uri, r.GetJson());
         }
@@ -425,7 +400,7 @@ namespace TestRail
                 return new CommandResult<ulong>(false, 0, new ArgumentNullException(nameof(name)));
             }
 
-            var uri = _CreateUri_(CommandType.Update, _NODE_SECTION_, sectionID);
+            var uri = _CreateUri_(CommandType.Update, CommandAction.Section, sectionID);
             var s = new Section { ID = sectionID, Name = name };
             return _SendCommand(uri, s.GetJson());
         }
@@ -437,7 +412,7 @@ namespace TestRail
         /// <returns></returns>
         public CommandResult<ulong> UpdateSuite(ulong suiteID, string name = null, string description = null)
         {
-            var uri = _CreateUri_(CommandType.Update, _NODE_SUITE_, suiteID);
+            var uri = _CreateUri_(CommandType.Update, CommandAction.Suite, suiteID);
             var s = new Suite { Name = name, Description = description };
             return _SendCommand(uri, s.GetJson());
         }
@@ -449,7 +424,7 @@ namespace TestRail
         /// <returns>true if successful</returns>
         public bool ClosePlan(ulong planID)
         {
-            var uri = _CreateUri_(CommandType.Close, _NODE_PLAN_, planID);
+            var uri = _CreateUri_(CommandType.Close, CommandAction.Plan, planID);
 
             var result = _CallPostEndpoint(uri);
             if (result.WasSuccessful)
@@ -467,7 +442,7 @@ namespace TestRail
         /// <returns>true if successful</returns>
         public bool CloseRun(ulong runID)
         {
-            var uri = _CreateUri_(CommandType.Close, _NODE_RUN_, runID);
+            var uri = _CreateUri_(CommandType.Close, CommandAction.Run, runID);
             var result = _CallPostEndpoint(uri);
             if (result.WasSuccessful)
             {
@@ -486,7 +461,7 @@ namespace TestRail
         /// <returns>result of the deletion</returns>
         public CommandResult<ulong> DeleteMilestone(ulong milestoneID)
         {
-            var uri = _CreateUri_(CommandType.Delete, _NODE_MILESTONE_, milestoneID);
+            var uri = _CreateUri_(CommandType.Delete, CommandAction.Milestone, milestoneID);
             return _SendCommand(uri);
         }
 
@@ -495,7 +470,7 @@ namespace TestRail
         /// <returns>result of the deletion</returns>
         public CommandResult<ulong> DeleteCase(ulong caseID)
         {
-            var uri = _CreateUri_(CommandType.Delete, _NODE_CASE_, caseID);
+            var uri = _CreateUri_(CommandType.Delete, CommandAction.Case, caseID);
             return _SendCommand(uri);
         }
 
@@ -504,7 +479,7 @@ namespace TestRail
         /// <returns>result of the deletion</returns>
         public CommandResult<ulong> DeletePlan(ulong planID)
         {
-            var uri = _CreateUri_(CommandType.Delete, _NODE_PLAN_, planID);
+            var uri = _CreateUri_(CommandType.Delete, CommandAction.Plan, planID);
             return _SendCommand(uri);
         }
 
@@ -514,7 +489,7 @@ namespace TestRail
         /// <returns>result of the deletion</returns>
         public CommandResult<ulong> DeletePlanEntry(ulong planID, string entryID)
         {
-            var uri = _CreateUri_(CommandType.Delete, _NODE_PLAN_ENTRY_, planID, null, null, entryID);
+            var uri = _CreateUri_(CommandType.Delete, CommandAction.PlanEntry, planID, null, null, entryID);
             return _SendCommand(uri);
         }
 
@@ -523,7 +498,7 @@ namespace TestRail
         /// <returns>result of the deletion</returns>
         public CommandResult<ulong> DeleteProject(ulong projectID)
         {
-            var uri = _CreateUri_(CommandType.Delete, _NODE_PROJECT_, projectID);
+            var uri = _CreateUri_(CommandType.Delete, CommandAction.Project, projectID);
             return _SendCommand(uri);
         }
 
@@ -532,7 +507,7 @@ namespace TestRail
         /// <returns>result of the deletion</returns>
         public CommandResult<ulong> DeleteSection(ulong sectionID)
         {
-            var uri = _CreateUri_(CommandType.Delete, _NODE_SECTION_, sectionID);
+            var uri = _CreateUri_(CommandType.Delete, CommandAction.Section, sectionID);
             return _SendCommand(uri);
         }
 
@@ -541,7 +516,7 @@ namespace TestRail
         /// <returns>result of the deletion</returns>
         public CommandResult<ulong> DeleteSuite(ulong suiteID)
         {
-            var uri = _CreateUri_(CommandType.Delete, _NODE_SUITE_, suiteID);
+            var uri = _CreateUri_(CommandType.Delete, CommandAction.Suite, suiteID);
             return _SendCommand(uri);
         }
         #endregion Delete Commands
@@ -552,8 +527,8 @@ namespace TestRail
         /// <returns>information about the test</returns>
         public Test GetTest(ulong testID)
         {
-            var uri = _CreateUri_(CommandType.Get, _NODE_TEST_, testID);
-            return _GetItem_(_NODE_TEST_, uri, Test.Parse);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Test, testID);
+            return _GetItem_(CommandAction.Test, uri, Test.Parse);
         }
 
         /// <summary>gets tests associated with a run</summary>
@@ -561,8 +536,8 @@ namespace TestRail
         /// <returns>tests associated with the run</returns>
         public List<Test> GetTests(ulong runID)
         {
-            var uri = _CreateUri_(CommandType.Get, _NODE_TESTS_, runID);
-            return _GetItems_(_NODE_TESTS_, uri, Test.Parse);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Tests, runID);
+            return _GetItems_(CommandAction.Tests, uri, Test.Parse);
         }
 
         /// <summary>gets a case</summary>
@@ -570,8 +545,8 @@ namespace TestRail
         /// <returns>information about the case</returns>
         public Case GetCase(ulong caseID)
         {
-            var uri = _CreateUri_(CommandType.Get, _NODE_CASE_, caseID);
-            return _GetItem_(_NODE_CASE_, uri, Case.Parse);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Case, caseID);
+            return _GetItem_(CommandAction.Case, uri, Case.Parse);
         }
 
         /// <summary>gets cases associated with a suite</summary>
@@ -583,22 +558,22 @@ namespace TestRail
         {
             var optionalSectionID = sectionID.HasValue ? $"&section_id={sectionID.Value}" : string.Empty;
             var options = $"&suite_id={suiteID}{optionalSectionID}";
-            var uri = _CreateUri_(CommandType.Get, _NODE_CASES_, projectID, null, options);
-            return _GetItems_(_NODE_CASES_, uri, Case.Parse);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Cases, projectID, null, options);
+            return _GetItems_(CommandAction.Cases, uri, Case.Parse);
         }
 
         // TODO: Add summary
         public List<CaseField> GetCaseFields()
         {
-            var uri = _CreateUri_(CommandType.Get, _NODE_CASE_FIELDS_);
-            return _GetItems_(_NODE_CASE_TYPES_, uri, CaseField.Parse);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.CaseFields);
+            return _GetItems_(CommandAction.CaseTypes, uri, CaseField.Parse);
         }
 
         // TODO: Add summary
         public List<CaseType> GetCaseTypes()
         {
-            var uri = _CreateUri_(CommandType.Get, _NODE_CASE_TYPES_);
-            return _GetItems_(_NODE_CASE_TYPES_, uri, CaseType.Parse);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.CaseTypes);
+            return _GetItems_(CommandAction.CaseTypes, uri, CaseType.Parse);
         }
 
         /// <summary>gets a suite</summary>
@@ -606,8 +581,8 @@ namespace TestRail
         /// <returns>information about the suite</returns>
         public Suite GetSuite(ulong suiteID)
         {
-            var uri = _CreateUri_(CommandType.Get, _NODE_SUITE_, suiteID);
-            return _GetItem_(_NODE_SUITE_, uri, Suite.Parse);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Suite, suiteID);
+            return _GetItem_(CommandAction.Suite, uri, Suite.Parse);
         }
 
         /// <summary>gets suites associated with a project</summary>
@@ -615,8 +590,8 @@ namespace TestRail
         /// <returns>suites associated with the project</returns>
         public List<Suite> GetSuites(ulong projectID)
         {
-            var uri = _CreateUri_(CommandType.Get, _NODE_SUITES_, projectID);
-            return _GetItems_(_NODE_SUITES_, uri, Suite.Parse);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Suites, projectID);
+            return _GetItems_(CommandAction.Suites, uri, Suite.Parse);
         }
 
         /// <summary>gets a section</summary>
@@ -624,8 +599,8 @@ namespace TestRail
         /// <returns>information about the section</returns>
         public Section GetSection(ulong sectionID)
         {
-            var uri = _CreateUri_(CommandType.Get, _NODE_SECTION_, sectionID);
-            return _GetItem_(_NODE_SECTION_, uri, Section.Parse);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Section, sectionID);
+            return _GetItem_(CommandAction.Section, uri, Section.Parse);
         }
 
         /// <summary>gets sections associated with a suite</summary>
@@ -635,8 +610,8 @@ namespace TestRail
         public List<Section> GetSections(ulong projectID, ulong suiteID)
         {
             var options = $"&suite_id={suiteID}";
-            var uri = _CreateUri_(CommandType.Get, _NODE_SECTIONS_, projectID, null, options);
-            return _GetItems_(_NODE_SECTIONS_, uri, Section.Parse);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Sections, projectID, null, options);
+            return _GetItems_(CommandAction.Sections, uri, Section.Parse);
         }
 
         /// <summary>gets a run</summary>
@@ -644,8 +619,8 @@ namespace TestRail
         /// <returns>information about the run</returns>
         public Run GetRun(ulong runID)
         {
-            var uri = _CreateUri_(CommandType.Get, _NODE_RUN_, runID);
-            return _GetItem_(_NODE_RUN_, uri, Run.Parse);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Run, runID);
+            return _GetItem_(CommandAction.Run, uri, Run.Parse);
         }
 
         /// <summary>gets runs associated with a project</summary>
@@ -653,8 +628,8 @@ namespace TestRail
         /// <returns>runs associated with the project</returns>
         public List<Run> GetRuns(ulong projectID)
         {
-            var uri = _CreateUri_(CommandType.Get, _NODE_RUNS_, projectID);
-            return _GetItems_(_NODE_RUNS_, uri, Run.Parse);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Runs, projectID);
+            return _GetItems_(CommandAction.Runs, uri, Run.Parse);
         }
 
         /// <summary>gets a plan</summary>
@@ -662,8 +637,8 @@ namespace TestRail
         /// <returns>information about the plan</returns>
         public Plan GetPlan(ulong planID)
         {
-            var uri = _CreateUri_(CommandType.Get, _NODE_PLAN_, planID);
-            return _GetItem_(_NODE_PLAN_, uri, Plan.Parse);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Plan, planID);
+            return _GetItem_(CommandAction.Plan, uri, Plan.Parse);
         }
 
         /// <summary>gets plans associated with a project</summary>
@@ -671,8 +646,8 @@ namespace TestRail
         /// <returns>plans associated with the project</returns>
         public List<Plan> GetPlans(ulong projectID)
         {
-            var uri = _CreateUri_(CommandType.Get, _NODE_PLANS_, projectID);
-            return _GetItems_(_NODE_PLANS_, uri, Plan.Parse);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Plans, projectID);
+            return _GetItems_(CommandAction.Plans, uri, Plan.Parse);
         }
 
         /// <summary>gets a milestone</summary>
@@ -680,8 +655,8 @@ namespace TestRail
         /// <returns>information about the milestone</returns>
         public Milestone GetMilestone(ulong milestoneID)
         {
-            var uri = _CreateUri_(CommandType.Get, _NODE_MILESTONE_, milestoneID);
-            return _GetItem_(_NODE_MILESTONE_, uri, Milestone.Parse);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Milestone, milestoneID);
+            return _GetItem_(CommandAction.Milestone, uri, Milestone.Parse);
         }
 
         /// <summary>gets milestones associated with a project</summary>
@@ -689,8 +664,8 @@ namespace TestRail
         /// <returns>milestone associated with project</returns>
         public List<Milestone> GetMilestones(ulong projectID)
         {
-            var uri = _CreateUri_(CommandType.Get, _NODE_MILESTONES_, projectID);
-            return _GetItems_(_NODE_MILESTONES_, uri, Milestone.Parse);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Milestones, projectID);
+            return _GetItems_(CommandAction.Milestones, uri, Milestone.Parse);
         }
 
         /// <summary>gets a project</summary>
@@ -698,17 +673,16 @@ namespace TestRail
         /// <returns>information about the project</returns>
         public Project GetProject(ulong projectID)
         {
-            var uri = _CreateUri_(CommandType.Get, _NODE_PROJECT_, projectID);
-            return _GetItem_(_NODE_PROJECT_, uri, Project.Parse);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Project, projectID);
+            return _GetItem_(CommandAction.Project, uri, Project.Parse);
         }
 
         /// <summary>gets all projects contained in the testrail instance</summary>
         /// <returns></returns>
         public List<Project> GetProjects()
         {
-            const string nodeName = "projects";
-            var uri = _CreateUri_(CommandType.Get, nodeName);
-            return _GetItems_(nodeName, uri, Project.Parse);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Projects);
+            return _GetItems_(CommandAction.Projects, uri, Project.Parse);
         }
 
         /// <summary>Get User for user id</summary>
@@ -716,8 +690,8 @@ namespace TestRail
         /// <returns>a User object</returns>
         public User GetUser(ulong userID)
         {
-            var uri = _CreateUri_(CommandType.Get, _NODE_USER_, userID);
-            return _GetItem_(_NODE_USER_, uri, User.Parse);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.User, userID);
+            return _GetItem_(CommandAction.User, uri, User.Parse);
         }
 
         /// <summary>Find a user by their email address</summary>
@@ -730,19 +704,18 @@ namespace TestRail
             {
                 return default(User);
             }
-
-            const string nodeName = "user_by_email";
+            
             var optional = $"&email={email}";
-            var uri = _CreateUri_(CommandType.Get, nodeName, null, null, optional);
-            return _GetItem_(nodeName, uri, User.Parse);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.UserByEmail, null, null, optional);
+            return _GetItem_(CommandAction.UserByEmail, uri, User.Parse);
         }
 
         /// <summary>Get a list of users in the testrail instance</summary>
         /// <returns>List of users</returns>
         public List<User> GetUsers()
         {
-            var uri = _CreateUri_(CommandType.Get, _NODE_USERS_);
-            return _GetItems_(_NODE_USERS_, uri, User.Parse);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Users);
+            return _GetItems_(CommandAction.Users, uri, User.Parse);
         }
 
         /// <summary>
@@ -754,8 +727,8 @@ namespace TestRail
         public List<Result> GetResults(ulong testID, ulong? limit = null)
         {
             var optional = (limit.HasValue) ? $"&limit={limit.Value}" : string.Empty;
-            var uri = _CreateUri_(CommandType.Get, _NODE_RESULTS_, testID, null, optional);
-            return _GetItems_(_NODE_RESULTS_, uri, Result.Parse);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Results, testID, null, optional);
+            return _GetItems_(CommandAction.Results, uri, Result.Parse);
         }
 
         /// <summary>
@@ -768,8 +741,8 @@ namespace TestRail
         public List<Result> GetResultsForCase(ulong runID, ulong caseID, ulong? limit = null)
         {
             var optional = limit.HasValue ? $"&limit={limit.Value}" : string.Empty;
-            var uri = _CreateUri_(CommandType.Get, _NODE_RESULTS_FOR_CASE_, runID, caseID, optional);
-            return _GetItems_(_NODE_RESULTS_FOR_CASE_, uri, Result.Parse);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.ResultsForCase, runID, caseID, optional);
+            return _GetItems_(CommandAction.ResultsForCase, uri, Result.Parse);
         }
 
         /// <summary>
@@ -781,8 +754,8 @@ namespace TestRail
         public List<Result> GetResultsForRun(ulong runID, ulong? limit = null)
         {
             var optional = limit.HasValue ? $"&limit={limit.Value}" : string.Empty;
-            var uri = _CreateUri_(CommandType.Get, _NODE_RESULTS_FOR_RUN_, runID, null, optional);
-            return _GetItems_(_NODE_RESULTS_FOR_RUN_, uri, Result.Parse);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.ResultsForRun, runID, null, optional);
+            return _GetItems_(CommandAction.ResultsForRun, uri, Result.Parse);
         }
 
         /// <summary>
@@ -791,9 +764,8 @@ namespace TestRail
         /// <returns>list of possible statuses</returns>
         public List<Status> GetStatuses()
         {
-            const string nodeName = "statuses";
-            var uri = _CreateUri_(CommandType.Get, nodeName);
-            return _GetItems_(nodeName, uri, Status.Parse);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Statuses);
+            return _GetItems_(CommandAction.Statuses, uri, Status.Parse);
         }
 
         /// <summary>
@@ -802,9 +774,8 @@ namespace TestRail
         /// <returns>list of priorities</returns>
         public List<Priority> GetPriorities()
         {
-            const string nodeName = "priorities";
-            var uri = _CreateUri_(CommandType.Get, nodeName);
-            return _GetItems_(nodeName, uri, Priority.Parse);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Priorities);
+            return _GetItems_(CommandAction.Priorities, uri, Priority.Parse);
         }
 
         /// <summary>
@@ -814,9 +785,8 @@ namespace TestRail
         /// <returns>list of ConfigurationGroup</returns>
         public List<ConfigurationGroup> GetConfigurationGroups(ulong projectID)
         {
-            const string nodeName = "configs";
-            var uri = _CreateUri_(CommandType.Get, nodeName, projectID);
-            return _GetItems_(nodeName, uri, ConfigurationGroup.Parse);
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Configs, projectID);
+            return _GetItems_(CommandAction.Configs, uri, ConfigurationGroup.Parse);
         }
         #endregion Get Commands
         #endregion Public Methods
@@ -824,17 +794,17 @@ namespace TestRail
         #region Protected Methods
         /// <summary>executes a get request for an item</summary>
         /// <typeparam name="T">the type of item</typeparam>
-        /// <param name="nodeName">the name of item's node</param>
+        /// <param name="actionName">the name of item's node</param>
         /// <param name="parse">a method which parse json into the item</param>
         /// <param name="id">the id of the item</param>
         /// <returns>object of the supplied type containing information about the item</returns>
-        protected T _GetItem_<T>(string nodeName, string uri, Func<JObject, T> parse)
+        protected T _GetItem_<T>(CommandAction actionName, string uri, Func<JObject, T> parse)
             where T : BaseTestRailType, new()
         {
             var result = _CallTestRailGetEndpoint(uri);
             if (!result.WasSuccessful)
             {
-                OnOperationFailed(this, $"Could not get {nodeName}: {result.Value}");
+                OnOperationFailed(this, $"Could not get {actionName}: {result.Value}");
                 return default(T);
             }
 
@@ -844,13 +814,13 @@ namespace TestRail
 
         /// <summary>executes a get request for an item</summary>
         /// <typeparam name="T">the type of the item</typeparam>
-        /// <param name="nodeName">the name of the item's node</param>
+        /// <param name="actionName">the name of the item's node</param>
         /// <param name="parse">a method which parses the json into the item</param>
         /// <param name="id1">the id of the first item on which to filter the get request</param>
         /// <param name="id2">the id of the second item on which to filter the get request</param>
         /// <param name="options">additional options to append to the get request</param>
         /// <returns>list of objects of the supplied type corresponding th supplied filters</returns>
-        protected List<T> _GetItems_<T>(string nodeName, string uri, Func<JObject, T> parse)
+        protected List<T> _GetItems_<T>(CommandAction actionName, string uri, Func<JObject, T> parse)
             where T : BaseTestRailType, new()
         {
             var items = new List<T>();
@@ -858,7 +828,7 @@ namespace TestRail
 
             if (!result.WasSuccessful)
             {
-                OnOperationFailed(this, $"Could not get {nodeName}s: {result.Value}");
+                OnOperationFailed(this, $"Could not get {actionName}s: {result.Value}");
             }
             else
             {
@@ -873,14 +843,17 @@ namespace TestRail
 
         /// <summary>Creates a URI with the parameters given in the format</summary>
         /// <param name="uriType">the type of action the server is going to take (i.e. get, add, update, close)</param>
-        /// <param name="nodeName"></param>
+        /// <param name="actionName"></param>
         /// <param name="id1"></param>
         /// <param name="id2"></param>
         /// <param name="options"></param>
         /// <returns>the uri</returns>
-        protected static string _CreateUri_(CommandType uriType, string nodeName, ulong? id1 = null, ulong? id2 = null, string options = null, string id2Str = null)
+        protected static string _CreateUri_(CommandType uriType, CommandAction actionName, ulong? id1 = null, ulong? id2 = null, string options = null, string id2Str = null)
         {
-            var uri = $"?/api/v2/{uriType}_{nodeName}{(id1.HasValue ? "/" + id1.Value : string.Empty)}{(id2.HasValue ? "/" + id2.Value : !string.IsNullOrWhiteSpace(id2Str) ? "/" + id2Str : string.Empty)}{(!string.IsNullOrWhiteSpace(options) ? options : string.Empty)}";
+            var uriTypeString = uriType.GetStringValue();
+            var actionNameString = actionName.GetStringValue();
+
+            var uri = $"?/api/v2/{uriTypeString}_{actionNameString}{(id1.HasValue ? "/" + id1.Value : string.Empty)}{(id2.HasValue ? "/" + id2.Value : !string.IsNullOrWhiteSpace(id2Str) ? "/" + id2Str : string.Empty)}{(!string.IsNullOrWhiteSpace(options) ? options : string.Empty)}";
             return uri;
         }
 
@@ -901,7 +874,7 @@ namespace TestRail
                 return new CommandResult<ulong>(false, 0, new ArgumentNullException(nameof(title)));
             }
 
-            var uri = _CreateUri_(CommandType.Add, _NODE_CASE_, sectionID);
+            var uri = _CreateUri_(CommandType.Add, CommandAction.Case, sectionID);
             var tmpCase = new Case { Title = title, TypeID = typeID, PriorityID = priorityID, Estimate = estimate, MilestoneID = milestoneID, References = refs };
             var jsonParams = JsonUtility.Merge(tmpCase.GetJson(), customs);
             return _SendCommand(uri, jsonParams);
@@ -924,7 +897,7 @@ namespace TestRail
                 return new CommandResult<ulong>(false, 0, new ArgumentNullException(nameof(title)));
             }
 
-            var uri = _CreateUri_(CommandType.Update, _NODE_CASE_, caseID);
+            var uri = _CreateUri_(CommandType.Update, CommandAction.Case, caseID);
             var tmpCase = new Case { Title = title, TypeID = typeID, PriorityID = priorityID, Estimate = estimate, MilestoneID = milestoneID, References = refs };
             var jsonParams = JsonUtility.Merge(tmpCase.GetJson(), customs);
             return _SendCommand(uri, jsonParams);

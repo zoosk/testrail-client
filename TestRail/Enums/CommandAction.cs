@@ -10,7 +10,7 @@ namespace TestRail.Enums
         Case,
 
         /// <summary>Used to access a set of cases.</summary>
-        [StringValue("Cases")]
+        [StringValue("cases")]
         Cases,
 
         /// <summary>Used to access the different case types.</summary>
@@ -20,6 +20,10 @@ namespace TestRail.Enums
         /// <summary>Used to access the different case fields.</summary>
         [StringValue("case_fields")]
         CaseFields,
+
+        /// <summary>Used to access configurations.</summary>
+        [StringValue("configs")]
+        Configs,
 
         /// <summary>Used to access an individual milestone.</summary>
         [StringValue("milestone")]
@@ -41,13 +45,29 @@ namespace TestRail.Enums
         [StringValue("plan_entry")]
         PlanEntry,
 
+        /// <summary>Used to access a set of priorities.</summary>
+        [StringValue("priorities")]
+        Priorities,
+
         /// <summary>Used to access an individual project.</summary>
         [StringValue("project")]
         Project,
 
+        /// <summary>Used to access a set of projects.</summary>
+        [StringValue("projects")]
+        Projects,
+
+        /// <summary>Used to access an individual result.</summary>
+        [StringValue("result")]
+        Result,
+
         /// <summary>Used to access a set of results.</summary>
         [StringValue("results")]
         Results,
+
+        /// <summary>Used to access an individual result for a case.</summary>
+        [StringValue("result_for_case")]
+        ResultForCase,
 
         /// <summary>Used to access the results for an individual case.</summary>
         [StringValue("results_for_case")]
@@ -81,6 +101,10 @@ namespace TestRail.Enums
         [StringValue("suites")]
         Suites,
 
+        /// <summary>Used to access a set of statuses.</summary>
+        [StringValue("statuses")]
+        Statuses,
+
         /// <summary>Used to access an individual test.</summary>
         [StringValue("test")]
         Test,
@@ -95,6 +119,10 @@ namespace TestRail.Enums
 
         /// <summary>Used to access a set of users.</summary>
         [StringValue("users")]
-        Users
+        Users,
+
+        /// <summary>Used to access a user by email address.</summary>
+        [StringValue("user_by_email")]
+        UserByEmail
     }
 }
