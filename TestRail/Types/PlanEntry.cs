@@ -32,7 +32,7 @@ namespace TestRail.Types
         public bool? IncludeAll { get; private set; }
 
         /// <summary>an array of case IDs for the custom case selection</summary>
-        public List<ulong> CaseIDs { get; set; }
+        public List<ulong> CaseIds { get; set; }
 
         /// <summary>an array of config IDs to allow for multiple test run configurations to be created</summary>
         public List<ulong> ConfigIDs { get; set; }
@@ -53,7 +53,7 @@ namespace TestRail.Types
                 AssignedToId = (ulong?)json["assignedto_id"],
                 IncludeAll = (bool?)json["include_all"],
                 RunIdList = _ConvertToRunIDs(json["runs"] as JArray),
-                CaseIDs = _ConvertToCaseIDs(json["case_ids"] as JArray)
+                CaseIds = _ConvertToCaseIDs(json["case_ids"] as JArray)
             };
 
             var jarray = json["runs"] as JArray;
@@ -79,11 +79,11 @@ namespace TestRail.Types
             if (null != AssignedToId)
                 jsonParams.assignedto_id = AssignedToId.Value;
 
-            if (null != CaseIDs && 0 < CaseIDs.Count)
+            if (null != CaseIds && 0 < CaseIds.Count)
             {
                 var jarray = new JArray();
 
-                foreach (var caseId in CaseIDs)
+                foreach (var caseId in CaseIds)
                     jarray.Add(caseId);
 
                 jsonParams.include_all = false;

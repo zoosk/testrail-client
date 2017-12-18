@@ -62,20 +62,14 @@ namespace TestRail
             }
         }
 
-        /// <summary>
-        /// TODO - Add summary
-        /// </summary>
+        /// <summary>list of projects in the current testrail instance</summary>
         private readonly Lazy<List<Project>> _projects;
 
-        /// <summary>
-        /// TODO - Add summary
-        /// </summary>
+        /// <summary>dictionary of priority ID (from test rail) to priority levels(where Higher value means higher priority)</summary>
         private Dictionary<ulong, int> PriorityIdToLevel => LazyPriorityIdToLevel.Value;
 
-        /// <summary>
-        /// TODO - Add summary
-        /// </summary>
-        private Lazy<Dictionary<ulong, int>> LazyPriorityIdToLevel { get; set; }
+        /// <summary>dictionary of priority ID (from test rail) to priority levels(where Higher value means higher priority)</summary>
+        private Lazy<Dictionary<ulong, int>> LazyPriorityIdToLevel { get; }
 
         #region Constructor
         /// <summary>constructor</summary>
@@ -118,9 +112,7 @@ namespace TestRail
         /// <param name="elapsed">time elapsed to complete the test</param>
         /// <param name="defects">defects associated with the result</param>
         /// <param name="assignedToId">id of the user the result is assigned to</param>
-        /// <param name="customs">
-        /// TODO - Add param text
-        /// </param>
+        /// <param name="customs">(optional)custom parameters to add to the command formatted as a single Json object</param>
         /// <returns>result of the command</returns>
         public CommandResult<ulong> AddResult(ulong testId, ResultStatus? status, string comment = null, string version = null,
             TimeSpan? elapsed = null, string defects = null, ulong? assignedToId = null, JObject customs = null)
@@ -141,21 +133,25 @@ namespace TestRail
         /// <param name="elapsed">time elapsed to complete the test</param>
         /// <param name="defects">defects associated with the result</param>
         /// <param name="assignedToId">id of the user the result is assigned to</param>
-        /// <param name="customs">
-        /// TODO - Add param text
-        /// </param>
-        /// <returns>
-        /// TODO - Add returns text
-        /// </returns>
+        /// <param name="customs">(optional)custom parameters to add to the command formatted as a single Json object</param>
+        /// <returns>if successful, this method returns the id of the case that was updated</returns>
         public CommandResult<ulong> AddResultForCase(ulong runId, ulong caseId, ResultStatus? status, string comment = null, string version = null,
             TimeSpan? elapsed = null, string defects = null, ulong? assignedToId = null, JObject customs = null)
         {
+            // TODO - At this time, this method only returns the id of the case that was updated.
+            // We should return result object in the same format as GetResult() instead,
+            // but with a single result instead of a list of results as the official API documentation suggests.
+            // http://docs.gurock.com/testrail-api2/reference-results#add_result_for_case
+
             var uri = _CreateUri_(CommandType.Add, CommandAction.ResultForCase, runId, caseId);
             var result = new Result { StatusId = (ulong?)status, Comment = comment, Version = version, Elapsed = elapsed, Defects = defects, AssignedToId = assignedToId };
             var jsonParams = JsonUtility.Merge(result.GetJson(), customs);
 
             return _SendCommand(uri, jsonParams);
         }
+
+        // TODO - Add a method called AddResultsForCases()
+        // http://docs.gurock.com/testrail-api2/reference-results#add_results_for_cases
 
         /// <summary>adds a run</summary>
         /// <param name="projectId">id of the project</param>
@@ -260,7 +256,7 @@ namespace TestRail
         /// <param name="milestoneId">(optional)id of the milestone to link the test plan</param>
         /// <param name="entries">an array of objects describing the test runs of the plan</param>
         /// <returns>result of the command</returns>
-        public CommandResult<ulong> AddPlan(ulong projectId, string name, string description = null, ulong? milestoneId = null, List<PlanEntry> entries = null)//todo:add config ids here
+        public CommandResult<ulong> AddPlan(ulong projectId, string name, string description = null, ulong? milestoneId = null, List<PlanEntry> entries = null)// TODO - Add config ids here
         // , params ulong[] suiteIDs)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -278,16 +274,16 @@ namespace TestRail
         /// <param name="suiteId">the ID of the test suite for the test run</param>
         /// <param name="name">(optional)the name of the test run</param>
         /// <param name="assignedToId">(optional)the ID of the user the test run should be assigned to</param>
-        /// <param name="caseIds">
-        /// TODO - Add param text
-        /// </param>
-        /// <returns>
-        /// TODO - Add returns text
-        /// </returns>
+        /// <param name="caseIds">A list of case IDs for the custom case selection</param>
+        /// <returns>if successful, this method returns the id of the plan that was updated</returns>
         public CommandResult<ulong> AddPlanEntry(ulong planId, ulong suiteId, string name = null, ulong? assignedToId = null, List<ulong> caseIds = null)
         {
+            // TODO - At this time, this method only returns the id of the plan entry that was updated.
+            // We should return the plan entry object instead as the official API documentation suggests.
+            // http://docs.gurock.com/testrail-api2/reference-plans#add_plan_entry
+
             var uri = _CreateUri_(CommandType.Add, CommandAction.PlanEntry, planId);
-            var planEntry = new PlanEntry { AssignedToId = assignedToId, SuiteId = suiteId, Name = name, CaseIDs = caseIds };
+            var planEntry = new PlanEntry { AssignedToId = assignedToId, SuiteId = suiteId, Name = name, CaseIds = caseIds };
             var jsonParams = planEntry.GetJson();
 
             return _SendCommand(uri, jsonParams);
@@ -309,7 +305,7 @@ namespace TestRail
         #endregion Add Commands
 
         #region Update Commands
-        /// <summary>update an existing case</summary>
+        /// <summary>updates an existing test case (partial updates are supported, i.e. you can submit and update specific fields only)</summary>
         /// <param name="caseId">the ID of the test case</param>
         /// <param name="title">title of the case</param>
         /// <param name="typeId">(optional)the ID of the case type</param>
@@ -317,39 +313,47 @@ namespace TestRail
         /// <param name="estimate">(optional)the estimate, e.g. "30s" or "1m 45s"</param>
         /// <param name="milestoneId">(optional)the ID of the milestone to link to the test case</param>
         /// <param name="refs">(optional)a comma-separated list of references/requirements</param>
-        /// <returns>result of the command</returns>
+        /// <returns>if successful, this method returns the case id that was updated</returns>
         public CommandResult<ulong> UpdateCase(ulong caseId, string title, ulong? typeId = null, ulong? priorityId = null, string estimate = null, ulong? milestoneId = null, string refs = null)
         {
+            // TODO - At this time, this method only returns the id of the case that was updated.
+            // We should return the case object instead as the official API documentation suggests.
+            // http://docs.gurock.com/testrail-api2/reference-cases#update_case
+
             return _UpdateCase_(caseId, title, typeId, priorityId, estimate, milestoneId, refs);
         }
 
-        /// <summary>update an existing milestone</summary>
+        /// <summary>updates an existing milestone (partial updates are supported, i.e. you can submit and update specific fields only)</summary>
         /// <param name="milestoneId">id of the milestone</param>
         /// <param name="name">(optional)name of the milestone</param>
         /// <param name="description">(optional)description of the milestone</param>
         /// <param name="dueOn">(optional)date on which the milestone is due</param>
-        /// <param name="isCompleted">
-        /// TODO - Add param text
-        /// </param>
-        /// <returns>result of the command</returns>
+        /// <param name="isCompleted">true if a milestone is considered completed and false otherwise</param>
+        /// <returns>if successful, this method returns the milestone id that was updated</returns>
         public CommandResult<ulong> UpdateMilestone(ulong milestoneId, string name = null, string description = null, DateTime? dueOn = null, bool? isCompleted = null)
         {
+            // TODO - At this time, this method only returns the id of the milestone that was updated.
+            // We should return the milestone object instead as the official API documentation suggests.
+            // http://docs.gurock.com/testrail-api2/reference-milestones#update_milestone
+
             var uri = _CreateUri_(CommandType.Update, CommandAction.Milestone, milestoneId);
             var milestone = new Milestone { Name = name, Description = description, DueOn = dueOn, IsCompleted = isCompleted };
 
             return _SendCommand(uri, milestone.GetJson());
         }
 
-        /// <summary>Update an existing plan</summary>
-        /// <param name="planId">id of the plan</param>
+        /// <summary>updates an existing test plan (partial updates are supported, i.e. you can submit and update specific fields only)</summary>
+        /// <param name="planId">id of the existing plan</param>
         /// <param name="name">(optional)name of the test plan </param>
         /// <param name="description">(optional)the description of the test plan</param>
         /// <param name="milestoneId">(optional)the id of the milestone to link to the test plan</param>
-        /// <returns>
-        /// TODO - Add returns text
-        /// </returns>
+        /// <returns>if successful, this method returns the plan id that was updated</returns>
         public CommandResult<ulong> UpdatePlan(ulong planId, string name = null, string description = null, ulong? milestoneId = null)
         {
+            // TODO - At this time, this method only returns the id of the plan that was updated.
+            // We should return the plan object instead as the official API documentation suggests.
+            // http://docs.gurock.com/testrail-api2/reference-plans#update_plan
+
             var uri = _CreateUri_(CommandType.Update, CommandAction.Plan, planId);
             var plan = new Plan { Name = name, Description = description, MilestoneId = milestoneId };
             var jsonParams = plan.GetJson();
@@ -357,54 +361,58 @@ namespace TestRail
             return _SendCommand(uri, jsonParams);
         }
 
-        /// <summary>Creates a new test run for a test plan</summary>
+        /// <summary>updates one or more existing test runs in a plan (partial updates are supported, i.e. you can submit and update specific fields only)</summary>
         /// <param name="planId">the ID of the plan the test run should be added to</param>
         /// <param name="entryId">the ID of the test plan entry</param>
         /// <param name="name">(optional)the name of the test run</param>
         /// <param name="assignedToId">(optional)the ID of the user the test run should be assigned to</param>
-        /// <param name="caseIDs">
-        /// TODO - Add param text
-        /// </param>
-        /// <returns>
-        /// TODO - Add returns text
-        /// </returns>
-        public CommandResult<ulong> UpdatePlanEntry(ulong planId, string entryId, string name = null, ulong? assignedToId = null, List<ulong> caseIDs = null)
+        /// <param name="caseIds">a list of case IDs for the custom case selection</param>
+        /// <returns>if successful, this method returns the plan entry id that was updated</returns>
+        public CommandResult<ulong> UpdatePlanEntry(ulong planId, string entryId, string name = null, ulong? assignedToId = null, List<ulong> caseIds = null)
         {
+            // TODO - At this time, this method only returns the id of the plan entry that was updated.
+            // We should return the plan entry object instead as the official API documentation suggests.
+            // http://docs.gurock.com/testrail-api2/reference-plans#update_plan_entry
+
             var uri = _CreateUri_(CommandType.Update, CommandAction.PlanEntry, planId, null, null, entryId);
-            var planEntry = new PlanEntry { AssignedToId = assignedToId, Name = name, CaseIDs = caseIDs };
+            var planEntry = new PlanEntry { AssignedToId = assignedToId, Name = name, CaseIds = caseIds };
             var jsonParams = planEntry.GetJson();
 
             return _SendCommand(uri, jsonParams);
         }
 
-        /// <summary>Update an existing project</summary>
-        /// <param name="projectId">the id of the project</param>
+        /// <summary>updates an existing project (admin status required; partial updates are supported, i.e. you can submit and update specific fields only)</summary>
+        /// <param name="projectId">the id of the existing project</param>
         /// <param name="projectName">the name of the project</param>
         /// <param name="announcement">(optional)the description of the project</param>
         /// <param name="showAnnouncement">(optional)true if the announcement should be displayed on the project's overview page and false otherwise</param>
         /// <param name="isCompleted">(optional)specifies whether a project is considered completed or not</param>
-        /// <returns>
-        /// TODO - Add returns text
-        /// </returns>
+        /// <returns>if successful, this method returns the project id that was updated</returns>
         public CommandResult<ulong> UpdateProject(ulong projectId, string projectName, string announcement = null, bool? showAnnouncement = null, bool? isCompleted = null)
         {
+            // TODO - At this time, this method only returns the id of the project that was updated.
+            // We should return the project object instead as the official API documentation suggests.
+            // http://docs.gurock.com/testrail-api2/reference-projects#update_project
+
             var uri = _CreateUri_(CommandType.Update, CommandAction.Project, projectId);
             var project = new Project { Name = projectName, Announcement = announcement, ShowAnnouncement = showAnnouncement, IsCompleted = isCompleted };
 
             return _SendCommand(uri, project.GetJson());
         }
 
-        /// <summary>update an existing test run</summary>
+        /// <summary>updates an existing test run (partial updates are supported, i.e. you can submit and update specific fields only)</summary>
         /// <param name="runId">the id of an existing run</param>
         /// <param name="name">(optional)name of the test run</param>
         /// <param name="description">(optional)description of the test run</param>
         /// <param name="milestoneId">(optional)the id of the milestone to link to the test run</param>
         /// <param name="caseIds">an array of case IDs for the custom case selection</param>
-        /// <returns>
-        /// TODO - Add returns text
-        /// </returns>
+        /// <returns>if successful, this method return the run id that was updated</returns>
         public CommandResult<ulong> UpdateRun(ulong runId, string name = null, string description = null, ulong? milestoneId = null, HashSet<ulong> caseIds = null)
         {
+            // TODO - At this time, this method only returns the id of the run that was updated.
+            // We should return the run object instead as the official API documentation suggests.
+            // http://docs.gurock.com/testrail-api2/reference-runs#update_run
+
             var includeAll = true;
             var existingRun = GetRun(runId);
 
@@ -426,14 +434,16 @@ namespace TestRail
             return _SendCommand(uri, newRun.GetJson());
         }
 
-        /// <summary>Updates an existing section</summary>
+        /// <summary>updates an existing section (partial updates are supported, i.e. you can submit and update specific fields only)</summary>
         /// <param name="sectionId">id of the section to update</param>
         /// <param name="name">name of the section</param>
-        /// <returns>
-        /// TODO - Add returns text
-        /// </returns>
+        /// <returns>if successful, this method returns the section id that was updated</returns>
         public CommandResult<ulong> UpdateSection(ulong sectionId, string name)
         {
+            // TODO - At this time, this method only returns the id of the section that was updated.
+            // We should return the section object instead as the official API documentation suggests.
+            // http://docs.gurock.com/testrail-api2/reference-sections#update_section
+
             if (string.IsNullOrWhiteSpace(name))
                 return new CommandResult<ulong>(false, 0, new ArgumentNullException(nameof(name)));
 
@@ -443,15 +453,17 @@ namespace TestRail
             return _SendCommand(uri, section.GetJson());
         }
 
-        /// <summary>Update an existing suite</summary>
+        /// <summary>updates an existing test suite (partial updates are supported, i.e. you can submit and update specific fields only)</summary>
         /// <param name="suiteId">id of the suite to update</param>
         /// <param name="name">(optional)new name to update to</param>
         /// <param name="description">(optional)new description to update to</param>
-        /// <returns>
-        /// TODO - Add returns text
-        /// </returns>
+        /// <returns>if successful, this method returns the test suite id that was updated</returns>
         public CommandResult<ulong> UpdateSuite(ulong suiteId, string name = null, string description = null)
         {
+            // TODO - At this time, the method only returns the id of the suite that was updated.
+            // We should return the suite object instead as the official API documentation suggests.
+            // http://docs.gurock.com/testrail-api2/reference-suites#update_suite
+
             var uri = _CreateUri_(CommandType.Update, CommandAction.Suite, suiteId);
             var s = new Suite { Name = name, Description = description };
 
@@ -619,12 +631,8 @@ namespace TestRail
             return _GetItems_(CommandAction.Cases, uri, Case.Parse);
         }
 
-        /// <summary>
-        /// TODO - Add summary
-        /// </summary>
-        /// <returns>
-        /// TODO - Add returns text
-        /// </returns>
+        /// <summary>returns a list of available test case custom fields</summary>
+        /// <returns>a list of custom field definitions</returns>
         public List<CaseField> GetCaseFields()
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.CaseFields);
@@ -632,12 +640,8 @@ namespace TestRail
             return _GetItems_(CommandAction.CaseTypes, uri, CaseField.Parse);
         }
 
-        /// <summary>
-        /// TODO - Add summary
-        /// </summary>
-        /// <returns>
-        /// TODO - Add returns text
-        /// </returns>
+        /// <summary>returns a list of available case types</summary>
+        /// <returns>a list of test case types, each has a unique ID and a name.</returns>
         public List<CaseType> GetCaseTypes()
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.CaseTypes);
@@ -758,9 +762,7 @@ namespace TestRail
         }
 
         /// <summary>gets all projects contained in the testrail instance</summary>
-        /// <returns>
-        /// TODO - Add returns text
-        /// </returns>
+        /// <returns>list containing all the projects</returns>
         public List<Project> GetProjects()
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Projects);
@@ -805,9 +807,7 @@ namespace TestRail
         /// <summary>Returns a list of test results for a test</summary>
         /// <param name="testId">id of the test</param>
         /// <param name="limit">(optional) maximum amount of test results to return, latest first</param>
-        /// <returns>
-        /// TODO - Add returns text
-        /// </returns>
+        /// <returns>list containing the results for the given test</returns>
         public List<Result> GetResults(ulong testId, ulong? limit = null)
         {
             var optional = (limit.HasValue) ? $"&limit={limit.Value}" : string.Empty;
@@ -875,9 +875,7 @@ namespace TestRail
         /// <summary>executes a get request for an item</summary>
         /// <typeparam name="T">the type of item</typeparam>
         /// <param name="actionName">the name of item's node</param>
-        /// <param name="uri">
-        /// TODO - Add param text
-        /// </param>
+        /// <param name="uri">the uri for the request</param>
         /// <param name="parse">a method which parse json into the item</param>
         /// <returns>object of the supplied type containing information about the item</returns>
         protected T _GetItem_<T>(CommandAction actionName, string uri, Func<JObject, T> parse) where T : BaseTestRailType, new()
@@ -899,9 +897,7 @@ namespace TestRail
         /// <summary>executes a get request for an item</summary>
         /// <typeparam name="T">the type of the item</typeparam>
         /// <param name="actionName">the name of the item's node</param>
-        /// <param name="uri">
-        /// TODO - Add param 
-        /// </param>
+        /// <param name="uri">the uri for the request</param>
         /// <param name="parse">a method which parses the json into the item</param>
         /// <returns>list of objects of the supplied type corresponding th supplied filters</returns>
         protected List<T> _GetItems_<T>(CommandAction actionName, string uri, Func<JObject, T> parse) where T : BaseTestRailType, new()
@@ -924,29 +920,19 @@ namespace TestRail
         }
 
         /// <summary>Creates a URI with the parameters given in the format</summary>
-        /// <param name="uriType">the type of action the server is going to take (i.e. get, add, update, close)</param>
-        /// <param name="actionName">
-        /// TODO - Add param text
-        /// </param>
-        /// <param name="id1">
-        /// TODO - Add param text
-        /// </param>
-        /// <param name="id2">
-        /// TODO - Add param text
-        /// </param>
-        /// <param name="options">
-        /// TODO - Add param text
-        /// </param>
-        /// <param name="id2Str">
-        /// TODO - Add param text
-        /// </param>
-        /// <returns>the uri</returns>
-        protected static string _CreateUri_(CommandType uriType, CommandAction actionName, ulong? id1 = null, ulong? id2 = null, string options = null, string id2Str = null)
+        /// <param name="commandType">the type of action the server is going to take (i.e. get, add, update, close)</param>
+        /// <param name="actionName">the type of command the server is going to take (i.e. run, case, plan, etc)</param>
+        /// <param name="id1">(optional)first id to include in the uri</param>
+        /// <param name="id2">(optional)second id to include in the uri</param>
+        /// <param name="options">(optional)additional options to include in the uri</param>
+        /// <param name="id2Str">(optional)additional parameters to append to the uri</param>
+        /// <returns>the newly created uri</returns>
+        protected static string _CreateUri_(CommandType commandType, CommandAction actionName, ulong? id1 = null, ulong? id2 = null, string options = null, string id2Str = null)
         {
-            var uriTypeString = uriType.GetStringValue();
-            var actionNameString = actionName.GetStringValue();
+            var commandString = commandType.GetStringValue();
+            var actionString = actionName.GetStringValue();
 
-            var uri = $"?/api/v2/{uriTypeString}_{actionNameString}{(id1.HasValue ? "/" + id1.Value : string.Empty)}{(id2.HasValue ? "/" + id2.Value : !string.IsNullOrWhiteSpace(id2Str) ? "/" + id2Str : string.Empty)}{(!string.IsNullOrWhiteSpace(options) ? options : string.Empty)}";
+            var uri = $"?/api/v2/{commandString}_{actionString}{(id1.HasValue ? "/" + id1.Value : string.Empty)}{(id2.HasValue ? "/" + id2.Value : !string.IsNullOrWhiteSpace(id2Str) ? "/" + id2Str : string.Empty)}{(!string.IsNullOrWhiteSpace(options) ? options : string.Empty)}";
             return uri;
         }
 
@@ -981,9 +967,7 @@ namespace TestRail
         /// <param name="estimate">(optional)the estimate, e.g. "30s" or "1m 45s"</param>
         /// <param name="milestoneId">(optional)the ID of the milestone to link to the test case</param>
         /// <param name="refs">(optional)a comma-separated list of references/requirements</param>
-        /// <param name="customs">(optional)
-        /// TODO - Add param text
-        /// </param>
+        /// <param name="customs">(optional)any extra parameters being passed into the update command</param>
         /// <returns>result of the command</returns>
         protected CommandResult<ulong> _UpdateCase_(ulong caseId, string title, ulong? typeId = null, ulong? priorityId = null, string estimate = null,
             ulong? milestoneId = null, string refs = null, JObject customs = null)
@@ -1052,9 +1036,7 @@ namespace TestRail
 
         /// <summary>makes an http post call to the testrail</summary>
         /// <param name="uri">uri of the endpoint</param>
-        /// <param name="json">
-        /// TODO - Add param text
-        /// </param>
+        /// <param name="json">parameters to send formatted as a single json object</param>
         /// <returns>result of the call</returns>
         private CommandResult _CallPostEndpoint(string uri, JObject json = null)
         {
@@ -1125,10 +1107,8 @@ namespace TestRail
 
         /// <summary>Send a command to the server</summary>
         /// <param name="uri">uri to send</param>
-        /// <param name="jsonParams">parameter</param>
-        /// <returns>
-        /// TODO - Add returns text
-        /// </returns>
+        /// <param name="jsonParams">parameters to send formatted as a single json object</param>
+        /// <returns>object containing if the command: was successful, the result value, and any exception that may have been thrown by the server</returns>
         private CommandResult<ulong> _SendCommand(string uri, JObject jsonParams = null)
         {
             Exception exception = null;
@@ -1183,12 +1163,8 @@ namespace TestRail
         /// <summary>Determines if at least one of the case ids given is contained in the project and suite</summary>
         /// <param name="projectId">id of the project</param>
         /// <param name="suiteId">id of the suite</param>
-        /// <param name="caseIds">
-        /// TODO - Add param text
-        /// </param>
-        /// <returns>
-        /// TODO - Add returns text
-        /// </returns>
+        /// <param name="caseIds">collection of case ids to check</param>
+        /// <returns>true if at least one case exists in the project and suite id combination, otherwise false</returns>
         private bool _CasesFoundInSuite(ulong projectId, ulong suiteId, ICollection<ulong> caseIds)
         {
             var validCases = GetCases(projectId, suiteId);
