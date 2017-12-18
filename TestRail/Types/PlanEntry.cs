@@ -13,14 +13,10 @@ namespace TestRail.Types
         /// <summary>Guid of the plan entry</summary>
         public string Id { get; set; }
 
-        /// <summary>
-        /// TODO - Add summary
-        /// </summary>
+        /// <summary>a list of test run ids associated with the current plan entry</summary>
         public List<ulong> RunIdList { get; private set; }
 
-        /// <summary>
-        /// TODO - Add summary
-        /// </summary>
+        /// <summary>a list of test runs associated with the current plan entry</summary>
         public List<Run> RunList { get; set; }
 
         /// <summary>the id of the test suite for the test run</summary>

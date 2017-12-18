@@ -3,25 +3,17 @@
 namespace TestRail.Types
 {
     /// <inheritdoc />
-    /// <summary>
-    /// TODO - Add summary
-    /// </summary>
+    /// <summary>stores details about a configuration in testrail</summary>
     public class Configuration : BaseTestRailType
     {
         #region Public Properties
-        /// <summary>
-        /// TODO - Add summary
-        /// </summary>
+        /// <summary>id of the current configuration</summary>
         public ulong Id { get; set; }
 
-        /// <summary>
-        /// TODO - Add summary
-        /// </summary>
+        /// <summary>group id of the current configuration</summary>
         public ulong ConfigurationGroupId { get; set; }
 
-        /// <summary>
-        /// TODO - Add summary
-        /// </summary>
+        /// <summary>name of the current configuration</summary>
         public string Name { get; set; }
         #endregion Public Properties
 

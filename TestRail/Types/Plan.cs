@@ -80,9 +80,7 @@ namespace TestRail.Types
         /// <summary>Custom Status 7 Count</summary>
         public ulong CustomStatus7Count { get; set; }
 
-        /// <summary>
-        /// TODO - Add Summary
-        /// </summary>
+        /// <summary>A list of 'plan entries', i.e. group of test runs</summary>
         public List<PlanEntry> Entries { get; set; }
         #endregion Public Properties
 

@@ -10,10 +10,13 @@ namespace TestRail.Types
         #region Public Fields
         /// <summary>description of the step</summary>
         public string Description;
+
         /// <summary>expected result for the step</summary>
         public string Expected;
+
         /// <summary>actual result for the step</summary>
         public string Actual;
+
         /// <summary>result of the step</summary>
         public ResultStatus? Status;
         #endregion Public Fields

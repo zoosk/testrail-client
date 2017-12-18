@@ -34,9 +34,7 @@ namespace TestRail.Utils
 
         /// <summary>Converts a JArray into a List of type T</summary>
         /// <param name="jarray">JArray to parse</param>
-        /// <param name="parse">
-        /// TODO - Add param text
-        /// </param>
+        /// <param name="parse">The method being used to parse the JArray</param>
         /// <returns>returns a list of objects corresponding to the json, empty list if nothing exists</returns>
         internal static List<T> ConvertJArrayToList<T>(JArray jarray, Func<JObject, T> parse)
             where T : BaseTestRailType

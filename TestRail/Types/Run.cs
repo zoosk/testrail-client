@@ -60,49 +60,31 @@ namespace TestRail.Types
         /// <summary>is of the user it is assigned to</summary>
         public ulong? AssignedTo { get; set; }
 
-        /// <summary>
-        /// TODO - Add summary
-        /// </summary>
+        /// <summary>true if the test run includes all test cases and false otherwise</summary>
         public bool IncludeAll { get; set; }
 
-        /// <summary>
-        /// TODO - Add summary
-        /// </summary>
+        /// <summary>the amount of tests in the test run with the respective custom status</summary>
         public ulong CustomStatus1Count { get; private set; }
 
-        /// <summary>
-        /// TODO - Add summary
-        /// </summary>
+        /// <summary>the amount of tests in the test run with the respective custom status</summary>
         public ulong CustomStatus2Count { get; private set; }
 
-        /// <summary>
-        /// TODO - Add summary
-        /// </summary>
+        /// <summary>the amount of tests in the test run with the respective custom status</summary>
         public ulong CustomStatus3Count { get; private set; }
 
-        /// <summary>
-        /// TODO - Add summary
-        /// </summary>
+        /// <summary>the amount of tests in the test run with the respective custom status</summary>
         public ulong CustomStatus4Count { get; private set; }
 
-        /// <summary>
-        /// TODO - Add summary
-        /// </summary>
+        /// <summary>the amount of tests in the test run with the respective custom status</summary>
         public ulong CustomStatus5Count { get; private set; }
 
-        /// <summary>
-        /// TODO - Add summary
-        /// </summary>
+        /// <summary>the amount of tests in the test run with the respective custom status</summary>
         public ulong CustomStatus6Count { get; private set; }
 
-        /// <summary>
-        /// TODO - Add summary
-        /// </summary>
+        /// <summary>the amount of tests in the test run with the respective custom status</summary>
         public ulong CustomStatus7Count { get; private set; }
 
-        /// <summary>
-        /// TODO - Add summary
-        /// </summary>
+        /// <summary>the address/URL of the test run in the user interface</summary>
         public string Url { get; private set; }
 
         /// <summary>an array of case IDs for the custom case selection</summary>

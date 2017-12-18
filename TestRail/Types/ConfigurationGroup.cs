@@ -5,30 +5,20 @@ using System.Collections.Generic;
 namespace TestRail.Types
 {
     /// <inheritdoc />
-    /// <summary>
-    /// TODO - Add summary
-    /// </summary>
+    /// <summary>store information about a configuration group in testrail</summary>
     public class ConfigurationGroup : BaseTestRailType
     {
         #region Public Properties
-        /// <summary>
-        /// TODO - Add summary
-        /// </summary>
+        /// <summary>id of the current configuration group</summary>
         public ulong Id { get; set; }
 
-        /// <summary>
-        /// TODO - Add summary
-        /// </summary>
+        /// <summary>project id associated with the current configuration group</summary>
         public ulong ProjectId { get; set; }
 
-        /// <summary>
-        /// TODO - Add summary
-        /// </summary>
+        /// <summary>name of the currenct configuration group</summary>
         public string Name { get; set; }
 
-        /// <summary>
-        /// TODO - Add summary
-        /// </summary>
+        /// <summary>list of configuations associated with the current configuration group</summary>
         public List<Configuration> Configurations { get; set; }
         #endregion Public Properties
 
@@ -43,7 +33,7 @@ namespace TestRail.Types
                 JsonFromResponse = json,
                 Id = (ulong)json["id"],
                 Name = (string)json["name"],
-                ProjectId = (ulong)json["project_id"],
+                ProjectId = (ulong)json["project_id"]
             };
 
             var jarray = json["configs"] as JArray;
