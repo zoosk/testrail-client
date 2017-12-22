@@ -31,7 +31,7 @@ namespace TestRail.Types
                 IsRequired = (bool?)json["is_required"],
                 DefaultValue = (string)json["default_value"],
                 Format = (string)json["format"],
-                Rows = (string)json["rows"],
+                Rows = (string)json["rows"]
             };
 
             return configOption;

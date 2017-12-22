@@ -16,10 +16,14 @@ namespace TestRail.Utils
         internal static JObject Merge(JObject obj1, JObject obj2)
         {
             if (null == obj1)
+            {
                 obj1 = new JObject();
+            }
 
             if (null == obj2)
+            {
                 return obj1;
+            }
 
             var token = obj2.First;
 
@@ -36,13 +40,14 @@ namespace TestRail.Utils
         /// <param name="jarray">JArray to parse</param>
         /// <param name="parse">The method being used to parse the JArray</param>
         /// <returns>returns a list of objects corresponding to the json, empty list if nothing exists</returns>
-        internal static List<T> ConvertJArrayToList<T>(JArray jarray, Func<JObject, T> parse)
-            where T : BaseTestRailType
+        internal static List<T> ConvertJArrayToList<T>(JArray jarray, Func<JObject, T> parse) where T : BaseTestRailType
         {
             var list = new List<T>();
 
             if (null != jarray && null != parse)
+            {
                 list.AddRange(from JObject json in jarray select parse(json));
+            }
 
             return list;
         }

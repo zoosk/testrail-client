@@ -12,7 +12,9 @@ namespace TestRail.Utils
         internal static TimeSpan? FromString(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
+            {
                 return null;
+            }
 
             TimeSpan? retVal;
             var days = 0;
@@ -31,19 +33,29 @@ namespace TestRail.Utils
                 alpha = alpha.ToLower();
 
                 if (alpha.StartsWith("d"))
+                {
                     days = numeric;
+                }
 
                 else if (alpha.StartsWith("h"))
+                {
                     hours = numeric;
+                }
 
                 else if (alpha.StartsWith("m"))
+                {
                     minutes = numeric;
+                }
 
                 else if (alpha.StartsWith("s"))
+                {
                     seconds = numeric;
+                }
 
                 else
+                {
                     throw new FormatException("Unknown time component");
+                }
             }
 
             retVal = new TimeSpan(days, hours, minutes, seconds);

@@ -46,16 +46,24 @@ namespace TestRail.Types
             dynamic json = new JObject();
 
             if (!string.IsNullOrWhiteSpace(Description))
+            {
                 json.content = Description;
+            }
 
             if (!string.IsNullOrWhiteSpace(Expected))
+            {
                 json.expected = Expected;
+            }
 
             if (!string.IsNullOrWhiteSpace(Actual))
+            {
                 json.actual = Actual;
+            }
 
             if (null != Status)
+            {
                 json.status_id = (int)Status;
+            }
 
             return json;
         }

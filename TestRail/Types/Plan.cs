@@ -128,7 +128,9 @@ namespace TestRail.Types
             var jarray = json["entries"] as JArray;
 
             if (null != jarray)
+            {
                 plan.Entries = JsonUtility.ConvertJArrayToList(jarray, PlanEntry.Parse);
+            }
 
             return plan;
         }
@@ -140,20 +142,28 @@ namespace TestRail.Types
             dynamic jsonParams = new JObject();
 
             if (!string.IsNullOrWhiteSpace(Name))
+            {
                 jsonParams.name = Name;
+            }
 
             if (!string.IsNullOrWhiteSpace(Description))
+            {
                 jsonParams.description = Description;
+            }
 
             if (null != MilestoneId)
+            {
                 jsonParams.milestone_id = MilestoneId;
+            }
 
             if (null != Entries && 0 < Entries.Count)
             {
                 var jarray = new JArray();
 
                 foreach (var pe in Entries.Where(pe => null != pe))
+                {
                     jarray.Add(pe.GetJson());
+                }
 
                 jsonParams.entries = jarray;
             }

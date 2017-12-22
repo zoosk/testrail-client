@@ -148,18 +148,29 @@ namespace TestRail.Types
             dynamic jsonParams = new JObject();
 
             if (null != SuiteId)
+            {
                 jsonParams.suite_id = SuiteId;
+            }
 
             if (!string.IsNullOrWhiteSpace(Name))
+            {
                 jsonParams.name = Name;
+            }
+
             if (null != Description)
+            {
                 jsonParams.description = Description;
+            }
 
             if (null != MilestoneId)
+            {
                 jsonParams.milestone_id = MilestoneId;
+            }
 
             if (null != AssignedTo)
+            {
                 jsonParams.assignedto_id = AssignedTo;
+            }
 
             jsonParams.include_all = IncludeAll;
 
@@ -168,7 +179,9 @@ namespace TestRail.Types
                 var jarray = new JArray();
 
                 foreach (var caseId in CaseIds)
+                {
                     jarray.Add(caseId);
+                }
 
                 jsonParams.case_ids = jarray;
             }
@@ -178,7 +191,9 @@ namespace TestRail.Types
                 var jarray = new JArray();
 
                 foreach (var configId in ConfigIds)
+                {
                     jarray.Add(configId);
+                }
 
                 jsonParams.config_ids = jarray;
             }

@@ -60,13 +60,19 @@ namespace TestRail.Types
             dynamic jsonParams = new JObject();
 
             if (null != SuiteId)
+            {
                 jsonParams.suite_id = SuiteId.Value;
+            }
 
             if (null != ParentId)
+            {
                 jsonParams.parent_id = ParentId.Value;
+            }
 
             if (!string.IsNullOrWhiteSpace(Name))
+            {
                 jsonParams.name = Name;
+            }
 
             return jsonParams;
         }

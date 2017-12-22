@@ -59,7 +59,9 @@ namespace TestRail.Types
             var jarray = json["runs"] as JArray;
 
             if (null != jarray)
+            {
                 planEntry.RunList = JsonUtility.ConvertJArrayToList(jarray, Run.Parse);
+            }
 
             return planEntry;
         }
@@ -71,34 +73,46 @@ namespace TestRail.Types
             dynamic jsonParams = new JObject();
 
             if (null != SuiteId)
+            {
                 jsonParams.suite_id = SuiteId;
+            }
 
             if (!string.IsNullOrWhiteSpace(Name))
+            {
                 jsonParams.name = Name;
+            }
 
             if (null != AssignedToId)
+            {
                 jsonParams.assignedto_id = AssignedToId.Value;
+            }
 
             if (null != CaseIds && 0 < CaseIds.Count)
             {
                 var jarray = new JArray();
 
                 foreach (var caseId in CaseIds)
+                {
                     jarray.Add(caseId);
+                }
 
                 jsonParams.include_all = false;
                 jsonParams.case_ids = jarray;
             }
 
             else
+            {
                 jsonParams.include_all = true;
+            }
 
             if (null != ConfigIDs && 0 < ConfigIDs.Count)
             {
                 var jarray = new JArray();
 
                 foreach (var configId in ConfigIDs)
+                {
                     jarray.Add(configId);
+                }
 
                 jsonParams.config_ids = jarray;
             }
@@ -108,7 +122,9 @@ namespace TestRail.Types
                 var jarray = new JArray();
 
                 foreach (var run in RunList)
+                {
                     jarray.Add(run.GetJson());
+                }
 
                 jsonParams.runs = jarray;
             }
@@ -126,7 +142,10 @@ namespace TestRail.Types
             var list = new List<ulong>();
 
             if (null != jarray)
+            {
+                // TODO - Convert to LINQ
                 list.AddRange(from jt in jarray where null != (ulong?)jt["id"] select (ulong)jt["id"]);
+            }
 
             return list;
         }
@@ -139,7 +158,9 @@ namespace TestRail.Types
             var list = new List<ulong>();
 
             if (null != jarray)
+            {
                 list.AddRange(from JValue jsonItem in jarray select (ulong)jsonItem);
+            }
 
             return list;
         }

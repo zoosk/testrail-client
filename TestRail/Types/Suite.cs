@@ -56,10 +56,14 @@ namespace TestRail.Types
             dynamic jsonParams = new JObject();
 
             if (!string.IsNullOrWhiteSpace(Name))
+            {
                 jsonParams.name = Name;
+            }
 
             if (!string.IsNullOrWhiteSpace(Description))
+            {
                 jsonParams.description = Description;
+            }
 
             return jsonParams;
         }

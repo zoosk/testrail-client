@@ -21,7 +21,7 @@ namespace TestRail.Types
         /// <param name="json">takes a json object and converts it to a ConfigContext</param>
         public static ConfigContext Parse(JObject json)
         {
-            var cc = new ConfigContext
+            var configContext = new ConfigContext
             {
                 JsonFromResponse = json,
                 IsGlobal = (bool?)json["is_global"],
@@ -33,15 +33,17 @@ namespace TestRail.Types
             if (null != jval && jval.HasValues)
             {
                 // add values to the list if not empty
-                cc.ProjectIds = new List<string>();
+                configContext.ProjectIds = new List<string>();
 
                 var jarray = (JArray)jval;
 
                 foreach (var jsonItem in jarray.Cast<JValue>())
-                    cc.ProjectIds.Add((string)jsonItem);
+                {
+                    configContext.ProjectIds.Add((string)jsonItem);
+                }
             }
 
-            return cc;
+            return configContext;
         }
         #endregion Public Methods
     }

@@ -80,22 +80,34 @@ namespace TestRail.Types
             dynamic jsonParams = new JObject();
 
             if (null != StatusId)
+            {
                 jsonParams.status_id = (int)StatusId;
+            }
 
             if (null != Comment)
+            {
                 jsonParams.comment = Comment;
+            }
 
             if (null != Version)
+            {
                 jsonParams.version = Version;
+            }
 
             if (null != Elapsed)
+            {
                 jsonParams.elapsed = $"{Elapsed.Value.Days}d {Elapsed.Value.Hours}h {Elapsed.Value.Minutes}m {Elapsed.Value.Seconds}s";
+            }
 
             if (null != Defects)
+            {
                 jsonParams.defects = Defects;
+            }
 
             if (null != AssignedToId)
+            {
                 jsonParams.assignedto_id = AssignedToId.Value;
+            }
 
             return jsonParams;
         }
