@@ -2,12 +2,13 @@
 
 namespace TestRail.Types
 {
+    /// <inheritdoc />
     /// <summary>stores information about a suite</summary>
     public class Suite : BaseTestRailType
     {
         #region Public Properties
         /// <summary>id of the suite</summary>
-        public ulong? ID { get; set; }
+        public ulong? Id { get; set; }
 
         /// <summary>name of the suite</summary>
         public string Name { get; set; }
@@ -16,7 +17,7 @@ namespace TestRail.Types
         public string Description { get; set; }
 
         /// <summary>id of the project associated with the suite</summary>
-        public ulong? ProjectID { get; set; }
+        public ulong? ProjectId { get; set; }
 
         /// <summary>url to view the suite</summary>
         public string Url { get; set; }
@@ -35,16 +36,17 @@ namespace TestRail.Types
         /// <returns>suite corresponding to the json</returns>
         public static Suite Parse(JObject json)
         {
-            var s = new Suite
+            var suite = new Suite
             {
                 JsonFromResponse = json,
-                ID = (ulong?)json["id"],
+                Id = (ulong?)json["id"],
                 Name = (string)json["name"],
                 Description = (string)json["description"],
-                ProjectID = (ulong?)json["project_id"],
-                Url = (string)json["url"],
+                ProjectId = (ulong?)json["project_id"],
+                Url = (string)json["url"]
             };
-            return s;
+
+            return suite;
         }
 
         /// <summary>Creates a json object for this class</summary>
@@ -52,8 +54,17 @@ namespace TestRail.Types
         public JObject GetJson()
         {
             dynamic jsonParams = new JObject();
-            if (!string.IsNullOrWhiteSpace(Name)) { jsonParams.name = Name; }
-            if (!string.IsNullOrWhiteSpace(Description)) { jsonParams.description = Description; }
+
+            if (!string.IsNullOrWhiteSpace(Name))
+            {
+                jsonParams.name = Name;
+            }
+
+            if (!string.IsNullOrWhiteSpace(Description))
+            {
+                jsonParams.description = Description;
+            }
+
             return jsonParams;
         }
         #endregion Public Methods

@@ -1,20 +1,22 @@
 ﻿using System;
+using TestRail.Utils;
 using Newtonsoft.Json.Linq;
 
 namespace TestRail.Types
 {
+    /// <inheritdoc />
     /// <summary>stores information about the result of a test</summary>
     public class Result : BaseTestRailType
     {
         #region Public Properties
         /// <summary>ID of the result</summary>
-        public ulong ID { get; set; }
+        public ulong Id { get; set; }
 
         /// <summary>ID of the test</summary>
-        public ulong TestID { get; set; }
+        public ulong TestId { get; set; }
 
         /// <summary>ID of the test status</summary>
-        public ulong? StatusID { get; set; }
+        public ulong? StatusId { get; set; }
 
         /// <summary>created by</summary>
         public ulong? CreatedBy { get; set; }
@@ -23,7 +25,7 @@ namespace TestRail.Types
         public DateTime? CreatedOn { get; set; }
 
         /// <summary>the ID of the user the test should be assigned to</summary>
-        public ulong? AssignedToID { get; set; }
+        public ulong? AssignedToId { get; set; }
 
         /// <summary>the comment /description for the test result</summary>
         public string Comment { get; set; }
@@ -39,13 +41,11 @@ namespace TestRail.Types
         #endregion Public Properties
 
         #region Public Methods
-        /// <summary>
-        /// string representation of the object
-        /// </summary>
+        /// <summary>string representation of the object</summary>
         /// <returns>string representation of the object</returns>
         public override string ToString()
         {
-            return $"{ID}:{Comment}";
+            return $"{Id}:{Comment}";
         }
 
         /// <summary>Parse the JSON into a Result</summary>
@@ -53,23 +53,24 @@ namespace TestRail.Types
         /// <returns>a Result</returns>
         public static Result Parse(JObject json)
         {
-            var r = new Result
+            var result = new Result
             {
                 JsonFromResponse = json,
-                ID = (ulong)json["id"],
-                TestID = (ulong)json["test_id"],
-                StatusID = (ulong?)json["status_id"],
+                Id = (ulong)json["id"],
+                TestId = (ulong)json["test_id"],
+                StatusId = (ulong?)json["status_id"],
                 CreatedBy = (ulong?)json["created_by"],
                 CreatedOn = null == (int?)json["created_on"] ? (DateTime?)null : new DateTime(1970, 1, 1).AddSeconds((int)json["created_on"]),
-                AssignedToID = (ulong?)json["assignedto_id"],
+                AssignedToId = (ulong?)json["assignedto_id"],
                 Comment = (string)json["comment"],
                 Version = (string)json["version"],
-                Defects = (string)json["defects"],
+                Defects = (string)json["defects"]
             };
 
             // separate for easier debugging if necessary
-            r.Elapsed = TimeSpanUtility.FromString((string)json["elapsed"]);
-            return r;
+            result.Elapsed = TimeSpanUtility.FromString((string)json["elapsed"]);
+
+            return result;
         }
 
         /// <summary>Returns a json object that represents this class</summary>
@@ -77,12 +78,37 @@ namespace TestRail.Types
         public virtual JObject GetJson()
         {
             dynamic jsonParams = new JObject();
-            if (null != StatusID) { jsonParams.status_id = (int)StatusID; }
-            if (null != Comment) { jsonParams.comment = Comment; }
-            if (null != Version) { jsonParams.version = Version; }
-            if (null != Elapsed) { jsonParams.elapsed = $"{Elapsed.Value.Days}d {Elapsed.Value.Hours}h {Elapsed.Value.Minutes}m {Elapsed.Value.Seconds}s" ; }
-            if (null != Defects) { jsonParams.defects = Defects; }
-            if (null != AssignedToID) { jsonParams.assignedto_id = AssignedToID.Value; }
+
+            if (null != StatusId)
+            {
+                jsonParams.status_id = (int)StatusId;
+            }
+
+            if (null != Comment)
+            {
+                jsonParams.comment = Comment;
+            }
+
+            if (null != Version)
+            {
+                jsonParams.version = Version;
+            }
+
+            if (null != Elapsed)
+            {
+                jsonParams.elapsed = $"{Elapsed.Value.Days}d {Elapsed.Value.Hours}h {Elapsed.Value.Minutes}m {Elapsed.Value.Seconds}s";
+            }
+
+            if (null != Defects)
+            {
+                jsonParams.defects = Defects;
+            }
+
+            if (null != AssignedToId)
+            {
+                jsonParams.assignedto_id = AssignedToId.Value;
+            }
+
             return jsonParams;
         }
         #endregion Public Methods

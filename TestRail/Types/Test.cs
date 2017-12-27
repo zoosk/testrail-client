@@ -1,25 +1,27 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using TestRail.Enums;
+using Newtonsoft.Json.Linq;
 
 namespace TestRail.Types
 {
+    /// <inheritdoc />
     /// <summary>stores information about a test</summary>
     public class Test : BaseTestRailType
     {
         #region Public Properties
         /// <summary>id of the test</summary>
-        public ulong? ID { get; private set; }
+        public ulong? Id { get; private set; }
 
         /// <summary>id of the test case</summary>
-        public ulong? CaseID { get; set; }
+        public ulong? CaseId { get; set; }
 
         /// <summary>id of the test run</summary>
-        public ulong? RunID { get; private set; }
+        public ulong? RunId { get; private set; }
 
         /// <summary>test rail status id</summary>
         public ResultStatus? Status { get; private set; }
 
         /// <summary>id of the user the test is assigned to</summary>
-        public ulong? AssignedToID { get; private set; }
+        public ulong? AssignedToId { get; private set; }
 
         /// <summary>title of the test</summary>
         public string Title;
@@ -38,17 +40,18 @@ namespace TestRail.Types
         /// <returns>test corresponding to the json</returns>
         public static Test Parse(JObject json)
         {
-            var t = new Test
+            var test = new Test
             {
                 JsonFromResponse = json,
-                ID = (ulong?)json["id"],
-                CaseID = (ulong?)json["case_id"],
-                RunID = (ulong?)json["run_id"],
+                Id = (ulong?)json["id"],
+                CaseId = (ulong?)json["case_id"],
+                RunId = (ulong?)json["run_id"],
                 Status = (ResultStatus?)(int)json["status_id"],
-                AssignedToID = (ulong?)json["assignedto_id"],
-                Title = (string)json["title"],
+                AssignedToId = (ulong?)json["assignedto_id"],
+                Title = (string)json["title"]
             };
-            return t;
+
+            return test;
         }
         #endregion Public Methods
     }

@@ -1,14 +1,16 @@
 ﻿using System;
+using TestRail.Utils;
 using Newtonsoft.Json.Linq;
 
 namespace TestRail.Types
 {
+    /// <inheritdoc />
     /// <summary>stores information about a milestone</summary>
     public class Milestone : BaseTestRailType
     {
         #region Public Properties
         /// <summary>id of the milestone</summary>
-        public ulong ID { get; private set; }
+        public ulong Id { get; private set; }
 
         /// <summary>name of the milestone</summary>
         public string Name { get; set; }
@@ -29,7 +31,7 @@ namespace TestRail.Types
         public DateTime? CompletedOn { get; private set; }
 
         /// <summary>id of the project with which the milestone is associated</summary>
-        public ulong ProjectID { get; private set; }
+        public ulong ProjectId { get; private set; }
 
         /// <summary>the url for to view the milestone</summary>
         public string Url { get; private set; }
@@ -48,20 +50,21 @@ namespace TestRail.Types
         /// <returns>milestone corresponding to the json</returns>
         public static Milestone Parse(JObject json)
         {
-            var m = new Milestone
+            var milestone = new Milestone
             {
                 JsonFromResponse = json,
-                ID = (ulong)json["id"],
+                Id = (ulong)json["id"],
                 Name = (string)json["name"],
                 Description = (string)json["description"],
                 IsCompleted = (bool?)json["is_completed"],
                 IsStarted = (bool?)json["is_started"],
                 DueOn = null == (int?)json["due_on"] ? (DateTime?)null : new DateTime(1970, 1, 1).AddSeconds((int)json["due_on"]),
                 CompletedOn = null == (int?)json["completed_on"] ? (DateTime?)null : new DateTime(1970, 1, 1).AddSeconds((int)json["completed_on"]),
-                ProjectID = (ulong)json["project_id"],
-                Url = (string)json["url"],
+                ProjectId = (ulong)json["project_id"],
+                Url = (string)json["url"]
             };
-            return m;
+
+            return milestone;
         }
 
         /// <summary>Creates a json object for this class</summary>
@@ -69,10 +72,27 @@ namespace TestRail.Types
         public JObject GetJson()
         {
             dynamic jsonParams = new JObject();
-            if (!string.IsNullOrWhiteSpace(Name)) { jsonParams.name = Name; }
-            if (!string.IsNullOrWhiteSpace(Description)) { jsonParams.description = Description; }
-            if (null != DueOn) { jsonParams.dueOn = DueOn.Value.ToUnixTimestamp(); }
-            if (null != IsCompleted) { jsonParams.is_completed = IsCompleted; }
+
+            if (!string.IsNullOrWhiteSpace(Name))
+            {
+                jsonParams.name = Name;
+            }
+
+            if (!string.IsNullOrWhiteSpace(Description))
+            {
+                jsonParams.description = Description;
+            }
+
+            if (null != DueOn)
+            {
+                jsonParams.dueOn = DueOn.Value.ToUnixTimestamp();
+            }
+
+            if (null != IsCompleted)
+            {
+                jsonParams.is_completed = IsCompleted;
+            }
+
             return jsonParams;
         }
         #endregion Public Methods
