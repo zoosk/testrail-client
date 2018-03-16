@@ -292,7 +292,7 @@ namespace TestRail
         /// <param name="name">(optional)the name of the test run</param>
         /// <param name="assignedToID">(optional)the ID of the user the test run should be assigned to</param>
         /// <param name="include_all">(optional)true for including all test cases of the test suite and false for a custom selection (default: true)</param>
-        /// <param name="caseIDs">an array of case IDs for the custom case selection</param>
+        /// <param name="caseIDs">(optional)an array of case IDs for the custom case selection</param>
         /// <param name="customs">(optional)custom json params to add to the current json parameters</param>
         /// <returns></returns>
         public CommandResult<ulong> AddPlanEntry(ulong planID, ulong suiteID, string name = null, ulong? assignedToID = null, List<ulong> caseIDs = null, JObject customs = null)
@@ -366,7 +366,7 @@ namespace TestRail
         /// <param name="entryID">the ID of the test plan entry</param>
         /// <param name="name">(optional)the name of the test run</param>
         /// <param name="assignedToID">(optional)the ID of the user the test run should be assigned to</param>
-        /// <param name="caseIDs">an array of case IDs for the custom case selection</param>
+        /// <param name="caseIDs">(optional)an array of case IDs for the custom case selection</param>
         /// <param name="customs">(optional)custom json params to add to the current json parameters</param>
         /// <returns></returns>
         public CommandResult<ulong> UpdatePlanEntry(ulong planID, string entryID, string name = null, ulong? assignedToID = null, List<ulong> caseIDs = null, JObject customs = null)
@@ -396,7 +396,7 @@ namespace TestRail
         /// <param name="name">(optional)name of the test run</param>
         /// <param name="description">(optional)description of the test run</param>
         /// <param name="milestoneID">(optional)the id of the milestone to link to the test run</param>
-        /// <param name="caseIDs">an array of case IDs for the custom case selection</param>
+        /// <param name="caseIDs">(optional)an array of case IDs for the custom case selection</param>
         /// <param name="customs">(optional)custom json params to add to the current json parameters</param>
         /// <returns></returns>
         public CommandResult<ulong> UpdateRun(ulong runID, string name = null, string description = null, ulong? milestoneID = null, HashSet<ulong> caseIDs = null, JObject customs = null)
@@ -427,7 +427,7 @@ namespace TestRail
         /// <summary>Updates an existing section</summary>
         /// <param name="sectionID">id of the section to update</param>
         /// <param name="name">name of the section</param>
-        /// <param name="description">description of the section</param>
+        /// <param name="description">(optional)description of the section</param>
         /// <param name="customs">(optional)custom json params to add to the current json parameters</param>
         /// <returns></returns>
         public CommandResult<ulong> UpdateSection(ulong sectionID, string name, string description = null, JObject customs = null)
@@ -454,7 +454,7 @@ namespace TestRail
             var uri = _CreateUri_(_CommandType_.update, _NODE_SUITE_, suiteID);
             var s = new Suite { Name = name, Description = description };
             var jsonParams = JsonUtility.Merge(s.GetJson(), customs);
-            return _SendCommand(uri, s.GetJson());
+            return _SendCommand(uri, jsonParams);
         }
         #endregion Update Commands
 
