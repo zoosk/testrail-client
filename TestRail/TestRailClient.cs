@@ -131,6 +131,7 @@ namespace TestRail
         /// <param name="elapsed">time elapsed to complete the test</param>
         /// <param name="defects">defects associated with the result</param>
         /// <param name="assignedToID">id of the user the result is assigned to</param>
+        /// <param name="customs">(optional)custom json params to add to the current json parameters</param>
         /// <returns>result of the command</returns>
         public CommandResult<ulong> AddResult(ulong testID, ResultStatus? status, string comment = null, string version = null,
             TimeSpan? elapsed = null, string defects = null, ulong? assignedToID = null, JObject customs = null)
@@ -150,6 +151,7 @@ namespace TestRail
         /// <param name="elapsed">time elapsed to complete the test</param>
         /// <param name="defects">defects associated with the result</param>
         /// <param name="assignedToID">id of the user the result is assigned to</param>
+        /// <param name="customs">(optional)custom json params to add to the current json parameters</param>
         /// <returns></returns>
         public CommandResult<ulong> AddResultForCase(ulong runID, ulong caseID, ResultStatus? status, string comment = null, string version = null,
             TimeSpan? elapsed = null, string defects = null, ulong? assignedToID = null, JObject customs = null)
@@ -168,8 +170,9 @@ namespace TestRail
         /// <param name="milestoneID">id of the milestone</param>
         /// <param name="assignedToID">id of the user the run should be assigned to</param>
         ///<param name="caseIDs">(optional)an array of case IDs for the custom case selection, if null, then will include all case ids from the suite </param>
+        /// <param name="customs">(optional)custom json params to add to the current json parameters</param>
         /// <returns>result of the command</returns>
-        public CommandResult<ulong> AddRun(ulong projectID, ulong suiteID, string name, string description, ulong milestoneID, ulong? assignedToID = null, HashSet<ulong> caseIDs = null)
+        public CommandResult<ulong> AddRun(ulong projectID, ulong suiteID, string name, string description, ulong milestoneID, ulong? assignedToID = null, HashSet<ulong> caseIDs = null, JObject customs = null)
         {
             var includeAll = true;
 
@@ -189,7 +192,8 @@ namespace TestRail
 
             var uri = _CreateUri_(_CommandType_.add, _NODE_RUN_, projectID);
             var r = new Run { SuiteID = suiteID, Name = name, Description = description, MilestoneID = milestoneID, AssignedTo = assignedToID, IncludeAll = includeAll, CaseIDs = caseIDs };
-            return _SendCommand(uri, r.GetJson());
+            var jsonParams = JsonUtility.Merge(r.GetJson(), customs);
+            return _SendCommand(uri, jsonParams);
         }
 
         /// <summary>Add a case</summary>
@@ -229,8 +233,9 @@ namespace TestRail
         /// <param name="suiteID">the ID of the test suite</param>
         /// <param name="name">the name of the section</param>
         /// <param name="parentID">(optional)the ID of the parent section (to build section hierarchies)</param>
+        /// <param name="description">(optional)the description section</param>
         /// <returns>result of the command</returns>
-        public CommandResult<ulong> AddSection(ulong projectID, ulong suiteID, string name, ulong? parentID = null)
+        public CommandResult<ulong> AddSection(ulong projectID, ulong suiteID, string name, ulong? parentID = null, string description = null)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -238,7 +243,7 @@ namespace TestRail
             }
 
             var uri = _CreateUri_(_CommandType_.add, _NODE_SECTION_, projectID);
-            var s = new Section { SuiteID = suiteID, ParentID = parentID, Name = name };
+            var s = new Section { SuiteID = suiteID, ParentID = parentID, Name = name, Description = description };
             return _SendCommand(uri, s.GetJson());
         }
 
@@ -265,8 +270,9 @@ namespace TestRail
         /// <param name="description">(optional)description of the test plan</param>
         /// <param name="milestoneID">(optional)id of the milestone to link the test plan</param>
         /// <param name="entries">an array of objects describing the test runs of the plan</param>
+        /// <param name="customs">(optional)custom json params to add to the current json parameters</param>
         /// <returns>result of the command</returns>
-        public CommandResult<ulong> AddPlan(ulong projectID, string name, string description = null, ulong? milestoneID = null, List<PlanEntry> entries = null)//todo:add config ids here
+        public CommandResult<ulong> AddPlan(ulong projectID, string name, string description = null, ulong? milestoneID = null, List<PlanEntry> entries = null, JObject customs = null)//todo:add config ids here
         // , params ulong[] suiteIDs)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -276,7 +282,7 @@ namespace TestRail
 
             var uri = _CreateUri_(_CommandType_.add, _NODE_PLAN_, projectID);
             var p = new Plan { Name = name, Description = description, MilestoneID = milestoneID, Entries = entries };
-            var jsonParams = p.GetJson();
+            var jsonParams = JsonUtility.Merge(p.GetJson(), customs);
             return _SendCommand(uri, jsonParams);
         }
 
@@ -286,12 +292,14 @@ namespace TestRail
         /// <param name="name">(optional)the name of the test run</param>
         /// <param name="assignedToID">(optional)the ID of the user the test run should be assigned to</param>
         /// <param name="include_all">(optional)true for including all test cases of the test suite and false for a custom selection (default: true)</param>
+        /// <param name="caseIDs">(optional)an array of case IDs for the custom case selection</param>
+        /// <param name="customs">(optional)custom json params to add to the current json parameters</param>
         /// <returns></returns>
-        public CommandResult<ulong> AddPlanEntry(ulong planID, ulong suiteID, string name = null, ulong? assignedToID = null, List<ulong> caseIDs = null)
+        public CommandResult<ulong> AddPlanEntry(ulong planID, ulong suiteID, string name = null, ulong? assignedToID = null, List<ulong> caseIDs = null, JObject customs = null)
         {
             var uri = _CreateUri_(_CommandType_.add, _NODE_PLAN_ENTRY_, planID);
             var pe = new PlanEntry { AssignedToID = assignedToID, SuiteID = suiteID, Name = name, CaseIDs = caseIDs };
-            var jsonParams = pe.GetJson();
+            var jsonParams = JsonUtility.Merge(pe.GetJson(), customs);
             return _SendCommand(uri, jsonParams);
         }
 
@@ -318,10 +326,11 @@ namespace TestRail
         /// <param name="estimate">(optional)the estimate, e.g. "30s" or "1m 45s"</param>
         /// <param name="milestoneID">(optional)the ID of the milestone to link to the test case</param>
         /// <param name="refs">(optional)a comma-separated list of references/requirements</param>
+        /// <param name="customs">(optional)custom json params to add to the current json parameters</param>
         /// <returns>result of the command</returns>
-        public CommandResult<ulong> UpdateCase(ulong caseID, string title, ulong? typeID = null, ulong? priorityID = null, string estimate = null, ulong? milestoneID = null, string refs = null)
+        public CommandResult<ulong> UpdateCase(ulong caseID, string title, ulong? typeID = null, ulong? priorityID = null, string estimate = null, ulong? milestoneID = null, string refs = null, JObject customs = null)
         {
-            return _UpdateCase_(caseID, title, typeID, priorityID, estimate, milestoneID, refs, null);
+            return _UpdateCase_(caseID, title, typeID, priorityID, estimate, milestoneID, refs, customs);
         }
 
         /// <summary>update an existing milestone</summary>
@@ -342,12 +351,13 @@ namespace TestRail
         /// <param name="name">(optional)name of the test plan </param>
         /// <param name="description">(optional)the description of the test plan</param>
         /// <param name="milestoneID">(optional)the id of the milestone to link to the test plan</param>
+        /// <param name="customs">(optional)custom json params to add to the current json parameters</param>
         /// <returns></returns>
-        public CommandResult<ulong> UpdatePlan(ulong planID, string name = null, string description = null, ulong? milestoneID = null)
+        public CommandResult<ulong> UpdatePlan(ulong planID, string name = null, string description = null, ulong? milestoneID = null, JObject customs = null)
         {
             var uri = _CreateUri_(_CommandType_.update, _NODE_PLAN_, planID);
             var p = new Plan { Name = name, Description = description, MilestoneID = milestoneID };
-            var jsonParams = p.GetJson();
+            var jsonParams = JsonUtility.Merge(p.GetJson(), customs);
             return _SendCommand(uri, jsonParams);
         }
 
@@ -356,13 +366,14 @@ namespace TestRail
         /// <param name="entryID">the ID of the test plan entry</param>
         /// <param name="name">(optional)the name of the test run</param>
         /// <param name="assignedToID">(optional)the ID of the user the test run should be assigned to</param>
-        /// <param name="include_all">(optional)true for including all test cases of the test suite and false for a custom selection (default: true)</param>
+        /// <param name="caseIDs">(optional)an array of case IDs for the custom case selection</param>
+        /// <param name="customs">(optional)custom json params to add to the current json parameters</param>
         /// <returns></returns>
-        public CommandResult<ulong> UpdatePlanEntry(ulong planID, string entryID, string name = null, ulong? assignedToID = null, List<ulong> caseIDs = null)
+        public CommandResult<ulong> UpdatePlanEntry(ulong planID, string entryID, string name = null, ulong? assignedToID = null, List<ulong> caseIDs = null, JObject customs = null)
         {
             var uri = _CreateUri_(_CommandType_.update, _NODE_PLAN_ENTRY_, planID, null, null, entryID);
             var pe = new PlanEntry { AssignedToID = assignedToID, Name = name, CaseIDs = caseIDs };
-            var jsonParams = pe.GetJson();
+            var jsonParams = JsonUtility.Merge(pe.GetJson(), customs);
             return _SendCommand(uri, jsonParams);
         }
 
@@ -385,10 +396,10 @@ namespace TestRail
         /// <param name="name">(optional)name of the test run</param>
         /// <param name="description">(optional)description of the test run</param>
         /// <param name="milestoneID">(optional)the id of the milestone to link to the test run</param>
-        /// <param name="include_all">(optional)true for including all test cases of the test suite and false for a custom case selection</param>
-        ///<param name="caseIDs">an array of case IDs for the custom case selection</param>
+        /// <param name="caseIDs">(optional)an array of case IDs for the custom case selection</param>
+        /// <param name="customs">(optional)custom json params to add to the current json parameters</param>
         /// <returns></returns>
-        public CommandResult<ulong> UpdateRun(ulong runID, string name = null, string description = null, ulong? milestoneID = null, HashSet<ulong> caseIDs = null)
+        public CommandResult<ulong> UpdateRun(ulong runID, string name = null, string description = null, ulong? milestoneID = null, HashSet<ulong> caseIDs = null, JObject customs = null)
         {
             var includeAll = true;
             var run = GetRun(runID);
@@ -409,14 +420,17 @@ namespace TestRail
 
             var uri = _CreateUri_(_CommandType_.update, _NODE_RUN_, runID);
             var r = new Run { Name = name, Description = description, MilestoneID = milestoneID, IncludeAll = includeAll, CaseIDs = caseIDs };
-            return _SendCommand(uri, r.GetJson());
+            var jsonParams = JsonUtility.Merge(r.GetJson(), customs);
+            return _SendCommand(uri, jsonParams);
         }
 
         /// <summary>Updates an existing section</summary>
         /// <param name="sectionID">id of the section to update</param>
         /// <param name="name">name of the section</param>
+        /// <param name="description">(optional)description of the section</param>
+        /// <param name="customs">(optional)custom json params to add to the current json parameters</param>
         /// <returns></returns>
-        public CommandResult<ulong> UpdateSection(ulong sectionID, string name)
+        public CommandResult<ulong> UpdateSection(ulong sectionID, string name, string description = null, JObject customs = null)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -424,20 +438,23 @@ namespace TestRail
             }
 
             var uri = _CreateUri_(_CommandType_.update, _NODE_SECTION_, sectionID);
-            var s = new Section { ID = sectionID, Name = name };
-            return _SendCommand(uri, s.GetJson());
+            var s = new Section { ID = sectionID, Name = name, Description = description };
+            var jsonParams = JsonUtility.Merge(s.GetJson(), customs);
+            return _SendCommand(uri, jsonParams);
         }
 
         /// <summary>Update an existing suite</summary>
         /// <param name="suiteID">id of the suite to update</param>
         /// <param name="name">(optional)new name to update to</param>
         /// <param name="description">(optional)new description to update to</param>
+        /// <param name="customs">(optional)custom json params to add to the current json parameters</param>
         /// <returns></returns>
-        public CommandResult<ulong> UpdateSuite(ulong suiteID, string name = null, string description = null)
+        public CommandResult<ulong> UpdateSuite(ulong suiteID, string name = null, string description = null, JObject customs = null)
         {
             var uri = _CreateUri_(_CommandType_.update, _NODE_SUITE_, suiteID);
             var s = new Suite { Name = name, Description = description };
-            return _SendCommand(uri, s.GetJson());
+            var jsonParams = JsonUtility.Merge(s.GetJson(), customs);
+            return _SendCommand(uri, jsonParams);
         }
         #endregion Update Commands
 

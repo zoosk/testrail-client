@@ -12,6 +12,9 @@ namespace TestRail.Types
         /// <summary>name of the section</summary>
         public string Name { get; set; }
 
+        /// <summary>description of the section</summary>
+        public string Description { get; set; }
+
         /// <summary>id of the parent section of the section</summary>
         public ulong? ParentID { get; set; }
 
@@ -43,6 +46,7 @@ namespace TestRail.Types
                 JsonFromResponse = json,
                 ID = (ulong?)json["id"],
                 Name = (string)json["name"],
+                Description = (string)json["description"],
                 ParentID = (ulong?)json["parent_id"],
                 Depth = (uint?)json["depth"],
                 DisplayOrder = (uint?)json["display_order"],
@@ -59,6 +63,7 @@ namespace TestRail.Types
             if (null != SuiteID) { jsonParams.suite_id = SuiteID.Value; }
             if (null != ParentID) { jsonParams.parent_id = ParentID.Value; }
             if (!string.IsNullOrWhiteSpace(Name)) { jsonParams.name = Name; }
+            if (!string.IsNullOrWhiteSpace(Description)) { jsonParams.description = Description; }
             return jsonParams;
         }
         #endregion Public Methods
