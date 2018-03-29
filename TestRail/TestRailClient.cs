@@ -983,9 +983,9 @@ namespace TestRail
                 var responseDataStream = response.GetResponseStream();
                 var reader = new StreamReader(responseDataStream);
                 var responseFromServer = reader.ReadToEnd();
+                cr = new CommandResult(response.StatusCode == HttpStatusCode.OK, responseFromServer);
                 reader.Close();
                 response.Close();
-                cr = new CommandResult(response.StatusCode == HttpStatusCode.OK, responseFromServer);
             }
             catch (Exception e) { cr = new CommandResult(false, e.ToString()); }
             if (!cr.WasSuccessful)
@@ -1041,9 +1041,9 @@ namespace TestRail
                 var responseDataStream = response.GetResponseStream();
                 var reader = new StreamReader(responseDataStream);
                 var responseFromServer = reader.ReadToEnd();
+                cr = new CommandResult(response.StatusCode == HttpStatusCode.OK, responseFromServer);
                 reader.Close();
                 response.Close();
-                cr = new CommandResult(response.StatusCode == HttpStatusCode.OK, responseFromServer);
             }
             catch (Exception e) { cr = new CommandResult(false, e.ToString()); }
             if (!cr.WasSuccessful)
