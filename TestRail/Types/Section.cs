@@ -13,6 +13,9 @@ namespace TestRail.Types
         /// <summary>name of the section</summary>
         public string Name { get; set; }
 
+        /// <summary>description of the section</summary>
+        public string Description { get; set; }
+
         /// <summary>id of the parent section of the section</summary>
         public ulong? ParentId { get; set; }
 
@@ -44,7 +47,8 @@ namespace TestRail.Types
                 JsonFromResponse = json,
                 Id = (ulong?)json["id"],
                 Name = (string)json["name"],
-                ParentId = (ulong?)json["parent_id"],
+                Description = (string)json["description"],
+                ParentID = (ulong?)json["parent_id"],
                 Depth = (uint?)json["depth"],
                 DisplayOrder = (uint?)json["display_order"],
                 SuiteId = (ulong?)json["suite_id"]
@@ -58,22 +62,10 @@ namespace TestRail.Types
         public JObject GetJson()
         {
             dynamic jsonParams = new JObject();
-
-            if (null != SuiteId)
-            {
-                jsonParams.suite_id = SuiteId.Value;
-            }
-
-            if (null != ParentId)
-            {
-                jsonParams.parent_id = ParentId.Value;
-            }
-
-            if (!string.IsNullOrWhiteSpace(Name))
-            {
-                jsonParams.name = Name;
-            }
-
+            if (null != SuiteID) { jsonParams.suite_id = SuiteID.Value; }
+            if (null != ParentID) { jsonParams.parent_id = ParentID.Value; }
+            if (!string.IsNullOrWhiteSpace(Name)) { jsonParams.name = Name; }
+            if (!string.IsNullOrWhiteSpace(Description)) { jsonParams.description = Description; }
             return jsonParams;
         }
         #endregion Public Methods

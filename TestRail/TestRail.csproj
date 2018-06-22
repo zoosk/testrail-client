@@ -12,13 +12,44 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Description>.Net Standard 2.0 implementation of the TestRail API</Description>
     <PackageReleaseNotes>
-    Version 2.0.1
-    - Created a new enum for `CommandActions` like: plan, run, case, etc.
-      - There was already an enum for `CommandTypes` like: get, add, delete, etc. The new enum simply standardized the creation of the URI for the Test Rail endpoints
-      - Added a dependency for the enum to be correctly parsed with the required underscores needed by Test Rail
-    - Updated methods that were missing intellisense/xml documentation
-    - Cleaned up the code with ReSharper suggestions
-    - Moved some files around so the project is structured a little better
+    ##2.0.1
+      - add description to Section and add custom to run, plan, and other APIs
+      - Fix dotnet core bug with HttpWebRequest
+    ##2.0
+      - Converted the application to .Net Standard 2.0
+      - The client should work with any project on: .Net Framework 4.5, 4.6.1, .Net Core &gt;= 2.0, and .Net Standard &gt;= 2.0.
+    ##1.0.0.15
+      - Bug Fix
+        - Timespan field for Result class
+      - Add isStarted property to Milestone class
+      - Update Newtonsoft.Json NuGet package
+    ##1.0.0.12
+      - Bug Fix
+        - Run's JSON Parse method threw possible ArgumentNullException on created_on field
+    ##1.0.0.11
+      - Update for VS 2015 and C# 6
+      - Update Nuget packages
+      - Features
+        - Add CreatedOn property to Run class
+    ##1.0.0.10
+      - TestRail types contain the Raw JSON object received
+    ##1.0.0.9
+      - Add more fields into Plan
+      - Update Nuget libraries
+    ##1.0.0.8
+      - Fix Nuget spec file
+    ##1.0.0.7
+      - Update dependencies for this package
+    ##1.0.0.6
+      - Bug
+        - Result Status Enum for Untested had wrong ID
+      - Feature
+        - Get Plan now populates complete run objects
+        - Get for Configs
+        - Ability to create a test plan with configs
+        - Config Ids added to plan entry
+    ##1.0.0.5
+      - Update Json.net Nuget Package
     </PackageReleaseNotes>
     <Copyright>Copyright 2017</Copyright>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
