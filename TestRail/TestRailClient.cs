@@ -583,7 +583,7 @@ namespace TestRail
                 CaseIds = caseIds
             };
 
-            var jsonParams = JsonUtility.Merge(r.GetJson(), customs);
+            var jsonParams = JsonUtility.Merge(newRun.GetJson(), customs);
             return _SendCommand(uri, jsonParams);
         }
 
@@ -613,7 +613,7 @@ namespace TestRail
                 Name = name
             };
 
-            var jsonParams = JsonUtility.Merge(s.GetJson(), customs);
+            var jsonParams = JsonUtility.Merge(section.GetJson(), customs);
             return _SendCommand(uri, jsonParams);
         }
 
@@ -1218,7 +1218,7 @@ namespace TestRail
                 var responseDataStream = response.GetResponseStream();
                 var reader = new StreamReader(responseDataStream);
                 var responseFromServer = reader.ReadToEnd();
-                cr = new CommandResult(response.StatusCode == HttpStatusCode.OK, responseFromServer);
+                commandResult = new CommandResult(response.StatusCode == HttpStatusCode.OK, responseFromServer);
                 reader.Close();
                 response.Close();
             }
@@ -1293,7 +1293,7 @@ namespace TestRail
                 var responseDataStream = response.GetResponseStream();
                 var reader = new StreamReader(responseDataStream);
                 var responseFromServer = reader.ReadToEnd();
-                cr = new CommandResult(response.StatusCode == HttpStatusCode.OK, responseFromServer);
+                commandResult = new CommandResult(response.StatusCode == HttpStatusCode.OK, responseFromServer);
                 reader.Close();
                 response.Close();
             }
@@ -1314,6 +1314,13 @@ namespace TestRail
             }
 
             return commandResult;
+        }
+
+        private CommandResult<BaseTestRailType> _SendCommand()
+        {
+            // TODO: This method will be used my API calls that should
+            // return an object.
+            throw new NotImplementedException();
         }
 
         /// <summary>Send a command to the server</summary>
