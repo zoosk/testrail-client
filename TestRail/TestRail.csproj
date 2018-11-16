@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net461;net45</TargetFrameworks>
     <PackageId>TestRail</PackageId>
-    <Version>2.0.1</Version>
+    <Version>2.0.2</Version>
     <PackageVersion>$(Version)</PackageVersion>
     <Title>TestRail Client</Title>
     <Authors>TestRail Client Committers</Authors>
@@ -11,7 +11,8 @@
     <RepositoryUrl>https://github.com/zoosk/testrail-client</RepositoryUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Description>.Net Standard 2.0 implementation of the TestRail API</Description>
-    <PackageReleaseNotes>
+    <PackageReleaseNotes>##2.0.2
+      - add Milestones property to handle sub-milestones in GetMilestone call
     ##2.0.1
       - add description to Section and add custom to run, plan, and other APIs
       - Fix dotnet core bug with HttpWebRequest
@@ -50,7 +51,7 @@
         - Config Ids added to plan entry
     ##1.0.0.5
       - Update Json.net Nuget Package
-    </PackageReleaseNotes>
+</PackageReleaseNotes>
     <Copyright>Copyright 2017</Copyright>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>

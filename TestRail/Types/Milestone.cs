@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 
 namespace TestRail.Types
@@ -15,6 +16,9 @@ namespace TestRail.Types
 
         /// <summary>description of the milestone</summary>
         public string Description { get; set; }
+
+        /// <summary>list of the sub-milestones</summary>
+        public List<Milestone> Milestones { get; set; }
 
         /// <summary>true if the milestone is completed</summary>
         public bool? IsCompleted { get; set; }
@@ -61,6 +65,12 @@ namespace TestRail.Types
                 ProjectID = (ulong)json["project_id"],
                 Url = (string)json["url"],
             };
+
+            var jarray = json["milestones"] as JArray;
+            if (null != jarray)
+            {
+                m.Milestones = JsonUtility.ConvertJArrayToList(jarray, Milestone.Parse);
+            }
             return m;
         }
 
