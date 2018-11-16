@@ -307,12 +307,13 @@ namespace TestRail
         /// <param name="projectID">id of the project</param>
         /// <param name="name">name of the milestone</param>
         /// <param name="description">(optional)description of the milestone</param>
+        /// <param name="parentID">(optional)parent milestone</param> 
         /// <param name="dueOn">(optional)date on which the milestone is due</param>
         /// <returns>result of the command</returns>
-        public CommandResult<ulong> AddMilestone(ulong projectID, string name, string description = null, DateTime? dueOn = null)
+        public CommandResult<ulong> AddMilestone(ulong projectID, string name, string description = null, ulong? parentID = null ,DateTime? dueOn = null)
         {
             var uri = _CreateUri_(_CommandType_.add, _NODE_MILESTONE_, projectID);
-            var m = new Milestone { Name = name, Description = description, DueOn = dueOn };
+            var m = new Milestone { Name = name, Description = description, DueOn = dueOn, ParentID = parentID };
             return _SendCommand(uri, m.GetJson());
         }
         #endregion Add Commands
