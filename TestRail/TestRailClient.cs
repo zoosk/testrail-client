@@ -560,6 +560,15 @@ namespace TestRail
             var uri = _CreateUri_(_CommandType_.delete, _NODE_SUITE_, suiteID);
             return _SendCommand(uri);
         }
+
+        /// <summary>Delete the run</summary>
+        /// <param name="runID">id of the run to delete</param>
+        /// <returns>result of the deletion</returns>
+        public CommandResult<ulong> DeleteRun(ulong runID)
+        {
+            var uri = _CreateUri_(_CommandType_.delete, _NODE_RUN_, runID);
+            return _SendCommand(uri);
+        }
         #endregion Delete Commands
 
         #region Get Commands
