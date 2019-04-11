@@ -13,10 +13,8 @@ namespace TestRail
     {
         /// <summary>url for testrail</summary>
         protected string _URL_;
-        /// <summary>testrail username</summary>
-        protected string _UserName_;
-        /// <summary>testrail password</summary>
-        protected string _Password_;
+        /// <summary>base 64 string of the given credentials</summary>
+        protected string _AuthInfo_;
 
         /// <summary>projects in the test rail database</summary>
         public List<Project> Projects => _Projects.Value;
@@ -96,8 +94,7 @@ namespace TestRail
         public TestRailClient(string url, string username, string password)
         {
             _URL_ = url;
-            _UserName_ = username;
-            _Password_ = password;
+            _AuthInfo_ = Convert.ToBase64String(Encoding.Default.GetBytes($"{username}:{password}"));
 
             _Projects = new Lazy<List<Project>>(GetProjects);
 
@@ -981,10 +978,8 @@ namespace TestRail
             {
                 // Build request
                 var request = new TestRailRequest(uri, "GET");
-                var authInfo = Convert.ToBase64String(Encoding.Default.GetBytes($"{_UserName_}:{_Password_}"));
-                var authDictionary = new Dictionary<string, string> { { "Authorization", authInfo } };
 
-                request.AddHeaders(authDictionary);
+                request.AddHeaders(new Dictionary<string, string> { { "Authorization", _AuthInfo_ } });
                 request.Accepts("application/json");
                 request.ContentType("application/json");
 
@@ -1022,10 +1017,8 @@ namespace TestRail
             {
                 // Build request
                 var request = new TestRailRequest(uri, "POST");
-                var authInfo = Convert.ToBase64String(Encoding.Default.GetBytes($"{_UserName_}:{_Password_}"));
-                var authDictionary = new Dictionary<string, string> { { "Authorization", authInfo } };
 
-                request.AddHeaders(authDictionary);
+                request.AddHeaders(new Dictionary<string, string> { { "Authorization", _AuthInfo_ } });
                 request.Accepts("application/json");
                 request.ContentType("application/json");
 
