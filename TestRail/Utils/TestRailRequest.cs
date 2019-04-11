@@ -10,10 +10,8 @@ namespace TestRail.Utils
     {
         private readonly HttpWebRequest _request;
 
-        public TestRailRequest(string url, string userName, string password, string requestType)
+        public TestRailRequest(string url, string requestType)
         {
-            var authInfo = Convert.ToBase64String(Encoding.Default.GetBytes($"{userName}:{password}"));
-
             _request = (HttpWebRequest)WebRequest.Create(url);
             _request.AllowAutoRedirect = true;
             _request.UserAgent = "TestRail Client for .NET";
@@ -50,18 +48,7 @@ namespace TestRail.Utils
             requestDataStream.Close();
         }
 
-        public string Execute()
-        {
-            var response = (HttpWebResponse)_request.GetResponse();
-
-            using (var reader = new StreamReader(response.GetResponseStream() ?? throw new InvalidOperationException(), Encoding.UTF8))
-            {
-                var rawJson = reader.ReadToEnd();
-                return rawJson;
-            }
-        }
-
-        public CommandResult Execute<T>()
+        public CommandResult Execute()
         {
             var response = (HttpWebResponse)_request.GetResponse();
 

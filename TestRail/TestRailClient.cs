@@ -32,6 +32,7 @@ namespace TestRail
         /// <summary>called when an operation fails</summary>
         public event EventHandler<string> OnOperationFailed = (s, e) => { };
 
+        /// <inheritdoc />
         /// <summary>event args for http request sent</summary>
         public class HTTPRequestSentEventArgs : EventArgs
         {
@@ -311,7 +312,7 @@ namespace TestRail
         /// <param name="parentID">(optional)parent milestone</param> 
         /// <param name="dueOn">(optional)date on which the milestone is due</param>
         /// <returns>result of the command</returns>
-        public CommandResult<ulong> AddMilestone(ulong projectID, string name, string description = null, ulong? parentID = null ,DateTime? dueOn = null)
+        public CommandResult<ulong> AddMilestone(ulong projectID, string name, string description = null, ulong? parentID = null, DateTime? dueOn = null)
         {
             var uri = _CreateUri_(_CommandType_.add, _NODE_MILESTONE_, projectID);
             var m = new Milestone { Name = name, Description = description, DueOn = dueOn, ParentID = parentID };
@@ -980,23 +981,17 @@ namespace TestRail
             CommandResult cr;
             try
             {
-                var request = (HttpWebRequest)WebRequest.Create(uri);
-                request.AllowAutoRedirect = true;
+                // Build request
+                var request = new TestRailRequest(uri, "GET");
                 var authInfo = Convert.ToBase64String(Encoding.Default.GetBytes($"{_UserName_}:{_Password_}"));
-                request.Headers["Authorization"] = $"Basic {authInfo}";
-                request.UserAgent = "TestRail Client for .NET";
-                request.Method = "GET";
-                request.Accept = "application/json";
-                request.ContentType = "application/json";
+                var authDictionary = new Dictionary<string, string> { { "Authorization", authInfo } };
 
-                // receive the response
-                var response = (HttpWebResponse)request.GetResponse();
-                var responseDataStream = response.GetResponseStream();
-                var reader = new StreamReader(responseDataStream);
-                var responseFromServer = reader.ReadToEnd();
-                cr = new CommandResult(response.StatusCode == HttpStatusCode.OK, responseFromServer);
-                reader.Close();
-                response.Close();
+                request.AddHeaders(authDictionary);
+                request.Accepts("application/json");
+                request.ContentType("application/json");
+
+                // Send request
+                cr = request.Execute();
             }
             catch (Exception e) { cr = new CommandResult(false, e.ToString()); }
             if (!cr.WasSuccessful)
@@ -1012,7 +1007,6 @@ namespace TestRail
 
         /// <summary>makes an http post call to the testrail</summary>
         /// <param name="uri">uri of the endpoint</param>
-        /// <param name="postParams">post parameters alternating between keys and values</param>
         /// <returns>result of the call</returns>
         private CommandResult _CallPostEndpoint(string uri, JObject json = null)
         {
@@ -1027,34 +1021,23 @@ namespace TestRail
             CommandResult cr;
             try
             {
-                var request = (HttpWebRequest)WebRequest.Create(uri);
-                request.AllowAutoRedirect = true;
+                // Build request
+                var request = new TestRailRequest(uri, "POST");
                 var authInfo = Convert.ToBase64String(Encoding.Default.GetBytes($"{_UserName_}:{_Password_}"));
-                request.Headers["Authorization"] = $"Basic {authInfo}";
-                request.UserAgent = "TestRail Client for .NET";
-                request.Method = "POST";
-                request.ContentType = "application/json";
-                request.ContentLength = 0;
-                request.Accept = "application/json";
+                var authDictionary = new Dictionary<string, string> { { "Authorization", authInfo } };
 
-                // add post data to the request
+                request.AddHeaders(authDictionary);
+                request.Accepts("application/json");
+                request.ContentType("application/json");
+
+                // Add body
                 if (!string.IsNullOrWhiteSpace(postContent))
                 {
-                    var byteArray = Encoding.UTF8.GetBytes(postContent);
-                    request.ContentLength = byteArray.Length;
-                    var requestDataStream = request.GetRequestStream();
-                    requestDataStream.Write(byteArray, 0, byteArray.Length);
-                    requestDataStream.Close();
+                    request.AddBody(postContent);
                 }
 
-                // receive the response
-                var response = (HttpWebResponse)request.GetResponse();
-                var responseDataStream = response.GetResponseStream();
-                var reader = new StreamReader(responseDataStream);
-                var responseFromServer = reader.ReadToEnd();
-                cr = new CommandResult(response.StatusCode == HttpStatusCode.OK, responseFromServer);
-                reader.Close();
-                response.Close();
+                // Send request
+                cr = request.Execute();
             }
             catch (Exception e) { cr = new CommandResult(false, e.ToString()); }
             if (!cr.WasSuccessful)
