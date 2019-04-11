@@ -4,7 +4,7 @@ using System.Linq;
 using Newtonsoft.Json.Linq;
 using TestRail.Types;
 
-namespace TestRail
+namespace TestRail.Utils
 {
     /// <summary>
     /// Helper class for Json Objects

@@ -1,5 +1,6 @@
-﻿using System;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
+using System;
+using TestRail.Utils;
 
 namespace TestRail.Types
 {
