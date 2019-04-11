@@ -1,9 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
 using System.Text;
 using TestRail.Types;
 using TestRail.Utils;
@@ -1007,6 +1005,7 @@ namespace TestRail
 
         /// <summary>makes an http post call to the testrail</summary>
         /// <param name="uri">uri of the endpoint</param>
+        /// <param name="json">the json object to include in the request</param>
         /// <returns>result of the call</returns>
         private CommandResult _CallPostEndpoint(string uri, JObject json = null)
         {
@@ -1053,7 +1052,7 @@ namespace TestRail
 
         /// <summary>Send a command to the server</summary>
         /// <param name="uri">uri to send</param>
-        /// <param name="jsonParams">parameter</param>
+        /// <param name="jsonParams">the json object to include in the request</param>
         /// <returns></returns>
         private CommandResult<ulong> _SendCommand(string uri, JObject jsonParams = null)
         {

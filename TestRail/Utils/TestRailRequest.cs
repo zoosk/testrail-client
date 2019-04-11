@@ -6,10 +6,16 @@ using System.Text;
 
 namespace TestRail.Utils
 {
+    /// <summary>
+    /// Wrapper class for building and sending an Http Web Request.
+    /// </summary>
     public class TestRailRequest
     {
         private readonly HttpWebRequest _request;
 
+        /// <summary>constructor</summary>
+        /// <param name="url">url for the request</param>
+        /// <param name="requestType">designate the request being built as a GET or POST request</param>
         public TestRailRequest(string url, string requestType)
         {
             _request = (HttpWebRequest)WebRequest.Create(url);
@@ -18,6 +24,8 @@ namespace TestRail.Utils
             _request.Method = requestType;
         }
 
+        /// <summary>add headers to the request</summary>
+        /// <param name="headers">key value pairs to be added to the headers</param>
         public void AddHeaders(IDictionary<string, string> headers)
         {
             foreach (var header in headers)
@@ -26,16 +34,22 @@ namespace TestRail.Utils
             }
         }
 
+        /// <summary>what type of data the request will accept</summary>
+        /// <param name="accept">set the type, ex: 'application/json'</param>
         public void Accepts(string accept)
         {
             _request.Accept = accept;
         }
 
+        /// <summary>what type of data the request contains</summary>
+        /// <param name="contentType">set the type, ex: 'application/json'</param>
         public void ContentType(string contentType)
         {
             _request.ContentType = contentType;
         }
 
+        /// <summary>add a body to the request</summary>
+        /// <param name="bodyString">the text to add to the body</param>
         public void AddBody(string bodyString)
         {
             var byteArray = Encoding.UTF8.GetBytes(bodyString);
@@ -48,6 +62,8 @@ namespace TestRail.Utils
             requestDataStream.Close();
         }
 
+        /// <summary>send th request and get a response</summary>
+        /// <returns>if successful, will return a new CommandResult object</returns>
         public CommandResult Execute()
         {
             var response = (HttpWebResponse)_request.GetResponse();
