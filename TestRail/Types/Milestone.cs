@@ -20,7 +20,7 @@ namespace TestRail.Types
         public string Description { get; set; }
 
         /// <summary>id of the parent milestone of the sub-milestone</summary>
-        public ulong? ParentID { private get; set; }
+        public ulong? ParentId { private get; set; }
 
         /// <summary>list of the sub-milestones</summary>
         public List<Milestone> Milestones { get; set; }
@@ -74,7 +74,7 @@ namespace TestRail.Types
             var jarray = json["milestones"] as JArray;
             if (null != jarray)
             {
-                milestone.Milestones = JsonUtility.ConvertJArrayToList(jarray, Milestone.Parse);
+                milestone.Milestones = JsonUtility.ConvertJArrayToList(jarray, Parse);
             }
 
             return milestone;
@@ -85,20 +85,20 @@ namespace TestRail.Types
         public JObject GetJson()
         {
             dynamic jsonParams = new JObject();
-            
+
             if (!string.IsNullOrWhiteSpace(Name))
             {
                 jsonParams.name = Name;
             }
 
             if (!string.IsNullOrWhiteSpace(Description))
-            { 
+            {
                 jsonParams.description = Description;
             }
 
-            if (null != ParentID)
+            if (null != ParentId)
             {
-                jsonParams.parent_id = ParentID.Value;
+                jsonParams.parent_id = ParentId.Value;
             }
 
             if (null != DueOn)

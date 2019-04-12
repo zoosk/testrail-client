@@ -1,5 +1,5 @@
-﻿using TestRail.Enums;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
+using TestRail.Enums;
 
 namespace TestRail.Types
 {

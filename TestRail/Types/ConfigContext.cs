@@ -1,11 +1,11 @@
-﻿using System.Linq;
+﻿using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
-using Newtonsoft.Json.Linq;
+using System.Linq;
 
 namespace TestRail.Types
 {
     /// <inheritdoc />
-    /// <summary>stores informations about the context for a case field's config section</summary>
+    /// <summary>stores information about the context for a case field's config section</summary>
     public class ConfigContext : BaseTestRailType
     {
         #region Public Properties

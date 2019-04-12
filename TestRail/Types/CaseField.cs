@@ -74,7 +74,7 @@ namespace TestRail.Types
 
             if (null != jarray)
             {
-                caseField.Configs = JsonUtility.ConvertJArrayToList<Config>(jarray, Config.Parse);
+                caseField.Configs = JsonUtility.ConvertJArrayToList(jarray, Config.Parse);
             }
 
             caseField.IsMulti = (bool?)json["is_multi"];
