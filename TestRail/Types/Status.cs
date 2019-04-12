@@ -2,35 +2,36 @@
 
 namespace TestRail.Types
 {
+    /// <inheritdoc />
     /// <summary>stores information about a status</summary>
     public class Status : BaseTestRailType
     {
         #region Public Properties
         /// <summary>id of the status</summary>
-        public ulong ID { get; private set; }
+        public ulong Id { get; private set; }
 
-        /// <summary></summary>
+        /// <summary>name of the status</summary>
         public string Name { get; private set; }
 
-        /// <summary></summary>
-        public string label { get; private set; }
+        /// <summary>display name of the current status</summary>
+        public string Label { get; private set; }
 
-        /// <summary></summary>
+        /// <summary>the 'dark' color being use for the current status</summary>
         public ulong ColorDark { get; private set; }
 
-        /// <summary></summary>
+        /// <summary>the 'medium' color being use for the current status</summary>
         public ulong ColorMedium { get; private set; }
 
-        /// <summary></summary>
+        /// <summary>the 'bright' color being use for the current status</summary>
         public ulong ColorBright { get; private set; }
 
-        /// <summary></summary>
+        /// <summary>whether or not the current instance is a system status</summary>
         public bool IsSystem { get; private set; }
 
-        /// <summary></summary>
+        /// <summary>whether or not the current instance is untested</summary>
         public bool IsUntested { get; private set; }
 
-        /// <summary></summary>
+        /// <summary>whether or not the current instance is finalized</summary>
         public bool IsFinal { get; private set; }
         #endregion Public Properties
 
@@ -47,20 +48,21 @@ namespace TestRail.Types
         /// <returns>Status object corresponding to the json</returns>
         public static Status Parse(JObject json)
         {
-            var s = new Status
+            var status = new Status
             {
                 JsonFromResponse = json,
-                ID = (ulong)json["id"],
+                Id = (ulong)json["id"],
                 Name = (string)json["name"],
-                label = (string)json["label"],
+                Label = (string)json["label"],
                 ColorDark = (ulong)json["color_dark"],
                 ColorMedium = (ulong)json["color_medium"],
                 ColorBright = (ulong)json["color_bright"],
                 IsSystem = (bool)json["is_system"],
                 IsUntested = (bool)json["is_untested"],
-                IsFinal = (bool)json["is_final"],
+                IsFinal = (bool)json["is_final"]
             };
-            return s;
+
+            return status;
         }
         #endregion Public Methods
     }

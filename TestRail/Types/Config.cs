@@ -2,6 +2,7 @@
 
 namespace TestRail.Types
 {
+    /// <inheritdoc />
     /// <summary>stores information about a config</summary>
     public class Config : BaseTestRailType
     {
@@ -10,7 +11,7 @@ namespace TestRail.Types
         public ConfigOption Option { get; private set; }
 
         /// <summary>Guid unique identifier as a string</summary>
-        public string ID { get; private set; }
+        public string Id { get; private set; }
 
         /// <summary>Configuration context</summary>
         public ConfigContext Context { get; private set; }
@@ -21,14 +22,15 @@ namespace TestRail.Types
         /// <param name="json">json object to parse into a Config</param>
         public static Config Parse(JObject json)
         {
-            var c = new Config
+            var config = new Config
             {
                 JsonFromResponse = json,
                 Option = ConfigOption.Parse((JObject)json["options"]),
                 Context = ConfigContext.Parse((JObject)json["context"]),
-                ID = (string)json["id"],
+                Id = (string)json["id"]
             };
-            return c;
+
+            return config;
         }
         #endregion Public Methods
     }

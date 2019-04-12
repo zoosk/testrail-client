@@ -3,30 +3,31 @@ using Newtonsoft.Json.Linq;
 
 namespace TestRail.Types
 {
+    /// <inheritdoc />
     /// <summary>stores information about a case</summary>
     public class Case : BaseTestRailType
     {
         #region Public Properties
         /// <summary>id of the case</summary>
-        public ulong? ID { get; set; }
+        public ulong? Id { get; set; }
 
         /// <summary>title of the case</summary>
         public string Title { get; set; }
 
         /// <summary>section id of the case</summary>
-        public ulong? SectionID { get; set; }
+        public ulong? SectionId { get; set; }
 
         /// <summary>type id of the case</summary>
-        public ulong? TypeID { get; set; }
+        public ulong? TypeId { get; set; }
 
         /// <summary>priority id of the case</summary>
-        public ulong? PriorityID { get; set; }
+        public ulong? PriorityId { get; set; }
 
         /// <summary>references for the case</summary>
         public string References { get; set; }
 
         /// <summary>the milestone this case was associated with</summary>
-        public ulong? MilestoneID { get; set; }
+        public ulong? MilestoneId { get; set; }
 
         /// <summary>the user who created this case</summary>
         public ulong? CreatedBy { get; set; }
@@ -41,7 +42,7 @@ namespace TestRail.Types
         public string EstimateForecast { get; set; }
 
         /// <summary>suite id for this case</summary>
-        public ulong? SuiteID { get; set; }
+        public ulong? SuiteId { get; set; }
         #endregion Public Properties
 
         #region Public Methods
@@ -57,42 +58,62 @@ namespace TestRail.Types
         /// <returns>case corresponding to the json</returns>
         public static Case Parse(JObject json)
         {
-            var c = new Case
+            var newCase = new Case
             {
                 JsonFromResponse = json,
-                ID = (ulong?)json["id"],
+                Id = (ulong?)json["id"],
                 Title = (string)json["title"],
-                SectionID = (ulong?)json["section_id"],
-                TypeID = (ulong?)json["type_id"],
-                PriorityID = (ulong?)json["priority_id"],
+                SectionId = (ulong?)json["section_id"],
+                TypeId = (ulong?)json["type_id"],
+                PriorityId = (ulong?)json["priority_id"],
                 References = (string)json["refs"],
-                MilestoneID = (ulong?)json["milestone_id"],
+                MilestoneId = (ulong?)json["milestone_id"],
                 CreatedBy = (ulong)json["created_by"],
                 CreatedOn = null == (int?)json["created_on"] ? (DateTime?)null : new DateTime(1970, 1, 1).AddSeconds((int)json["created_on"]),
                 Estimate = (string)json["estimate"],
                 EstimateForecast = (string)json["estimate_forecast"],
-                SuiteID = (ulong)json["suite_id"],
+                SuiteId = (ulong)json["suite_id"]
             };
-            return c;
+
+            return newCase;
         }
 
         /// <summary>creates a json object with the given parameters</summary>
-        /// <param name="title">title of the case</param>
-        /// <param name="typeID">(optional)the ID of the case type</param>
-        /// <param name="priorityID">(optional)the id of the case priority</param>
-        /// <param name="estimate">(optional)the estimate, e.g. "30s" or "1m 45s"</param>
-        /// <param name="milestoneID">(optional)the ID of the milestone to link to the test case</param>
-        /// <param name="refs">(optional)a comma-separated list of references/requirements</param>
         /// <returns>json object for case</returns>
         public virtual JObject GetJson()
         {
             dynamic jsonParams = new JObject();
-            if (!string.IsNullOrWhiteSpace(Title)) { jsonParams.title = Title; }
-            if (null != TypeID) { jsonParams.type_id = TypeID.Value; }
-            if (null != PriorityID) { jsonParams.priority_id = PriorityID.Value; }
-            if (!string.IsNullOrWhiteSpace(Estimate)) { jsonParams.estimate = Estimate; }
-            if (null != MilestoneID) { jsonParams.milestone_id = MilestoneID.Value; }
-            if (!string.IsNullOrWhiteSpace(References)) { jsonParams.refs = References; }
+
+            if (!string.IsNullOrWhiteSpace(Title))
+            {
+                jsonParams.title = Title;
+            }
+
+            if (null != TypeId)
+            {
+                jsonParams.type_id = TypeId.Value;
+            }
+
+            if (null != PriorityId)
+            {
+                jsonParams.priority_id = PriorityId.Value;
+            }
+
+            if (!string.IsNullOrWhiteSpace(Estimate))
+            {
+                jsonParams.estimate = Estimate;
+            }
+
+            if (null != MilestoneId)
+            {
+                jsonParams.milestone_id = MilestoneId.Value;
+            }
+
+            if (!string.IsNullOrWhiteSpace(References))
+            {
+                jsonParams.refs = References;
+            }
+
             return jsonParams;
         }
         #endregion Public Methods

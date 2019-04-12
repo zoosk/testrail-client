@@ -1,22 +1,24 @@
-﻿using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using TestRail.Utils;
 
 namespace TestRail.Types
 {
+    /// <inheritdoc />
+    /// <summary>store information about a configuration group in testrail</summary>
     public class ConfigurationGroup : BaseTestRailType
     {
         #region Public Properties
-        // TODO: Add summary
-        public ulong ID { get; set; }
+        /// <summary>id of the current configuration group</summary>
+        public ulong Id { get; set; }
 
-        // TODO: Add summary
-        public ulong ProjectID { get; set; }
+        /// <summary>project id associated with the current configuration group</summary>
+        public ulong ProjectId { get; set; }
 
-        // TODO: Add summary
+        /// <summary>name of the currenct configuration group</summary>
         public string Name { get; set; }
 
-        // TODO: Add summary
+        /// <summary>list of configuations associated with the current configuration group</summary>
         public List<Configuration> Configurations { get; set; }
         #endregion Public Properties
 
@@ -29,16 +31,18 @@ namespace TestRail.Types
             var configurationGroup = new ConfigurationGroup
             {
                 JsonFromResponse = json,
-                ID = (ulong)json["id"],
+                Id = (ulong)json["id"],
                 Name = (string)json["name"],
-                ProjectID = (ulong)json["project_id"],
+                ProjectId = (ulong)json["project_id"]
             };
 
             var jarray = json["configs"] as JArray;
+
             if (null != jarray)
             {
                 configurationGroup.Configurations = JsonUtility.ConvertJArrayToList(jarray, Configuration.Parse);
             }
+
             return configurationGroup;
         }
         #endregion Public Methods

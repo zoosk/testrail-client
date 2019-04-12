@@ -2,12 +2,13 @@
 
 namespace TestRail.Types
 {
+    /// <inheritdoc />
     /// <summary>stores information about a section</summary>
     public class Section : BaseTestRailType
     {
         #region Public Properties
         /// <summary>id of the section</summary>
-        public ulong? ID { get; set; }
+        public ulong? Id { get; set; }
 
         /// <summary>name of the section</summary>
         public string Name { get; set; }
@@ -16,7 +17,7 @@ namespace TestRail.Types
         public string Description { get; set; }
 
         /// <summary>id of the parent section of the section</summary>
-        public ulong? ParentID { get; set; }
+        public ulong? ParentId { get; set; }
 
         /// <summary>depth of the section</summary>
         public uint? Depth { get; set; }
@@ -25,7 +26,7 @@ namespace TestRail.Types
         public uint? DisplayOrder { get; set; }
 
         /// <summary>id of the suite associated with the section</summary>
-        public ulong? SuiteID { get; set; }
+        public ulong? SuiteId { get; set; }
         #endregion Public Properties
 
         #region Public Methods
@@ -41,18 +42,19 @@ namespace TestRail.Types
         /// <returns>section corresponding to the json</returns>
         public static Section Parse(JObject json)
         {
-            var s = new Section
+            var section = new Section
             {
                 JsonFromResponse = json,
-                ID = (ulong?)json["id"],
+                Id = (ulong?)json["id"],
                 Name = (string)json["name"],
                 Description = (string)json["description"],
-                ParentID = (ulong?)json["parent_id"],
+                ParentId = (ulong?)json["parent_id"],
                 Depth = (uint?)json["depth"],
                 DisplayOrder = (uint?)json["display_order"],
-                SuiteID = (ulong?)json["suite_id"],
+                SuiteId = (ulong?)json["suite_id"]
             };
-            return s;
+
+            return section;
         }
 
         /// <summary>Creates a json object for this class</summary>
@@ -60,8 +62,8 @@ namespace TestRail.Types
         public JObject GetJson()
         {
             dynamic jsonParams = new JObject();
-            if (null != SuiteID) { jsonParams.suite_id = SuiteID.Value; }
-            if (null != ParentID) { jsonParams.parent_id = ParentID.Value; }
+            if (null != SuiteId) { jsonParams.suite_id = SuiteId.Value; }
+            if (null != ParentId) { jsonParams.parent_id = ParentId.Value; }
             if (!string.IsNullOrWhiteSpace(Name)) { jsonParams.name = Name; }
             if (!string.IsNullOrWhiteSpace(Description)) { jsonParams.description = Description; }
             return jsonParams;

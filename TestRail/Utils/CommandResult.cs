@@ -1,10 +1,12 @@
 ﻿using System;
 
-namespace TestRail
+namespace TestRail.Utils
 {
+    /// <inheritdoc />
     /// <summary>represents the result of a command </summary>
     public class CommandResult : CommandResult<string>
     {
+        /// <inheritdoc />
         /// <summary>constructor</summary>
         /// <param name="wasSuccessful">true if the command was successful</param>
         /// <param name="result">result of the command</param>

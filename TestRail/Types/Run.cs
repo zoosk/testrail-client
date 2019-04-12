@@ -4,12 +4,13 @@ using Newtonsoft.Json.Linq;
 
 namespace TestRail.Types
 {
+    /// <inheritdoc />
     /// <summary>stores information about a run</summary>
     public class Run : BaseTestRailType
     {
         #region Public Properties
         /// <summary>id of the run</summary>
-        public ulong? ID { get; private set; }
+        public ulong? Id { get; private set; }
 
         /// <summary>name of the run</summary>
         public string Name { get; set; }
@@ -18,10 +19,10 @@ namespace TestRail.Types
         public string Description { get; set; }
 
         /// <summary>id of the suite associated with the run</summary>
-        public ulong? SuiteID { get; set; }
+        public ulong? SuiteId { get; set; }
 
         /// <summary>id of the milestone associated with the run</summary>
-        public ulong? MilestoneID { get; set; }
+        public ulong? MilestoneId { get; set; }
 
         /// <summary>config for the run</summary>
         public string Config { get; private set; }
@@ -51,46 +52,46 @@ namespace TestRail.Types
         public uint? FailedCount { get; private set; }
 
         /// <summary>id of the project associated with the run</summary>
-        public ulong? ProjectID { get; private set; }
+        public ulong? ProjectId { get; private set; }
 
         /// <summary>id of the plan associated with the run</summary>
-        public ulong? PlanID { get; private set; }
+        public ulong? PlanId { get; private set; }
 
         /// <summary>is of the user it is assigned to</summary>
         public ulong? AssignedTo { get; set; }
 
-        /// <summary></summary>
+        /// <summary>true if the test run includes all test cases and false otherwise</summary>
         public bool IncludeAll { get; set; }
 
-        /// <summary></summary>
+        /// <summary>the amount of tests in the test run with the respective custom status</summary>
         public ulong CustomStatus1Count { get; private set; }
 
-        /// <summary></summary>
+        /// <summary>the amount of tests in the test run with the respective custom status</summary>
         public ulong CustomStatus2Count { get; private set; }
 
-        /// <summary></summary>
+        /// <summary>the amount of tests in the test run with the respective custom status</summary>
         public ulong CustomStatus3Count { get; private set; }
 
-        /// <summary></summary>
+        /// <summary>the amount of tests in the test run with the respective custom status</summary>
         public ulong CustomStatus4Count { get; private set; }
 
-        /// <summary></summary>
+        /// <summary>the amount of tests in the test run with the respective custom status</summary>
         public ulong CustomStatus5Count { get; private set; }
 
-        /// <summary></summary>
+        /// <summary>the amount of tests in the test run with the respective custom status</summary>
         public ulong CustomStatus6Count { get; private set; }
 
-        /// <summary></summary>
+        /// <summary>the amount of tests in the test run with the respective custom status</summary>
         public ulong CustomStatus7Count { get; private set; }
 
-        /// <summary></summary>
+        /// <summary>the address/URL of the test run in the user interface</summary>
         public string Url { get; private set; }
 
         /// <summary>an array of case IDs for the custom case selection</summary>
-        public HashSet<ulong> CaseIDs { get; set; }
+        public HashSet<ulong> CaseIds { get; set; }
 
         /// <summary>an array of case IDs for the custom case selection</summary>
-        public List<ulong> ConfigIDs { get; set; }
+        public List<ulong> ConfigIds { get; set; }
         #endregion Public Properties
 
         #region Public Methods
@@ -106,14 +107,14 @@ namespace TestRail.Types
         /// <returns>run corresponding to the json</returns>
         public static Run Parse(JObject json)
         {
-            var r = new Run
+            var run = new Run
             {
                 JsonFromResponse = json,
-                ID = (ulong?)json["id"],
+                Id = (ulong?)json["id"],
                 Name = (string)json["name"],
                 Description = (string)json["description"],
-                SuiteID = (ulong?)json["suite_id"],
-                MilestoneID = (ulong?)json["milestone_id"],
+                SuiteId = (ulong?)json["suite_id"],
+                MilestoneId = (ulong?)json["milestone_id"],
                 Config = (string)json["config"],
                 IsCompleted = (bool?)json["is_completed"],
                 CompletedOn = null == (int?)json["completed_on"] ? (DateTime?)null : new DateTime(1970, 1, 1).AddSeconds((int)json["completed_on"]),
@@ -123,8 +124,8 @@ namespace TestRail.Types
                 UntestedCount = (uint?)json["untested_count"],
                 RetestCount = (uint?)json["retest_count"],
                 FailedCount = (uint?)json["failed_count"],
-                ProjectID = (ulong?)json["project_id"],
-                PlanID = (ulong?)json["plan_id"],
+                ProjectId = (ulong?)json["project_id"],
+                PlanId = (ulong?)json["plan_id"],
                 CustomStatus1Count = (ulong)json["custom_status1_count"],
                 CustomStatus2Count = (ulong)json["custom_status2_count"],
                 CustomStatus3Count = (ulong)json["custom_status3_count"],
@@ -134,9 +135,10 @@ namespace TestRail.Types
                 CustomStatus7Count = (ulong)json["custom_status7_count"],
                 AssignedTo = (ulong?)json["assignedto_id"],
                 IncludeAll = (bool)json["include_all"],
-                Url = (string)json["url"],
+                Url = (string)json["url"]
             };
-            return r;
+
+            return run;
         }
 
         /// <summary>Creates a json object for this class</summary>
@@ -144,32 +146,58 @@ namespace TestRail.Types
         public JObject GetJson()
         {
             dynamic jsonParams = new JObject();
-            if (null != SuiteID) { jsonParams.suite_id = SuiteID; }
-            if (!string.IsNullOrWhiteSpace(Name)) { jsonParams.name = Name; }
-            if (null != Description) { jsonParams.description = Description; }
-            if (null != MilestoneID) { jsonParams.milestone_id = MilestoneID; }
-            if (null != AssignedTo) { jsonParams.assignedto_id = AssignedTo; }
+
+            if (null != SuiteId)
+            {
+                jsonParams.suite_id = SuiteId;
+            }
+
+            if (!string.IsNullOrWhiteSpace(Name))
+            {
+                jsonParams.name = Name;
+            }
+
+            if (null != Description)
+            {
+                jsonParams.description = Description;
+            }
+
+            if (null != MilestoneId)
+            {
+                jsonParams.milestone_id = MilestoneId;
+            }
+
+            if (null != AssignedTo)
+            {
+                jsonParams.assignedto_id = AssignedTo;
+            }
+
             jsonParams.include_all = IncludeAll;
 
-            if (null != CaseIDs && 0 < CaseIDs.Count)
+            if (null != CaseIds && 0 < CaseIds.Count)
             {
                 var jarray = new JArray();
-                foreach (var caseID in CaseIDs)
+
+                foreach (var caseId in CaseIds)
                 {
-                    jarray.Add(caseID);
+                    jarray.Add(caseId);
                 }
+
                 jsonParams.case_ids = jarray;
             }
 
-            if (null != ConfigIDs && 0 < ConfigIDs.Count)
+            if (null != ConfigIds && 0 < ConfigIds.Count)
             {
                 var jarray = new JArray();
-                foreach (var configID in ConfigIDs)
+
+                foreach (var configId in ConfigIds)
                 {
-                    jarray.Add(configID);
+                    jarray.Add(configId);
                 }
+
                 jsonParams.config_ids = jarray;
             }
+
             return jsonParams;
         }
         #endregion Public Methods
