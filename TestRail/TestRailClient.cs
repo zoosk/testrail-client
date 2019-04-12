@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using TestRail.Enums;
 using TestRail.Types;
@@ -109,8 +110,8 @@ namespace TestRail
         /// <param name="assignedToId">id of the user the result is assigned to</param>
         /// <param name="customs">(optional)custom json params to add to the current json parameters</param>
         /// <returns>result of the command</returns>
-        public CommandResult<ulong> AddResult(ulong testId, ResultStatus? status, string comment = null, string version = null,
-            TimeSpan? elapsed = null, string defects = null, ulong? assignedToId = null, JObject customs = null)
+        public RequestResult<IList<Result>> AddResult(ulong testId, ResultStatus? status, string comment = null,
+            string version = null, TimeSpan? elapsed = null, string defects = null, ulong? assignedToId = null, JObject customs = null)
         {
             var uri = _CreateUri_(CommandType.Add, CommandAction.Result, testId);
 
@@ -127,7 +128,7 @@ namespace TestRail
 
             var jsonParams = JsonUtility.Merge(result.GetJson(), customs);
 
-            return _SendCommand(uri, jsonParams);
+            return SendCommand<IList<Result>>(uri, jsonParams);
         }
 
         /// <summary>creates a new test result for a test run and case combination</summary>
@@ -1290,11 +1291,48 @@ namespace TestRail
             return commandResult;
         }
 
-        private CommandResult<BaseTestRailType> _SendCommand()
+        private RequestResult<T> SendCommand<T>(string uri, JObject jsonParams = null)
         {
-            // TODO: This method will be used my API calls that should
-            // return an object.
-            throw new NotImplementedException();
+            try
+            {
+                var result = _CallPostEndpoint(uri, jsonParams);
+
+                return new RequestResult<T>(HttpStatusCode.OK, result.Value);
+            }
+
+            // If there is an error, will try to create a new result object
+            // with the corresponding response code
+            catch (Exception thrownException)
+            {
+                var message = thrownException.Message;
+
+                // Return a response object for the most popular errors
+                if (message.Contains("400"))
+                    return new RequestResult<T>(HttpStatusCode.BadRequest, thrownException: thrownException);
+
+                if (message.Contains("401"))
+                    return new RequestResult<T>(HttpStatusCode.Unauthorized, thrownException: thrownException);
+
+                if (message.Contains("403"))
+                    return new RequestResult<T>(HttpStatusCode.Forbidden, thrownException: thrownException);
+
+                if (message.Contains("404"))
+                    return new RequestResult<T>(HttpStatusCode.NotFound, thrownException: thrownException);
+
+                if (message.Contains("500"))
+                    return new RequestResult<T>(HttpStatusCode.InternalServerError, thrownException: thrownException);
+
+                if (message.Contains("502"))
+                    return new RequestResult<T>(HttpStatusCode.BadGateway, thrownException: thrownException);
+
+                if (message.Contains("503"))
+                    return new RequestResult<T>(HttpStatusCode.ServiceUnavailable, thrownException: thrownException);
+
+                if (message.Contains("504"))
+                    return new RequestResult<T>(HttpStatusCode.GatewayTimeout, thrownException: thrownException);
+
+                throw;
+            }
         }
 
         /// <summary>Send a command to the server</summary>
