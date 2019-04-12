@@ -27,7 +27,7 @@ namespace TestRail.Utils
         /// <summary>exception thrown by the command</summary>
         public Exception Exception { get; set; }
 
-        /// <summary>parameterless constructor</summary>
+        /// <summary>default constructor</summary>
         public CommandResult()
         {
             WasSuccessful = false;

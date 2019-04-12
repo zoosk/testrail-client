@@ -16,22 +16,25 @@ namespace TestRail.Utils
         internal static TimeSpan? FromString(String value)
         {
             TimeSpan? retVal = null;
+
             if (!string.IsNullOrWhiteSpace(value))
             {
-                int days = 0;
-                int hours = 0;
-                int minutes = 0;
-                int seconds = 0;
+                var days = 0;
+                var hours = 0;
+                var minutes = 0;
+                var seconds = 0;
 
-                Regex re = new Regex(@"(\d+)([a-zA-Z]+)");
-                var timesplits = value.Split(' ');
+                var re = new Regex(@"(\d+)([a-zA-Z]+)");
+                var timeSplits = value.Split(' ');
 
-                foreach (var timesplit in timesplits)
+                foreach (var timeSplit in timeSplits)
                 {
-                    Match result = re.Match(timesplit);
-                    int numeric = int.Parse(result.Groups[1].Value);
-                    string alpha = result.Groups[2].Value;
+                    var result = re.Match(timeSplit);
+                    var numeric = int.Parse(result.Groups[1].Value);
+                    var alpha = result.Groups[2].Value;
+
                     alpha = alpha.ToLower();
+
                     if (alpha.StartsWith("d"))
                     {
                         days = numeric;
@@ -53,11 +56,11 @@ namespace TestRail.Utils
                         throw new FormatException("Unknown time component");
                     }
                 }
+
                 retVal = new TimeSpan(days, hours, minutes, seconds);
             }
+
             return retVal;
         }
-
     }
 }
-
