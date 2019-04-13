@@ -100,17 +100,20 @@ namespace TestRail
         }
 
         #region Add Commands
-        /// <summary>adds a result for a test</summary>
-        /// <param name="testId">id of the test</param>
-        /// <param name="status">status of the result</param>
-        /// <param name="comment">comment to log</param>
-        /// <param name="version">version</param>
-        /// <param name="elapsed">time elapsed to complete the test</param>
-        /// <param name="defects">defects associated with the result</param>
-        /// <param name="assignedToId">id of the user the result is assigned to</param>
-        /// <param name="customs">(optional)custom json params to add to the current json parameters</param>
-        /// <returns>result of the command</returns>
-        public RequestResult<IList<Result>> AddResult(ulong testId, ResultStatus? status, string comment = null,
+        /// <summary>
+        /// Adds a new test result, comment or assigns a test.
+        /// It's recommended to use AddResults() instead if you plan to add results for multiple tests.
+        /// </summary>
+        /// <param name="testId">The ID of the test the result should be added to.</param>
+        /// <param name="status">The test status.</param>
+        /// <param name="comment">The comment/description for the test result.</param>
+        /// <param name="version">The version or build you tested against.</param>
+        /// <param name="elapsed">The time it took to execute the test, e.g. "30s" or "1m 45s".</param>
+        /// <param name="defects">A comma-separated list of defects to link to the test result.</param>
+        /// <param name="assignedToId">The ID of a user the test should be assigned to.</param>
+        /// <param name="customs">Custom fields are supported as well and must be submitted with their system name, prefixed with 'custom_', e.g. custom_comment</param>
+        /// <returns>If successful, this method will return the new test result.</returns>
+        public RequestResult<Result> AddResult(ulong testId, ResultStatus? status, string comment = null,
             string version = null, TimeSpan? elapsed = null, string defects = null, ulong? assignedToId = null, JObject customs = null)
         {
             var uri = _CreateUri_(CommandType.Add, CommandAction.Result, testId);
@@ -128,28 +131,26 @@ namespace TestRail
 
             var jsonParams = JsonUtility.Merge(result.GetJson(), customs);
 
-            return SendCommand<IList<Result>>(uri, jsonParams);
+            return SendCommand<Result>(uri, jsonParams);
         }
 
-        /// <summary>creates a new test result for a test run and case combination</summary>
-        /// <param name="runId">the id of the test run</param>
-        /// <param name="caseId">the id of the test case</param>
-        /// <param name="status">status of the result</param>
-        /// <param name="comment">comment to log</param>
-        /// <param name="version">version</param>
-        /// <param name="elapsed">time elapsed to complete the test</param>
-        /// <param name="defects">defects associated with the result</param>
-        /// <param name="assignedToId">id of the user the result is assigned to</param>
-        /// <param name="customs">(optional)custom json params to add to the current json parameters</param>
-        /// <returns>if successful, this method returns the id of the case that was updated</returns>
-        public CommandResult<ulong> AddResultForCase(ulong runId, ulong caseId, ResultStatus? status, string comment = null,
+        /// <summary>
+        /// Adds a new test result, comment or assigns a test.
+        /// It's recommended to use AddResultsForCases() instead if you plan to add results for multiple test cases.
+        /// </summary>
+        /// <param name="runId">The ID of the test run.</param>
+        /// <param name="caseId">The ID of the test case.</param>
+        /// <param name="status">The test status.</param>
+        /// <param name="comment">The comment/description for the test result.</param>
+        /// <param name="version">The version or build you tested against.</param>
+        /// <param name="elapsed">The time it took to execute the test, e.g. "30s" or "1m 45s".</param>
+        /// <param name="defects">A comma-separated list of defects to link to the test result.</param>
+        /// <param name="assignedToId">The ID of a user the test should be assigned to.</param>
+        /// <param name="customs">Custom fields are supported as well and must be submitted with their system name, prefixed with 'custom_', e.g. custom_comment</param>
+        /// <returns>If successful, this method will return the new test result.</returns>
+        public RequestResult<Result> AddResultForCase(ulong runId, ulong caseId, ResultStatus? status, string comment = null,
             string version = null, TimeSpan? elapsed = null, string defects = null, ulong? assignedToId = null, JObject customs = null)
         {
-            // TODO: - At this time, this method only returns the id of the case that was updated.
-            // We should return result object in the same format as GetResult() instead,
-            // but with a single result instead of a list of results as the official API documentation suggests.
-            // http://docs.gurock.com/testrail-api2/reference-results#add_result_for_case
-
             var uri = _CreateUri_(CommandType.Add, CommandAction.ResultForCase, runId, caseId);
 
             var result = new Result
@@ -164,24 +165,23 @@ namespace TestRail
 
             var jsonParams = JsonUtility.Merge(result.GetJson(), customs);
 
-            return _SendCommand(uri, jsonParams);
+            return SendCommand<Result>(uri, jsonParams);
         }
 
         // TODO: - Add a method called AddResultsForCases()
         // http://docs.gurock.com/testrail-api2/reference-results#add_results_for_cases
 
-        /// <summary>adds a run</summary>
-        /// <param name="projectId">id of the project</param>
-        /// <param name="suiteId">id of the suite</param>
-        /// <param name="name">name of the run</param>
-        /// <param name="description">description of the run</param>
-        /// <param name="milestoneId">id of the milestone</param>
-        /// <param name="assignedToId">id of the user the run should be assigned to</param>
-        /// <param name="caseIds">(optional)an array of case IDs for the custom case selection, if null, then will include all
-        /// case ids from the suite </param>
-        /// <param name="customs">(optional)custom json params to add to the current json parameters</param>
-        /// <returns>result of the command</returns>
-        public CommandResult<ulong> AddRun(ulong projectId, ulong suiteId, string name, string description, ulong milestoneId,
+        /// <summary>Creates a new test run.</summary>
+        /// <param name="projectId">The ID of the project the test run should be added to.</param>
+        /// <param name="suiteId">The ID of the test suite for the test run (optional if the project is operating in single suite mode, required otherwise).</param>
+        /// <param name="name">	The name of the test run.</param>
+        /// <param name="description">The description of the test run.</param>
+        /// <param name="milestoneId">The ID of the milestone to link to the test run.</param>
+        /// <param name="assignedToId">The ID of the user the test run should be assigned to.</param>
+        /// <param name="caseIds">An array of case IDs for the custom case selection.</param>
+        /// <param name="customs">Custom fields are supported as well and must be submitted with their system name, prefixed with 'custom_', e.g. custom_comment</param>
+        /// <returns>If successful, this method returns the new test run.</returns>
+        public RequestResult<Run> AddRun(ulong projectId, ulong suiteId, string name, string description, ulong milestoneId,
             ulong? assignedToId = null, HashSet<ulong> caseIds = null, JObject customs = null)
         {
             var includeAll = true;
@@ -198,7 +198,7 @@ namespace TestRail
 
                 else
                 {
-                    return new CommandResult<ulong>(false, 0, new Exception("Case IDs not found in the Suite"));
+                    return new RequestResult<Run>(HttpStatusCode.BadRequest, thrownException: new Exception("Case ids not found in the Suite"));
                 }
             }
 
@@ -217,7 +217,7 @@ namespace TestRail
 
             var jsonParams = JsonUtility.Merge(run.GetJson(), customs);
 
-            return _SendCommand(uri, jsonParams);
+            return SendCommand<Run>(uri, jsonParams);
         }
 
         /// <summary>Add a case</summary>
@@ -233,20 +233,20 @@ namespace TestRail
         public CommandResult<ulong> AddCase(ulong sectionId, string title, ulong? typeId = null, ulong? priorityId = null,
             string estimate = null, ulong? milestoneId = null, string refs = null, JObject customFields = null)
         {
+            // TODO: Update to RequestResult
             return _AddCase_(sectionId, title, typeId, priorityId, estimate, milestoneId, refs, customFields);
         }
 
-        /// <summary>Add a project</summary>
-        /// <param name="projectName">the name of the project</param>
-        /// <param name="announcement">(optional)the description of the project</param>
-        /// <param name="showAnnouncement">(optional)true if the announcement should be displayed on the project's
-        /// overview page and false otherwise</param>
-        /// <returns>result of the command</returns>
-        public CommandResult<ulong> AddProject(string projectName, string announcement = null, bool? showAnnouncement = null)
+        /// <summary>Creates a new project (admin status required).</summary>
+        /// <param name="projectName">The name of the project (required).</param>
+        /// <param name="announcement">The description of the project.</param>
+        /// <param name="showAnnouncement">True if the announcement should be displayed on the project's overview page and false otherwise.</param>
+        /// <returns>If successful, this method returns the new project.</returns>
+        public RequestResult<Project> AddProject(string projectName, string announcement = null, bool? showAnnouncement = null)
         {
             if (string.IsNullOrWhiteSpace(projectName))
             {
-                return new CommandResult<ulong>(false, 0, new ArgumentNullException(nameof(projectName)));
+                return new RequestResult<Project>(HttpStatusCode.BadRequest, thrownException: new ArgumentNullException(nameof(projectName)));
             }
 
             var uri = _CreateUri_(CommandType.Add, CommandAction.Project);
@@ -258,21 +258,21 @@ namespace TestRail
                 ShowAnnouncement = showAnnouncement
             };
 
-            return _SendCommand(uri, project.GetJson());
+            return SendCommand<Project>(uri, project.GetJson());
         }
 
-        /// <summary>creates a new section</summary>
-        /// <param name="projectId">the ID of the project</param>
-        /// <param name="suiteId">the ID of the test suite</param>
-        /// <param name="name">the name of the section</param>
-        /// <param name="parentId">(optional)the ID of the parent section (to build section hierarchies)</param>
-        /// <param name="description">(optional)the description section</param>
-        /// <returns>result of the command</returns>
-        public CommandResult<ulong> AddSection(ulong projectId, ulong suiteId, string name, ulong? parentId = null, string description = null)
+        /// <summary>Creates a new section.</summary>
+        /// <param name="projectId">The ID of the project.</param>
+        /// <param name="suiteId">The ID of the test suite (ignored if the project is operating in single suite mode, required otherwise).</param>
+        /// <param name="name">The name of the section (required).</param>
+        /// <param name="parentId">The ID of the parent section (to build section hierarchies).</param>
+        /// <param name="description">The description of the section (added with TestRail 4.0).</param>
+        /// <returns>If successful, this method returns the new section.</returns>
+        public RequestResult<Section> AddSection(ulong projectId, ulong suiteId, string name, ulong? parentId = null, string description = null)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                return new CommandResult<ulong>(false, 0, new ArgumentNullException(nameof(name)));
+                return new RequestResult<Section>(HttpStatusCode.BadRequest, thrownException: new ArgumentNullException(nameof(name)));
             }
 
             var uri = _CreateUri_(CommandType.Add, CommandAction.Section, projectId);
@@ -285,19 +285,19 @@ namespace TestRail
                 Description = description
             };
 
-            return _SendCommand(uri, section.GetJson());
+            return SendCommand<Section>(uri, section.GetJson());
         }
 
-        /// <summary>Creates a new test suite</summary>
-        /// <param name="projectId">the ID of the project the test suite should be added to</param>
-        /// <param name="name">the name of the test suite</param>
-        /// <param name="description">(optional)the description of the test suite</param>
-        /// <returns>result of the command</returns>
-        public CommandResult<ulong> AddSuite(ulong projectId, string name, string description = null)
+        /// <summary>Creates a new test suite.</summary>
+        /// <param name="projectId">The ID of the project the test suite should be added to.</param>
+        /// <param name="name">The name of the test suite (required).</param>
+        /// <param name="description">The description of the test suite.</param>
+        /// <returns>If successful, this method returns the new test suite.</returns>
+        public RequestResult<Suite> AddSuite(ulong projectId, string name, string description = null)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                return new CommandResult<ulong>(false, 0, new ArgumentNullException(nameof(name)));
+                return new RequestResult<Suite>(HttpStatusCode.BadRequest, thrownException: new ArgumentNullException(nameof(name)));
             }
 
             var uri = _CreateUri_(CommandType.Add, CommandAction.Suite, projectId);
@@ -308,24 +308,23 @@ namespace TestRail
                 Description = description
             };
 
-            return _SendCommand(uri, suite.GetJson());
+            return SendCommand<Suite>(uri, suite.GetJson());
         }
 
-        /// <summary>creates a new plan</summary>
-        /// <param name="projectId">id of the project the test plan should be added to</param>
-        /// <param name="name">name of the test plan</param>
-        /// <param name="description">(optional)description of the test plan</param>
-        /// <param name="milestoneId">(optional)id of the milestone to link the test plan</param>
-        /// <param name="entries">an array of objects describing the test runs of the plan</param>
-        /// <param name="customs">(optional)custom json params to add to the current json parameters</param>
-        /// <returns>result of the command</returns>
-        public CommandResult<ulong> AddPlan(ulong projectId, string name, string description = null,
-            ulong? milestoneId = null, List<PlanEntry> entries = null, JObject customs = null)// TODO: - Add config ids here
-        // , params ulong[] suiteIDs)
+        /// <summary>Creates a new test plan.</summary>
+        /// <param name="projectId">The ID of the project the test plan should be added to.</param>
+        /// <param name="name">The name of the test plan (required).</param>
+        /// <param name="description">The description of the test plan.</param>
+        /// <param name="milestoneId">The ID of the milestone to link to the test plan.</param>
+        /// <param name="entries">An array of objects describing the test runs of the plan.</param>
+        /// <param name="customs">Custom fields are supported as well and must be submitted with their system name, prefixed with 'custom_', e.g. custom_comment</param>
+        /// <returns>If successful, this method returns the new test plan.</returns>
+        public RequestResult<Plan> AddPlan(ulong projectId, string name, string description = null, ulong? milestoneId = null,
+            List<PlanEntry> entries = null, JObject customs = null)// TODO: - Add config ids here: , params ulong[] suiteIDs)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                return new CommandResult<ulong>(false, 0, new ArgumentNullException(nameof(name)));
+                return new RequestResult<Plan>(HttpStatusCode.BadRequest, thrownException: new ArgumentNullException(nameof(name)));
             }
 
             var uri = _CreateUri_(CommandType.Add, CommandAction.Plan, projectId);
@@ -340,24 +339,20 @@ namespace TestRail
 
             var jsonParams = JsonUtility.Merge(plan.GetJson(), customs);
 
-            return _SendCommand(uri, jsonParams);
+            return SendCommand<Plan>(uri, jsonParams);
         }
 
-        /// <summary>Creates a new test run for a test plan</summary>
-        /// <param name="planId">the ID of the plan the test run should be added to</param>
-        /// <param name="suiteId">the ID of the test suite for the test run</param>
-        /// <param name="name">(optional)the name of the test run</param>
-        /// <param name="assignedToId">(optional)the ID of the user the test run should be assigned to</param>
-        /// <param name="caseIds">(optional)an array of case IDs for the custom case selection</param>
-        /// <param name="customs">(optional)custom json params to add to the current json parameters</param>
-        /// <returns>if successful, this method returns the id of the plan that was updated</returns>
-        public CommandResult<ulong> AddPlanEntry(ulong planId, ulong suiteId, string name = null,
-            ulong? assignedToId = null, List<ulong> caseIds = null, JObject customs = null)
+        /// <summary>Adds one or more new test runs to a test plan.</summary>
+        /// <param name="planId">The ID of the plan the test runs should be added to.</param>
+        /// <param name="suiteId">The ID of the test suite for the test run(s) (required).</param>
+        /// <param name="name">The name of the test run(s).</param>
+        /// <param name="assignedToId">The ID of the user the test run(s) should be assigned to.</param>
+        /// <param name="caseIds">An array of case IDs for the custom case selection.</param>
+        /// <param name="customs">Custom fields are supported as well and must be submitted with their system name, prefixed with 'custom_', e.g. custom_comment</param>
+        /// <returns>If successful, this method returns the new test plan entry including test runs.</returns>
+        public RequestResult<PlanEntry> AddPlanEntry(ulong planId, ulong suiteId, string name = null, ulong? assignedToId = null,
+            List<ulong> caseIds = null, JObject customs = null)
         {
-            // TODO: - At this time, this method only returns the id of the plan entry that was updated.
-            // We should return the plan entry object instead as the official API documentation suggests.
-            // http://docs.gurock.com/testrail-api2/reference-plans#add_plan_entry
-
             var uri = _CreateUri_(CommandType.Add, CommandAction.PlanEntry, planId);
 
             var planEntry = new PlanEntry
@@ -370,17 +365,17 @@ namespace TestRail
 
             var jsonParams = JsonUtility.Merge(planEntry.GetJson(), customs);
 
-            return _SendCommand(uri, jsonParams);
+            return SendCommand<PlanEntry>(uri, jsonParams);
         }
 
-        /// <summary>adds a milestone</summary>
-        /// <param name="projectId">id of the project</param>
-        /// <param name="name">name of the milestone</param>
-        /// <param name="description">(optional)description of the milestone</param>
-        /// <param name="parentId">(optional)parent milestone</param> 
-        /// <param name="dueOn">(optional)date on which the milestone is due</param>
-        /// <returns>result of the command</returns>
-        public CommandResult<ulong> AddMilestone(ulong projectId, string name, string description = null, ulong? parentId = null, DateTime? dueOn = null)
+        /// <summary>Creates a new milestone.</summary>
+        /// <param name="projectId">The ID of the project the milestone should be added to.</param>
+        /// <param name="name">The name of the milestone (required).</param>
+        /// <param name="description">The description of the milestone.</param>
+        /// <param name="parentId">The ID of the parent milestone, if any (for sub-milestones) (available since TestRail 5.3).</param> 
+        /// <param name="dueOn">The due date of the milestone (as UNIX timestamp).</param>
+        /// <returns>If successful, this method returns the new milestone.</returns>
+        public RequestResult<Milestone> AddMilestone(ulong projectId, string name, string description = null, ulong? parentId = null, DateTime? dueOn = null)
         {
             var uri = _CreateUri_(CommandType.Add, CommandAction.Milestone, projectId);
 
@@ -392,7 +387,7 @@ namespace TestRail
                 ParentId = parentId
             };
 
-            return _SendCommand(uri, milestone.GetJson());
+            return SendCommand<Milestone>(uri, milestone.GetJson());
         }
         #endregion Add Commands
 
