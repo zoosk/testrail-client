@@ -220,21 +220,39 @@ namespace TestRail
             return SendCommand<Run>(uri, jsonParams);
         }
 
-        /// <summary>Add a case</summary>
-        /// <param name="sectionId">section id to add the case to</param>
-        /// <param name="title">title of the case</param>
-        /// <param name="typeId">(optional)the ID of the case type</param>
-        /// <param name="priorityId">(optional)the id of the case priority</param>
-        /// <param name="estimate">(optional)the estimate, e.g. "30s" or "1m 45s"</param>
-        /// <param name="milestoneId">(optional)the ID of the milestone to link to the test case</param>
-        /// <param name="refs">(optional)a comma-separated list of references/requirements</param>
-        /// <param name="customFields">(optional)a json object for custom fields</param>
-        /// <returns>result of the command</returns>
-        public CommandResult<ulong> AddCase(ulong sectionId, string title, ulong? typeId = null, ulong? priorityId = null,
+        /// <summary>Creates a new test case.</summary>
+        /// <param name="sectionId">The ID of the section the test case should be added to.</param>
+        /// <param name="title">The title of the test case (required).</param>
+        /// <param name="typeId">The ID of the case type.</param>
+        /// <param name="priorityId">The ID of the case priority.</param>
+        /// <param name="estimate">The estimate, e.g. "30s" or "1m 45s".</param>
+        /// <param name="milestoneId">The ID of the milestone to link to the test case.</param>
+        /// <param name="refs">A comma-separated list of references/requirements.</param>
+        /// <param name="customFields">Custom fields are supported as well and must be submitted with their system name, prefixed with 'custom_', e.g. custom_preconds</param>
+        /// <returns>If successful, this method returns the new test case.</returns>
+        public RequestResult<Case> AddCase(ulong sectionId, string title, ulong? typeId = null, ulong? priorityId = null,
             string estimate = null, ulong? milestoneId = null, string refs = null, JObject customFields = null)
         {
-            // TODO: Update to RequestResult
-            return _AddCase_(sectionId, title, typeId, priorityId, estimate, milestoneId, refs, customFields);
+            if (string.IsNullOrWhiteSpace(title))
+            {
+                return new RequestResult<Case>(HttpStatusCode.BadRequest, thrownException: new ArgumentNullException(nameof(title)));
+            }
+
+            var uri = _CreateUri_(CommandType.Add, CommandAction.Case, sectionId);
+
+            var tmpCase = new Case
+            {
+                Title = title,
+                TypeId = typeId,
+                PriorityId = priorityId,
+                Estimate = estimate,
+                MilestoneId = milestoneId,
+                References = refs
+            };
+
+            var jsonParams = JsonUtility.Merge(tmpCase.GetJson(), customFields);
+
+            return SendCommand<Case>(uri, jsonParams);
         }
 
         /// <summary>Creates a new project (admin status required).</summary>
@@ -410,7 +428,26 @@ namespace TestRail
             // We should return the case object instead as the official API documentation suggests.
             // http://docs.gurock.com/testrail-api2/reference-cases#update_case
 
-            return _UpdateCase_(caseId, title, typeId, priorityId, estimate, milestoneId, refs, customs);
+            if (string.IsNullOrWhiteSpace(title))
+            {
+                return new CommandResult<ulong>(false, 0, new ArgumentNullException(nameof(title)));
+            }
+
+            var uri = _CreateUri_(CommandType.Update, CommandAction.Case, caseId);
+
+            var tmpCase = new Case
+            {
+                Title = title,
+                TypeId = typeId,
+                PriorityId = priorityId,
+                Estimate = estimate,
+                MilestoneId = milestoneId,
+                References = refs
+            };
+
+            var jsonParams = JsonUtility.Merge(tmpCase.GetJson(), customs);
+
+            return _SendCommand(uri, jsonParams);
         }
 
         /// <summary>updates an existing milestone (partial updates are supported,
@@ -1115,76 +1152,6 @@ namespace TestRail
             var uri = $"?/api/v2/{commandString}_{actionString}{(id1.HasValue ? "/" + id1.Value : string.Empty)}{(id2.HasValue ? "/" + id2.Value : !string.IsNullOrWhiteSpace(id2Str) ? "/" + id2Str : string.Empty)}{(!string.IsNullOrWhiteSpace(options) ? options : string.Empty)}";
 
             return uri;
-        }
-
-        /// <summary>Add a case</summary>
-        /// <param name="sectionId">section id to add the case to</param>
-        /// <param name="title">title of the case</param>
-        /// <param name="typeId">(optional)the ID of the case type</param>
-        /// <param name="priorityId">(optional)the id of the case priority</param>
-        /// <param name="estimate">(optional)the estimate, e.g. "30s" or "1m 45s"</param>
-        /// <param name="milestoneId">(optional)the ID of the milestone to link to the test case</param>
-        /// <param name="refs">(optional)a comma-separated list of references/requirements</param>
-        /// <param name="customs">(optional)custom json params to add to the current json parameters</param>
-        /// <returns>result of the command</returns>
-        protected CommandResult<ulong> _AddCase_(ulong sectionId, string title, ulong? typeId = null,
-            ulong? priorityId = null, string estimate = null, ulong? milestoneId = null, string refs = null, JObject customs = null)
-        {
-            if (string.IsNullOrWhiteSpace(title))
-            {
-                return new CommandResult<ulong>(false, 0, new ArgumentNullException(nameof(title)));
-            }
-
-            var uri = _CreateUri_(CommandType.Add, CommandAction.Case, sectionId);
-
-            var tmpCase = new Case
-            {
-                Title = title,
-                TypeId = typeId,
-                PriorityId = priorityId,
-                Estimate = estimate,
-                MilestoneId = milestoneId,
-                References = refs
-            };
-
-            var jsonParams = JsonUtility.Merge(tmpCase.GetJson(), customs);
-
-            return _SendCommand(uri, jsonParams);
-        }
-
-        /// <summary>update an existing case</summary>
-        /// <param name="caseId">the ID of the test case</param>
-        /// <param name="title">title of the case</param>
-        /// <param name="typeId">(optional)the ID of the case type</param>
-        /// <param name="priorityId">(optional)the id of the case priority</param>
-        /// <param name="estimate">(optional)the estimate, e.g. "30s" or "1m 45s"</param>
-        /// <param name="milestoneId">(optional)the ID of the milestone to link to the test case</param>
-        /// <param name="refs">(optional)a comma-separated list of references/requirements</param>
-        /// <param name="customs">(optional)any extra parameters being passed into the update command</param>
-        /// <returns>result of the command</returns>
-        protected CommandResult<ulong> _UpdateCase_(ulong caseId, string title, ulong? typeId = null, ulong? priorityId = null, string estimate = null,
-            ulong? milestoneId = null, string refs = null, JObject customs = null)
-        {
-            if (string.IsNullOrWhiteSpace(title))
-            {
-                return new CommandResult<ulong>(false, 0, new ArgumentNullException(nameof(title)));
-            }
-
-            var uri = _CreateUri_(CommandType.Update, CommandAction.Case, caseId);
-
-            var tmpCase = new Case
-            {
-                Title = title,
-                TypeId = typeId,
-                PriorityId = priorityId,
-                Estimate = estimate,
-                MilestoneId = milestoneId,
-                References = refs
-            };
-
-            var jsonParams = JsonUtility.Merge(tmpCase.GetJson(), customs);
-
-            return _SendCommand(uri, jsonParams);
         }
         #endregion Protected Methods
 
