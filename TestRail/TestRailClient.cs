@@ -630,44 +630,36 @@ namespace TestRail
         #endregion Update Commands
 
         #region Close Commands
-        /// <summary>closes a plan</summary>
-        /// <param name="planId">id of the plan</param>
-        /// <returns>true if successful</returns>
-        public bool ClosePlan(ulong planId)
+        /// <summary>Closes an existing test plan and archives its test runs and results. Please note: Closing a test plan cannot be undone.</summary>
+        /// <param name="planId">The ID of the test plan.</param>
+        /// <returns>If successful, this method returns the closed test plan.</returns>
+        public RequestResult<Plan> ClosePlan(ulong planId)
         {
             var uri = _CreateUri_(CommandType.Close, CommandAction.Plan, planId);
-            var result = _CallPostEndpoint(uri);
+            var result = SendCommand<Plan>(uri);
 
-            if (result.WasSuccessful)
+            if (result.StatusCode != HttpStatusCode.OK)
             {
-                var unused = JObject.Parse(result.Value);
-
-                return result.WasSuccessful;
+                OnOperationFailed(this, $"Could not close plan: {result.Payload.Id}");
             }
 
-            OnOperationFailed(this, $"Could not close plan : {result.Value}");
-
-            return false;
+            return result;
         }
 
-        /// <summary>closes a run</summary>
-        /// <param name="runId">id of the run</param>
-        /// <returns>true if successful</returns>
-        public bool CloseRun(ulong runId)
+        /// <summary>Closes an existing test run and archives its tests and results. Please note: Closing a test run cannot be undone.</summary>
+        /// <param name="runId">The ID of the test run.</param>
+        /// <returns>If successful, this method returns the closed test run.</returns>
+        public RequestResult<Run> CloseRun(ulong runId)
         {
             var uri = _CreateUri_(CommandType.Close, CommandAction.Run, runId);
-            var result = _CallPostEndpoint(uri);
+            var result = SendCommand<Run>(uri);
 
-            if (result.WasSuccessful)
+            if (result.StatusCode != HttpStatusCode.OK)
             {
-                var unused = JObject.Parse(result.Value);
-
-                return result.WasSuccessful;
+                OnOperationFailed(this, $"Could not close run : {result.Payload.Id}");
             }
 
-            OnOperationFailed(this, $"Could not close run : {result.Value}");
-
-            return false;
+            return result;
         }
         #endregion Close Commands
 
