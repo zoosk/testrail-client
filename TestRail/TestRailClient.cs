@@ -1041,7 +1041,7 @@ namespace TestRail
         /// <returns>object of the supplied type containing information about the item</returns>
         protected T _GetItem_<T>(CommandAction actionName, string uri, Func<JObject, T> parse) where T : BaseTestRailType, new()
         {
-            var result = _CallTestRailGetEndpoint(uri);
+            var result = _CallEndpoint(uri, RequestType.Get);
 
             if (!result.WasSuccessful)
             {
@@ -1064,7 +1064,7 @@ namespace TestRail
         protected List<T> _GetItems_<T>(CommandAction actionName, string uri, Func<JObject, T> parse) where T : BaseTestRailType, new()
         {
             var items = new List<T>();
-            var result = _CallTestRailGetEndpoint(uri);
+            var result = _CallEndpoint(uri, RequestType.Get);
 
             if (!result.WasSuccessful)
             {
@@ -1105,55 +1105,17 @@ namespace TestRail
         #endregion Protected Methods
 
         #region Private Methods
-        /// <summary>makes an http get call to the testrail</summary>
-        /// <param name="uri">uri of the endpoint</param>
-        /// <returns>result of the call</returns>
-        private CommandResult _CallTestRailGetEndpoint(string uri)
+        /// <summary>Constructs the request and sends it.</summary>
+        /// <param name="uri">The uri of the endpoint.</param>
+        /// <param name="type">The type of request to build: GEt, POST, etc.</param>
+        /// <param name="json">Parameters to send formatted as a single JSON object.</param>
+        /// <returns>Result of the call.</returns>
+        private CommandResult _CallEndpoint(string uri, RequestType type, JObject json = null)
         {
             uri = Url + uri;
-            OnHttpRequestSent(this, new HttpRequestSentEventArgs("GET", new Uri(uri)));
+            OnHttpRequestSent(this, new HttpRequestSentEventArgs(type.GetStringValue(), new Uri(uri)));
 
             CommandResult commandResult;
-
-            try
-            {
-                // Build request
-                var request = new TestRailRequest(uri, "GET");
-
-                request.AddHeaders(new Dictionary<string, string> { { "Authorization", AuthInfo } });
-                request.Accepts("application/json");
-                request.ContentType("application/json");
-
-                // Send request
-                commandResult = request.Execute();
-            }
-
-            catch (Exception e)
-            {
-                commandResult = new CommandResult(false, e.ToString());
-            }
-
-            if (!commandResult.WasSuccessful)
-            {
-                OnOperationFailed(this, $"HTTP RESPONSE: {commandResult.Value}");
-            }
-
-            else
-            {
-                OnHttpResponseReceived(this, commandResult.Value);
-            }
-
-            return commandResult;
-        }
-
-        /// <summary>makes an http post call to the testrail</summary>
-        /// <param name="uri">uri of the endpoint</param>
-        /// <param name="json">parameters to send formatted as a single json object</param>
-        /// <returns>result of the call</returns>
-        private CommandResult _CallPostEndpoint(string uri, JObject json = null)
-        {
-            uri = Url + uri;
-
             string postContent = null;
 
             if (null != json)
@@ -1161,14 +1123,10 @@ namespace TestRail
                 postContent = json.ToString();
             }
 
-            OnHttpRequestSent(this, new HttpRequestSentEventArgs("POST", new Uri(uri), postContent));
-
-            CommandResult commandResult;
-
             try
             {
                 // Build request
-                var request = new TestRailRequest(uri, "POST");
+                var request = new TestRailRequest(uri, type.GetStringValue());
 
                 request.AddHeaders(new Dictionary<string, string> { { "Authorization", AuthInfo } });
                 request.Accepts("application/json");
@@ -1206,7 +1164,7 @@ namespace TestRail
         {
             try
             {
-                var result = _CallPostEndpoint(uri, jsonParams);
+                var result = _CallEndpoint(uri, RequestType.Post, jsonParams);
 
                 return new RequestResult<T>(HttpStatusCode.OK, result.Value);
             }
@@ -1258,7 +1216,7 @@ namespace TestRail
 
             try
             {
-                var result = _CallPostEndpoint(uri, jsonParams);
+                var result = _CallEndpoint(uri, RequestType.Post, jsonParams);
 
                 wasSuccessful = result.WasSuccessful;
 
