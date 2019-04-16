@@ -131,7 +131,7 @@ namespace TestRail
 
             var jsonParams = JsonUtility.Merge(result.GetJson(), customs);
 
-            return SendCommand<Result>(uri, jsonParams);
+            return SendPostCommand<Result>(uri, jsonParams);
         }
 
         /// <summary>
@@ -165,7 +165,7 @@ namespace TestRail
 
             var jsonParams = JsonUtility.Merge(result.GetJson(), customs);
 
-            return SendCommand<Result>(uri, jsonParams);
+            return SendPostCommand<Result>(uri, jsonParams);
         }
 
         // TODO: - Add a method called AddResultsForCases()
@@ -217,7 +217,7 @@ namespace TestRail
 
             var jsonParams = JsonUtility.Merge(run.GetJson(), customs);
 
-            return SendCommand<Run>(uri, jsonParams);
+            return SendPostCommand<Run>(uri, jsonParams);
         }
 
         /// <summary>Creates a new test case.</summary>
@@ -252,7 +252,7 @@ namespace TestRail
 
             var jsonParams = JsonUtility.Merge(tmpCase.GetJson(), customFields);
 
-            return SendCommand<Case>(uri, jsonParams);
+            return SendPostCommand<Case>(uri, jsonParams);
         }
 
         /// <summary>Creates a new project (admin status required).</summary>
@@ -276,7 +276,7 @@ namespace TestRail
                 ShowAnnouncement = showAnnouncement
             };
 
-            return SendCommand<Project>(uri, project.GetJson());
+            return SendPostCommand<Project>(uri, project.GetJson());
         }
 
         /// <summary>Creates a new section.</summary>
@@ -303,7 +303,7 @@ namespace TestRail
                 Description = description
             };
 
-            return SendCommand<Section>(uri, section.GetJson());
+            return SendPostCommand<Section>(uri, section.GetJson());
         }
 
         /// <summary>Creates a new test suite.</summary>
@@ -326,7 +326,7 @@ namespace TestRail
                 Description = description
             };
 
-            return SendCommand<Suite>(uri, suite.GetJson());
+            return SendPostCommand<Suite>(uri, suite.GetJson());
         }
 
         /// <summary>Creates a new test plan.</summary>
@@ -357,7 +357,7 @@ namespace TestRail
 
             var jsonParams = JsonUtility.Merge(plan.GetJson(), customs);
 
-            return SendCommand<Plan>(uri, jsonParams);
+            return SendPostCommand<Plan>(uri, jsonParams);
         }
 
         /// <summary>Adds one or more new test runs to a test plan.</summary>
@@ -383,7 +383,7 @@ namespace TestRail
 
             var jsonParams = JsonUtility.Merge(planEntry.GetJson(), customs);
 
-            return SendCommand<PlanEntry>(uri, jsonParams);
+            return SendPostCommand<PlanEntry>(uri, jsonParams);
         }
 
         /// <summary>Creates a new milestone.</summary>
@@ -405,7 +405,7 @@ namespace TestRail
                 ParentId = parentId
             };
 
-            return SendCommand<Milestone>(uri, milestone.GetJson());
+            return SendPostCommand<Milestone>(uri, milestone.GetJson());
         }
         #endregion Add Commands
 
@@ -442,7 +442,7 @@ namespace TestRail
 
             var jsonParams = JsonUtility.Merge(tmpCase.GetJson(), customs);
 
-            return SendCommand<Case>(uri, jsonParams);
+            return SendPostCommand<Case>(uri, jsonParams);
         }
 
         /// <summary>Updates an existing milestone (partial updates are supported, i.e. you can submit and update specific fields only).</summary>
@@ -464,7 +464,7 @@ namespace TestRail
                 IsCompleted = isCompleted
             };
 
-            return SendCommand<Milestone>(uri, milestone.GetJson());
+            return SendPostCommand<Milestone>(uri, milestone.GetJson());
         }
 
         /// <summary>Updates an existing test plan (partial updates are supported, i.e. you can submit and update specific fields only).</summary>
@@ -487,7 +487,7 @@ namespace TestRail
 
             var jsonParams = JsonUtility.Merge(plan.GetJson(), customs);
 
-            return SendCommand<Plan>(uri, jsonParams);
+            return SendPostCommand<Plan>(uri, jsonParams);
         }
 
         /// <summary>Updates one or more existing test runs in a plan (partial updates are supported, i.e. you can submit and update specific fields only).</summary>
@@ -511,7 +511,7 @@ namespace TestRail
 
             var jsonParams = JsonUtility.Merge(planEntry.GetJson(), customs);
 
-            return SendCommand<PlanEntry>(uri, jsonParams);
+            return SendPostCommand<PlanEntry>(uri, jsonParams);
         }
 
         /// <summary>Updates an existing project (admin status required; partial updates are supported, i.e. you can submit and update specific fields only).</summary>
@@ -533,7 +533,7 @@ namespace TestRail
                 IsCompleted = isCompleted
             };
 
-            return SendCommand<Project>(uri, project.GetJson());
+            return SendPostCommand<Project>(uri, project.GetJson());
         }
 
         /// <summary>Updates an existing test run (partial updates are supported, i.e. you can submit and update specific fields only).</summary>
@@ -578,7 +578,7 @@ namespace TestRail
 
             var jsonParams = JsonUtility.Merge(newRun.GetJson(), customs);
 
-            return SendCommand<Run>(uri, jsonParams);
+            return SendPostCommand<Run>(uri, jsonParams);
         }
 
         /// <summary>Updates an existing section (partial updates are supported, i.e. you can submit and update specific fields only).</summary>
@@ -604,7 +604,7 @@ namespace TestRail
 
             var jsonParams = JsonUtility.Merge(section.GetJson(), customs);
 
-            return SendCommand<Section>(uri, jsonParams);
+            return SendPostCommand<Section>(uri, jsonParams);
         }
 
         /// <summary>Updates an existing test suite (partial updates are supported, i.e. you can submit and update specific fields only).</summary>
@@ -625,7 +625,7 @@ namespace TestRail
 
             var jsonParams = JsonUtility.Merge(s.GetJson(), customs);
 
-            return SendCommand<Suite>(uri, jsonParams);
+            return SendPostCommand<Suite>(uri, jsonParams);
         }
         #endregion Update Commands
 
@@ -636,7 +636,7 @@ namespace TestRail
         public RequestResult<Plan> ClosePlan(ulong planId)
         {
             var uri = _CreateUri_(CommandType.Close, CommandAction.Plan, planId);
-            var result = SendCommand<Plan>(uri);
+            var result = SendPostCommand<Plan>(uri);
 
             if (result.StatusCode != HttpStatusCode.OK)
             {
@@ -652,7 +652,7 @@ namespace TestRail
         public RequestResult<Run> CloseRun(ulong runId)
         {
             var uri = _CreateUri_(CommandType.Close, CommandAction.Run, runId);
-            var result = SendCommand<Run>(uri);
+            var result = SendPostCommand<Run>(uri);
 
             if (result.StatusCode != HttpStatusCode.OK)
             {
@@ -1160,7 +1160,17 @@ namespace TestRail
             return commandResult;
         }
 
-        private RequestResult<T> SendCommand<T>(string uri, JObject jsonParams = null)
+        private RequestResult<T> SendPostCommand<T>(string uri, JObject jsonParams = null)
+        {
+            return _SendCommand<T>(uri, RequestType.Post, jsonParams);
+        }
+
+        private RequestResult<T> SendGetCommand<T>(string uri)
+        {
+            return _SendCommand<T>(uri, RequestType.Get);
+        }
+
+        private RequestResult<T> _SendCommand<T>(string uri, RequestType type, JObject jsonParams = null)
         {
             try
             {
