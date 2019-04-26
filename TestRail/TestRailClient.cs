@@ -14,8 +14,9 @@ namespace TestRail
     /// <summary>client used to access test case data in testrail</summary>
     public class TestRailClient
     {
-        /// <summary>url for testrail</summary>
-        protected string Url;
+        /// <summary>base url for testrail</summary>
+        protected string BaseUrl;
+
         /// <summary>base 64 string of the given credentials</summary>
         protected string AuthInfo;
 
@@ -68,13 +69,13 @@ namespace TestRail
 
         #region Constructor
         /// <summary>constructor</summary>
-        /// <param name="url">url for test rail</param>
-        /// <param name="username">user name</param>
+        /// <param name="baseUrl">base url for test rail</param>
+        /// <param name="userName">user name</param>
         /// <param name="password">password</param>
-        public TestRailClient(string url, string username, string password)
+        public TestRailClient(string baseUrl, string userName, string password)
         {
-            Url = url;
-            AuthInfo = Convert.ToBase64String(Encoding.Default.GetBytes($"{username}:{password}"));
+            BaseUrl = baseUrl;
+            AuthInfo = Convert.ToBase64String(Encoding.Default.GetBytes($"{userName}:{password}"));
 
             _projects = new Lazy<IList<Project>>(_GetProjects);
 
@@ -1064,61 +1065,6 @@ namespace TestRail
         #endregion Protected Methods
 
         #region Private Methods
-        /// <summary>Constructs the request and sends it.</summary>
-        /// <param name="uri">The uri of the endpoint.</param>
-        /// <param name="type">The type of request to build: GEt, POST, etc.</param>
-        /// <param name="json">Parameters to send formatted as a single JSON object.</param>
-        /// <returns>Result of the call.</returns>
-        private CommandResult _CallEndpoint(string uri, RequestType type, JObject json = null)
-        {
-            uri = Url + uri;
-            OnHttpRequestSent(this, new HttpRequestSentEventArgs(type.GetStringValue(), new Uri(uri)));
-
-            CommandResult commandResult;
-            string postContent = null;
-
-            if (null != json)
-            {
-                postContent = json.ToString();
-            }
-
-            try
-            {
-                // Build request
-                var request = new TestRailRequest(uri, type.GetStringValue());
-
-                request.AddHeaders(new Dictionary<string, string> { { "Authorization", AuthInfo } });
-                request.Accepts("application/json");
-                request.ContentType("application/json");
-
-                // Add body
-                if (!string.IsNullOrWhiteSpace(postContent))
-                {
-                    request.AddBody(postContent);
-                }
-
-                // Send request
-                commandResult = request.Execute();
-            }
-
-            catch (Exception e)
-            {
-                commandResult = new CommandResult(false, e.ToString());
-            }
-
-            if (!commandResult.WasSuccessful)
-            {
-                OnOperationFailed(this, $"HTTP RESPONSE: {commandResult.Value}");
-            }
-
-            else
-            {
-                OnHttpResponseReceived(this, commandResult.Value);
-            }
-
-            return commandResult;
-        }
-
         private RequestResult<T> SendPostCommand<T>(string uri, JObject jsonParams = null)
         {
             return _SendCommand<T>(uri, RequestType.Post, jsonParams);
@@ -1171,6 +1117,61 @@ namespace TestRail
 
                 throw;
             }
+        }
+
+        /// <summary>Constructs the request and sends it.</summary>
+        /// <param name="uri">The uri of the endpoint.</param>
+        /// <param name="type">The type of request to build: GEt, POST, etc.</param>
+        /// <param name="json">Parameters to send formatted as a single JSON object.</param>
+        /// <returns>Result of the call.</returns>
+        private CommandResult _CallEndpoint(string uri, RequestType type, JObject json = null)
+        {
+            uri = BaseUrl + uri;
+            OnHttpRequestSent(this, new HttpRequestSentEventArgs(type.GetStringValue(), new Uri(uri)));
+
+            CommandResult commandResult;
+            string postContent = null;
+
+            if (null != json)
+            {
+                postContent = json.ToString();
+            }
+
+            try
+            {
+                // Build request
+                var request = new TestRailRequest(uri, type.GetStringValue());
+
+                request.AddHeaders(new Dictionary<string, string> { { "Authorization", AuthInfo } });
+                request.Accepts("application/json");
+                request.ContentType("application/json");
+
+                // Add body
+                if (!string.IsNullOrWhiteSpace(postContent))
+                {
+                    request.AddBody(postContent);
+                }
+
+                // Send request
+                commandResult = request.Execute();
+            }
+
+            catch (Exception e)
+            {
+                commandResult = new CommandResult(false, e.ToString());
+            }
+
+            if (!commandResult.WasSuccessful)
+            {
+                OnOperationFailed(this, $"HTTP RESPONSE: {commandResult.Value}");
+            }
+
+            else
+            {
+                OnHttpResponseReceived(this, commandResult.Value);
+            }
+
+            return commandResult;
         }
 
         /// <summary>Determines if at least one of the case ids given is contained in the project and suite</summary>
