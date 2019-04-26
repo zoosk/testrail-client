@@ -76,7 +76,7 @@ namespace TestRail
             Url = url;
             AuthInfo = Convert.ToBase64String(Encoding.Default.GetBytes($"{username}:{password}"));
 
-            _projects = new Lazy<List<Project>>(GetProjects);
+            _projects = new Lazy<List<Project>>(InternalGetProjects);
 
             // set up the lazy loading of the priority dictionary (priority id to priority value)
             LazyPriorityIdToLevel = new Lazy<Dictionary<ulong, int>>(_CreatePrioritiesDict);
@@ -547,7 +547,7 @@ namespace TestRail
         public RequestResult<Run> UpdateRun(ulong runId, string name = null, string description = null, ulong? milestoneId = null, HashSet<ulong> caseIds = null, JObject customs = null)
         {
             var includeAll = true;
-            var existingRun = GetRun(runId);
+            var existingRun = GetRun(runId).Payload;
 
             // validates whether we are in include all or custom case selection mode
             if (null != existingRun?.ProjectId && existingRun.SuiteId.HasValue && null != caseIds)
@@ -749,31 +749,31 @@ namespace TestRail
         /// <summary>gets a test</summary>
         /// <param name="testId">id of the test</param>
         /// <returns>information about the test</returns>
-        public Test GetTest(ulong testId)
+        public RequestResult<Test> GetTest(ulong testId)
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Test, testId);
 
-            return _GetItem_(CommandAction.Test, uri, Test.Parse);
+            return SendGetCommand<Test>(uri);
         }
 
         /// <summary>gets tests associated with a run</summary>
         /// <param name="runId">id of the run</param>
         /// <returns>tests associated with the run</returns>
-        public List<Test> GetTests(ulong runId)
+        public RequestResult<IList<Test>> GetTests(ulong runId)
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Tests, runId);
 
-            return _GetItems_(CommandAction.Tests, uri, Test.Parse);
+            return SendGetCommand<IList<Test>>(uri);
         }
 
         /// <summary>gets a case</summary>
         /// <param name="caseId">id of the case</param>
         /// <returns>information about the case</returns>
-        public Case GetCase(ulong caseId)
+        public RequestResult<Case> GetCase(ulong caseId)
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Case, caseId);
 
-            return _GetItem_(CommandAction.Case, uri, Case.Parse);
+            return SendGetCommand<Case>(uri);
         }
 
         /// <summary>gets cases associated with a suite</summary>
@@ -781,200 +781,201 @@ namespace TestRail
         /// <param name="suiteId">id of the suite</param>
         /// <param name="sectionId">(optional) id of the section</param>
         /// <returns>cases associated with the suite</returns>
-        public List<Case> GetCases(ulong projectId, ulong suiteId, ulong? sectionId = null)
+        public RequestResult<IList<Case>> GetCases(ulong projectId, ulong suiteId, ulong? sectionId = null)
         {
             var optionalSectionId = sectionId.HasValue ? $"&section_id={sectionId.Value}" : string.Empty;
             var options = $"&suite_id={suiteId}{optionalSectionId}";
             var uri = _CreateUri_(CommandType.Get, CommandAction.Cases, projectId, null, options);
 
-            return _GetItems_(CommandAction.Cases, uri, Case.Parse);
+            return SendGetCommand<IList<Case>>(uri);
         }
 
         /// <summary>returns a list of available test case custom fields</summary>
         /// <returns>a list of custom field definitions</returns>
-        public List<CaseField> GetCaseFields()
+        public RequestResult<IList<CaseField>> GetCaseFields()
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.CaseFields);
 
-            return _GetItems_(CommandAction.CaseTypes, uri, CaseField.Parse);
+            return SendGetCommand<IList<CaseField>>(uri);
         }
 
         /// <summary>returns a list of available case types</summary>
         /// <returns>a list of test case types, each has a unique ID and a name.</returns>
-        public List<CaseType> GetCaseTypes()
+        public RequestResult<IList<CaseType>> GetCaseTypes()
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.CaseTypes);
 
-            return _GetItems_(CommandAction.CaseTypes, uri, CaseType.Parse);
+            return SendGetCommand<IList<CaseType>>(uri);
         }
 
         /// <summary>gets a suite</summary>
         /// <param name="suiteId">id of the suite</param>
         /// <returns>information about the suite</returns>
-        public Suite GetSuite(ulong suiteId)
+        public RequestResult<Suite> GetSuite(ulong suiteId)
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Suite, suiteId);
 
-            return _GetItem_(CommandAction.Suite, uri, Suite.Parse);
+            return SendGetCommand<Suite>(uri);
         }
 
         /// <summary>gets suites associated with a project</summary>
         /// <param name="projectId">id of the project</param>
         /// <returns>suites associated with the project</returns>
-        public List<Suite> GetSuites(ulong projectId)
+        public RequestResult<IList<Suite>> GetSuites(ulong projectId)
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Suites, projectId);
 
-            return _GetItems_(CommandAction.Suites, uri, Suite.Parse);
+            return SendGetCommand<IList<Suite>>(uri);
         }
 
         /// <summary>gets a section</summary>
         /// <param name="sectionId">id of the section</param>
         /// <returns>information about the section</returns>
-        public Section GetSection(ulong sectionId)
+        public RequestResult<Section> GetSection(ulong sectionId)
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Section, sectionId);
 
-            return _GetItem_(CommandAction.Section, uri, Section.Parse);
+            return SendGetCommand<Section>(uri);
         }
 
         /// <summary>gets sections associated with a suite</summary>
         /// <param name="projectId">id of the project</param>
         /// <param name="suiteId">id of the suite</param>
         /// <returns>sections associated with the suite</returns>
-        public List<Section> GetSections(ulong projectId, ulong suiteId)
+        public RequestResult<IList<Section>> GetSections(ulong projectId, ulong suiteId)
         {
             var options = $"&suite_id={suiteId}";
             var uri = _CreateUri_(CommandType.Get, CommandAction.Sections, projectId, null, options);
 
-            return _GetItems_(CommandAction.Sections, uri, Section.Parse);
+            return SendGetCommand<IList<Section>>(uri);
         }
 
         /// <summary>gets a run</summary>
         /// <param name="runId">id of the run</param>
         /// <returns>information about the run</returns>
-        public Run GetRun(ulong runId)
+        public RequestResult<Run> GetRun(ulong runId)
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Run, runId);
 
-            return _GetItem_(CommandAction.Run, uri, Run.Parse);
+            return SendGetCommand<Run>(uri);
         }
 
         /// <summary>gets runs associated with a project</summary>
         /// <param name="projectId">id of the project</param>
         /// <returns>runs associated with the project</returns>
-        public List<Run> GetRuns(ulong projectId)
+        public RequestResult<IList<Run>> GetRuns(ulong projectId)
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Runs, projectId);
 
-            return _GetItems_(CommandAction.Runs, uri, Run.Parse);
+            return SendGetCommand<IList<Run>>(uri);
         }
 
         /// <summary>gets a plan</summary>
         /// <param name="planId">id of the plan</param>
         /// <returns>information about the plan</returns>
-        public Plan GetPlan(ulong planId)
+        public RequestResult<Plan> GetPlan(ulong planId)
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Plan, planId);
 
-            return _GetItem_(CommandAction.Plan, uri, Plan.Parse);
+            return SendGetCommand<Plan>(uri);
         }
 
         /// <summary>gets plans associated with a project</summary>
         /// <param name="projectId">id of the project</param>
         /// <returns>plans associated with the project</returns>
-        public List<Plan> GetPlans(ulong projectId)
+        public RequestResult<IList<Plan>> GetPlans(ulong projectId)
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Plans, projectId);
 
-            return _GetItems_(CommandAction.Plans, uri, Plan.Parse);
+            return SendGetCommand<IList<Plan>>(uri);
         }
 
         /// <summary>gets a milestone</summary>
         /// <param name="milestoneId">id of the milestone</param>
         /// <returns>information about the milestone</returns>
-        public Milestone GetMilestone(ulong milestoneId)
+        public RequestResult<Milestone> GetMilestone(ulong milestoneId)
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Milestone, milestoneId);
 
-            return _GetItem_(CommandAction.Milestone, uri, Milestone.Parse);
+            return SendGetCommand<Milestone>(uri);
         }
 
         /// <summary>gets milestones associated with a project</summary>
         /// <param name="projectId">id of the project</param>
         /// <returns>milestone associated with project</returns>
-        public List<Milestone> GetMilestones(ulong projectId)
+        public RequestResult<IList<Milestone>> GetMilestones(ulong projectId)
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Milestones, projectId);
 
-            return _GetItems_(CommandAction.Milestones, uri, Milestone.Parse);
+            return SendGetCommand<IList<Milestone>>(uri);
         }
 
         /// <summary>gets a project</summary>
         /// <param name="projectId">id of the project</param>
         /// <returns>information about the project</returns>
-        public Project GetProject(ulong projectId)
+        public RequestResult<Project> GetProject(ulong projectId)
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Project, projectId);
 
-            return _GetItem_(CommandAction.Project, uri, Project.Parse);
+            return SendGetCommand<Project>(uri);
         }
 
         /// <summary>gets all projects contained in the testrail instance</summary>
         /// <returns>list containing all the projects</returns>
-        public List<Project> GetProjects()
+        public RequestResult<IList<Project>> GetProjects()
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Projects);
 
-            return _GetItems_(CommandAction.Projects, uri, Project.Parse);
+            return SendGetCommand<IList<Project>>(uri);
         }
 
         /// <summary>Get User for user id</summary>
         /// <param name="userId">user id to search for</param>
         /// <returns>a User object</returns>
-        public User GetUser(ulong userId)
+        public RequestResult<User> GetUser(ulong userId)
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.User, userId);
 
-            return _GetItem_(CommandAction.User, uri, User.Parse);
+            return SendGetCommand<User>(uri);
         }
 
         /// <summary>Find a user by their email address</summary>
         /// <param name="email">email address of the user</param>
         /// <returns>user if found</returns>
-        public User GetUserByEmail(string email)
+        public RequestResult<User> GetUserByEmail(string email)
         {
             // validate the email string
             if (string.IsNullOrWhiteSpace(email))
             {
-                return default(User);
+                return new RequestResult<User>(HttpStatusCode.BadRequest,
+                    thrownException: new ArgumentException($"You must provide a valid string that is not null or white space for: {nameof(email)}"));
             }
 
             var optionalParam = $"&email={email}";
             var uri = _CreateUri_(CommandType.Get, CommandAction.UserByEmail, null, null, optionalParam);
 
-            return _GetItem_(CommandAction.UserByEmail, uri, User.Parse);
+            return SendGetCommand<User>(uri);
         }
 
         /// <summary>Get a list of users in the testrail instance</summary>
         /// <returns>List of users</returns>
-        public List<User> GetUsers()
+        public RequestResult<IList<User>> GetUsers()
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Users);
 
-            return _GetItems_(CommandAction.Users, uri, User.Parse);
+            return SendGetCommand<IList<User>>(uri);
         }
 
         /// <summary>Returns a list of test results for a test</summary>
         /// <param name="testId">id of the test</param>
         /// <param name="limit">(optional) maximum amount of test results to return, latest first</param>
         /// <returns>list containing the results for the given test</returns>
-        public List<Result> GetResults(ulong testId, ulong? limit = null)
+        public RequestResult<IList<Result>> GetResults(ulong testId, ulong? limit = null)
         {
             var optional = (limit.HasValue) ? $"&limit={limit.Value}" : string.Empty;
             var uri = _CreateUri_(CommandType.Get, CommandAction.Results, testId, null, optional);
 
-            return _GetItems_(CommandAction.Results, uri, Result.Parse);
+            return SendGetCommand<IList<Result>>(uri);
         }
 
         /// <summary>Return the list of test results for a test run and the case combination</summary>
@@ -982,52 +983,52 @@ namespace TestRail
         /// <param name="caseId">id of the test case</param>
         /// <param name="limit">(optional) maximum amount of test results to return, latest first</param>
         /// <returns>list of test results for a case</returns>
-        public List<Result> GetResultsForCase(ulong runId, ulong caseId, ulong? limit = null)
+        public RequestResult<IList<Result>> GetResultsForCase(ulong runId, ulong caseId, ulong? limit = null)
         {
             var optional = limit.HasValue ? $"&limit={limit.Value}" : string.Empty;
             var uri = _CreateUri_(CommandType.Get, CommandAction.ResultsForCase, runId, caseId, optional);
 
-            return _GetItems_(CommandAction.ResultsForCase, uri, Result.Parse);
+            return SendGetCommand<IList<Result>>(uri);
         }
 
         /// <summary>Return the list of test results for a test run</summary>
         /// <param name="runId">id of the rest run</param>
         /// <param name="limit">(optional) maximum amount of test results to return, latest first</param>
         /// <returns>list of test results for a test run</returns>
-        public List<Result> GetResultsForRun(ulong runId, ulong? limit = null)
+        public RequestResult<IList<Result>> GetResultsForRun(ulong runId, ulong? limit = null)
         {
             var optional = limit.HasValue ? $"&limit={limit.Value}" : string.Empty;
             var uri = _CreateUri_(CommandType.Get, CommandAction.ResultsForRun, runId, null, optional);
 
-            return _GetItems_(CommandAction.ResultsForRun, uri, Result.Parse);
+            return SendGetCommand<IList<Result>>(uri);
         }
 
         /// <summary>Returns the list of statuses available to test rail</summary>
         /// <returns>list of possible statuses</returns>
-        public List<Status> GetStatuses()
+        public RequestResult<IList<Status>> GetStatuses()
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Statuses);
 
-            return _GetItems_(CommandAction.Statuses, uri, Status.Parse);
+            return SendGetCommand<IList<Status>>(uri);
         }
 
         /// <summary>Get a list of all available priorities</summary>
         /// <returns>list of priorities</returns>
-        public List<Priority> GetPriorities()
+        public RequestResult<IList<Priority>> GetPriorities()
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Priorities);
 
-            return _GetItems_(CommandAction.Priorities, uri, Priority.Parse);
+            return SendGetCommand<IList<Priority>>(uri);
         }
 
         /// <summary>Returns a list of Config Groups available in a Project</summary>
         /// <param name="projectId">ID of the Project to return the Config Groups for</param>
         /// <returns>list of ConfigurationGroup</returns>
-        public List<ConfigurationGroup> GetConfigurationGroups(ulong projectId)
+        public RequestResult<IList<ConfigurationGroup>> GetConfigurationGroups(ulong projectId)
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Configs, projectId);
 
-            return _GetItems_(CommandAction.Configs, uri, ConfigurationGroup.Parse);
+            return SendGetCommand<IList<ConfigurationGroup>>(uri);
         }
         #endregion Get Commands
         #endregion Public Methods
@@ -1162,7 +1163,15 @@ namespace TestRail
 
         private RequestResult<T> SendPostCommand<T>(string uri, JObject jsonParams = null)
         {
-            return _SendCommand<T>(uri, RequestType.Post, jsonParams);
+            try
+            {
+                return _SendCommand<T>(uri, RequestType.Post, jsonParams);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         private RequestResult<T> SendGetCommand<T>(string uri)
@@ -1282,7 +1291,7 @@ namespace TestRail
         /// <returns>true if at least one case exists in the project and suite id combination, otherwise false</returns>
         private bool _CasesFoundInSuite(ulong projectId, ulong suiteId, ICollection<ulong> caseIds)
         {
-            var validCases = GetCases(projectId, suiteId);
+            var validCases = GetCases(projectId, suiteId).Payload;
 
             return validCases.Any(tmpCase => tmpCase.Id.HasValue && caseIds.Contains(tmpCase.Id.Value));
         }
@@ -1292,7 +1301,7 @@ namespace TestRail
         private Dictionary<ulong, int> _CreatePrioritiesDict()
         {
             var tmpDict = new Dictionary<ulong, int>();
-            var priorityList = GetPriorities();
+            var priorityList = GetPriorities().Payload;
 
             foreach (var priority in priorityList.Where(priority => null != priority))
             {
@@ -1300,6 +1309,13 @@ namespace TestRail
             }
 
             return tmpDict;
+        }
+
+        private List<Project> InternalGetProjects()
+        {
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Projects);
+
+            return _GetItems_(CommandAction.Projects, uri, Project.Parse);
         }
         #endregion Private Methods
     }
