@@ -20,7 +20,7 @@ namespace TestRail
         protected string AuthInfo;
 
         /// <summary>projects in the test rail database</summary>
-        public List<Project> Projects => _projects.Value;
+        public IList<Project> Projects => _projects.Value;
 
         /// <summary>called when the client sends an http request</summary>
         public event EventHandler<HttpRequestSentEventArgs> OnHttpRequestSent = (s, e) => { };
@@ -58,13 +58,13 @@ namespace TestRail
         }
 
         /// <summary>list of projects in the current testrail instance</summary>
-        private readonly Lazy<List<Project>> _projects;
+        private readonly Lazy<IList<Project>> _projects;
 
         /// <summary>dictionary of priority ID (from test rail) to priority levels(where Higher value means higher priority)</summary>
-        private Dictionary<ulong, int> PriorityIdToLevel => LazyPriorityIdToLevel.Value;
+        private IDictionary<ulong, int> PriorityIdToLevel => LazyPriorityIdToLevel.Value;
 
         /// <summary>dictionary of priority ID (from test rail) to priority levels(where Higher value means higher priority)</summary>
-        private Lazy<Dictionary<ulong, int>> LazyPriorityIdToLevel { get; }
+        private Lazy<IDictionary<ulong, int>> LazyPriorityIdToLevel { get; }
 
         #region Constructor
         /// <summary>constructor</summary>
@@ -76,10 +76,10 @@ namespace TestRail
             Url = url;
             AuthInfo = Convert.ToBase64String(Encoding.Default.GetBytes($"{username}:{password}"));
 
-            _projects = new Lazy<List<Project>>(InternalGetProjects);
+            _projects = new Lazy<IList<Project>>(_GetProjects);
 
             // set up the lazy loading of the priority dictionary (priority id to priority value)
-            LazyPriorityIdToLevel = new Lazy<Dictionary<ulong, int>>(_CreatePrioritiesDict);
+            LazyPriorityIdToLevel = new Lazy<IDictionary<ulong, int>>(_CreatePrioritiesDict);
         }
         #endregion Constructor
 
@@ -1034,57 +1034,6 @@ namespace TestRail
         #endregion Public Methods
 
         #region Protected Methods
-        /// <summary>executes a get request for an item</summary>
-        /// <typeparam name="T">the type of item</typeparam>
-        /// <param name="actionName">the name of item's node</param>
-        /// <param name="uri">the uri for the request</param>
-        /// <param name="parse">a method which parse json into the item</param>
-        /// <returns>object of the supplied type containing information about the item</returns>
-        protected T _GetItem_<T>(CommandAction actionName, string uri, Func<JObject, T> parse) where T : BaseTestRailType, new()
-        {
-            var result = _CallEndpoint(uri, RequestType.Get);
-
-            if (!result.WasSuccessful)
-            {
-                OnOperationFailed(this, $"Could not get {actionName}: {result.Value}");
-
-                return default(T);
-            }
-
-            var json = JObject.Parse(result.Value);
-
-            return parse(json);
-        }
-
-        /// <summary>executes a get request for an item</summary>
-        /// <typeparam name="T">the type of the item</typeparam>
-        /// <param name="actionName">the name of the item's node</param>
-        /// <param name="uri">the uri for the request</param>
-        /// <param name="parse">a method which parses the json into the item</param>
-        /// <returns>list of objects of the supplied type corresponding th supplied filters</returns>
-        protected List<T> _GetItems_<T>(CommandAction actionName, string uri, Func<JObject, T> parse) where T : BaseTestRailType, new()
-        {
-            var items = new List<T>();
-            var result = _CallEndpoint(uri, RequestType.Get);
-
-            if (!result.WasSuccessful)
-            {
-                OnOperationFailed(this, $"Could not get {actionName}s: {result.Value}");
-            }
-
-            else
-            {
-                var jarray = JArray.Parse(result.Value);
-
-                if (null != jarray)
-                {
-                    items = JsonUtility.ConvertJArrayToList(jarray, parse);
-                }
-            }
-
-            return items;
-        }
-
         /// <summary>Creates a URI with the parameters given in the format</summary>
         /// <param name="commandType">the type of action the server is going to take (i.e. get, add, update, close)</param>
         /// <param name="actionName">the type of command the server is going to take (i.e. run, case, plan, etc)</param>
@@ -1163,15 +1112,7 @@ namespace TestRail
 
         private RequestResult<T> SendPostCommand<T>(string uri, JObject jsonParams = null)
         {
-            try
-            {
-                return _SendCommand<T>(uri, RequestType.Post, jsonParams);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            return _SendCommand<T>(uri, RequestType.Post, jsonParams);
         }
 
         private RequestResult<T> SendGetCommand<T>(string uri)
@@ -1298,7 +1239,7 @@ namespace TestRail
 
         /// <summary>Create a priority dictionary</summary>
         /// <returns>dictionary of priority ID (from test rail) to priority levels(where Higher value means higher priority)</returns>
-        private Dictionary<ulong, int> _CreatePrioritiesDict()
+        private IDictionary<ulong, int> _CreatePrioritiesDict()
         {
             var tmpDict = new Dictionary<ulong, int>();
             var priorityList = GetPriorities().Payload;
@@ -1311,11 +1252,13 @@ namespace TestRail
             return tmpDict;
         }
 
-        private List<Project> InternalGetProjects()
+        private IList<Project> _GetProjects()
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Projects);
 
-            return _GetItems_(CommandAction.Projects, uri, Project.Parse);
+            var items = SendGetCommand<IList<Project>>(uri);
+
+            return items.Payload;
         }
         #endregion Private Methods
     }
