@@ -664,84 +664,93 @@ namespace TestRail
         #endregion Close Commands
 
         #region Delete Commands
-        /// <summary>Delete a milestone</summary>
-        /// <param name="milestoneId">id of the milestone</param>
-        /// <returns>result of the deletion</returns>
-        public CommandResult<ulong> DeleteMilestone(ulong milestoneId)
+        /// <summary>Deletes an existing milestone. This action requires the account to have permissions to delete.</summary>
+        /// <param name="milestoneId">The ID of the milestone.</param>
+        /// <returns>Please note: Deleting a milestone cannot be undone.</returns>
+        public RequestResult<Milestone> DeleteMilestone(ulong milestoneId)
         {
             var uri = _CreateUri_(CommandType.Delete, CommandAction.Milestone, milestoneId);
 
-            return _SendCommand(uri);
+            return SendPostCommand<Milestone>(uri);
         }
 
-        /// <summary>Delete a case</summary>
-        /// <param name="caseId">id of the case to delete</param>
-        /// <returns>result of the deletion</returns>
-        public CommandResult<ulong> DeleteCase(ulong caseId)
+        /// <summary>Deletes an existing test case. This action requires the account to have permissions to delete.</summary>
+        /// <param name="caseId">The ID of the test case.</param>
+        /// <returns>
+        /// Please note: Deleting a test case cannot be undone and also permanently deletes all test results in active test runs (i.e. test runs that haven't been closed (archived) yet).
+        /// </returns>
+        public RequestResult<Case> DeleteCase(ulong caseId)
         {
             var uri = _CreateUri_(CommandType.Delete, CommandAction.Case, caseId);
 
-            return _SendCommand(uri);
+            return SendPostCommand<Case>(uri);
         }
 
-        /// <summary>Delete a plan</summary>
-        /// <param name="planId">id of the plan to delete</param>
-        /// <returns>result of the deletion</returns>
-        public CommandResult<ulong> DeletePlan(ulong planId)
+        /// <summary>Deletes an existing test plan. This action requires the account to have permissions to delete.</summary>
+        /// <param name="planId">The ID of the test plan.</param>
+        /// <returns>Please note: Deleting a test plan cannot be undone and also permanently deletes all test runs and results of the test plan.</returns>
+        public RequestResult<Plan> DeletePlan(ulong planId)
         {
             var uri = _CreateUri_(CommandType.Delete, CommandAction.Plan, planId);
 
-            return _SendCommand(uri);
+            return SendPostCommand<Plan>(uri);
         }
 
-        /// <summary>Delete a specific plan entry for a plan id</summary>
-        /// <param name="planId">id of the plan</param>
-        /// <param name="entryId">string representation of the GUID for the entryID</param>
-        /// <returns>result of the deletion</returns>
-        public CommandResult<ulong> DeletePlanEntry(ulong planId, string entryId)
+        /// <summary>Deletes one or more existing test runs from a plan. This action requires the account to have permissions to delete.</summary>
+        /// <param name="planId">The ID of the test plan.</param>
+        /// <param name="entryId">The ID of the test plan entry (note: not the test run ID).</param>
+        /// <returns>Please note: Deleting a test run from a plan cannot be undone and also permanently deletes all related test results.</returns>
+        public RequestResult<PlanEntry> DeletePlanEntry(ulong planId, string entryId)
         {
             var uri = _CreateUri_(CommandType.Delete, CommandAction.PlanEntry, planId, null, null, entryId);
 
-            return _SendCommand(uri);
+            return SendPostCommand<PlanEntry>(uri);
         }
 
-        /// <summary>Delete the Project</summary>
-        /// <param name="projectId">id of the project to delete</param>
-        /// <returns>result of the deletion</returns>
-        public CommandResult<ulong> DeleteProject(ulong projectId)
+        /// <summary>Deletes an existing project (admin status required). This action requires the account to have permissions to delete.</summary>
+        /// <param name="projectId">The ID of the project.</param>
+        /// <returns>
+        /// Please note: Deleting a project cannot be undone and also permanently deletes all test suites and cases, test runs and results and everything else that is part of the project.
+        /// </returns>
+        public RequestResult<Project> DeleteProject(ulong projectId)
         {
             var uri = _CreateUri_(CommandType.Delete, CommandAction.Project, projectId);
 
-            return _SendCommand(uri);
+            return SendPostCommand<Project>(uri);
         }
 
-        /// <summary>Delete the section</summary>
-        /// <param name="sectionId">id of the section to delete</param>
-        /// <returns>result of the deletion</returns>
-        public CommandResult<ulong> DeleteSection(ulong sectionId)
+        /// <summary>Deletes an existing section. This action requires the account to have permissions to delete.</summary>
+        /// <param name="sectionId">The ID of the section.</param>
+        /// <returns>
+        /// Please note: Deleting a section cannot be undone and also deletes all related test cases as well as active tests and results, i.e. tests and results that weren't closed (archived) yet.
+        /// </returns>
+        public RequestResult<Section> DeleteSection(ulong sectionId)
         {
             var uri = _CreateUri_(CommandType.Delete, CommandAction.Section, sectionId);
 
-            return _SendCommand(uri);
+            return SendPostCommand<Section>(uri);
         }
 
-        /// <summary>Delete the suite</summary>
-        /// <param name="suiteId">id of the suite to delete</param>
-        /// <returns>result of the deletion</returns>
-        public CommandResult<ulong> DeleteSuite(ulong suiteId)
+        /// <summary>Deletes an existing test suite. This action requires the account to have permissions to delete.</summary>
+        /// <param name="suiteId">The ID of the test suite.</param>
+        /// <returns>
+        /// Please note: Deleting a test suite cannot be undone and also deletes all active test runs and results, i.e. test runs and results that weren't closed (archived) yet.
+        /// </returns>
+        public RequestResult<Suite> DeleteSuite(ulong suiteId)
         {
             var uri = _CreateUri_(CommandType.Delete, CommandAction.Suite, suiteId);
 
-            return _SendCommand(uri);
+            return SendPostCommand<Suite>(uri);
         }
 
-        /// <summary>Delete the run</summary>
-        /// <param name="runId">id of the run to delete</param>
-        /// <returns>result of the deletion</returns>
-        public CommandResult<ulong> DeleteRun(ulong runId)
+        /// <summary>Deletes an existing test run. This action requires the account to have permissions to delete.</summary>
+        /// <param name="runId">The ID of the test run.</param>
+        /// <returns>Please note: Deleting a test run cannot be undone and also permanently deletes all tests and results of the test run.</returns>
+        public RequestResult<Result> DeleteRun(ulong runId)
         {
             var uri = _CreateUri_(CommandType.Delete, CommandAction.Run, runId);
-            return _SendCommand(uri);
+
+            return SendPostCommand<Result>(uri);
         }
         #endregion Delete Commands
 
