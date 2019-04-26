@@ -1173,67 +1173,6 @@ namespace TestRail
             }
         }
 
-        /// <summary>Send a command to the server</summary>
-        /// <param name="uri">uri to send</param>
-        /// <param name="jsonParams">parameters to send formatted as a single json object</param>
-        /// <returns>object containing if the command: was successful, the result value, and any exception that may have been thrown by the server</returns>
-        private CommandResult<ulong> _SendCommand(string uri, JObject jsonParams = null)
-        {
-            Exception exception = null;
-            ulong resultValue = 0;
-            var wasSuccessful = false;
-
-            try
-            {
-                var result = _CallEndpoint(uri, RequestType.Post, jsonParams);
-
-                wasSuccessful = result.WasSuccessful;
-
-                if (wasSuccessful)
-                {
-                    if (!string.IsNullOrWhiteSpace(result.Value))
-                    {
-                        var json = JObject.Parse(result.Value);
-                        var token = json["id"];
-
-                        try
-                        {
-                            if (null == token)
-                            {
-                                // do nothing
-                            }
-
-                            else if (JTokenType.String == token.Type) // for plan entry 
-                            {
-                                resultValue = (ulong)json["runs"][0]["id"];
-                            }
-
-                            else if (JTokenType.Integer == token.Type)
-                            {
-                                resultValue = (ulong)json["id"];
-                            }
-                        }
-
-                        catch
-                        {
-                            // do nothing since result value is already 0 
-                        }
-                    }
-                }
-
-                else
-                {
-                    exception = new Exception(result.Value);
-                }
-            }
-            catch (Exception caughtException)
-            {
-                exception = caughtException;
-            }
-
-            return new CommandResult<ulong>(wasSuccessful, resultValue, exception);
-        }
-
         /// <summary>Determines if at least one of the case ids given is contained in the project and suite</summary>
         /// <param name="projectId">id of the project</param>
         /// <param name="suiteId">id of the suite</param>
