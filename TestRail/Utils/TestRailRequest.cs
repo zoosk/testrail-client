@@ -62,9 +62,10 @@ namespace TestRail.Utils
             requestDataStream.Close();
         }
 
-        /// <summary>send th request and get a response</summary>
-        /// <returns>if successful, will return a new CommandResult object</returns>
-        public CommandResult Execute()
+        /// <summary>send the request and get a response</summary>
+        /// <typeparam name="T">the type to deserialize to</typeparam>
+        /// <returns>if successful, will return a new RequestResult object</returns>
+        public RequestResult<T> Execute<T>()
         {
             var response = (HttpWebResponse)_request.GetResponse();
 
@@ -72,7 +73,7 @@ namespace TestRail.Utils
             {
                 var responseFromServer = reader.ReadToEnd();
 
-                return new CommandResult(response.StatusCode == HttpStatusCode.OK, responseFromServer);
+                return new RequestResult<T>(response.StatusCode, responseFromServer);
             }
         }
     }
