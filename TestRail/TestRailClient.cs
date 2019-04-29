@@ -23,41 +23,6 @@ namespace TestRail
         /// <summary>projects in the test rail database</summary>
         public IList<Project> Projects => _projects.Value;
 
-        /// <summary>called when the client sends an http request</summary>
-        public event EventHandler<HttpRequestSentEventArgs> OnHttpRequestSent = (s, e) => { };
-
-        /// <summary>called when the client receives an http response</summary>
-        public event EventHandler<string> OnHttpResponseReceived = (s, e) => { };
-
-        /// <summary>called when an operation fails</summary>
-        public event EventHandler<string> OnOperationFailed = (s, e) => { };
-
-        /// <inheritdoc />
-        /// <summary>event args for http request sent</summary>
-        public class HttpRequestSentEventArgs : EventArgs
-        {
-            /// <summary>http method (GET, POST, PUT, DELETE, etc.)</summary>
-            public string Method;
-
-            /// <summary>uri</summary>
-            public Uri Uri;
-
-            /// <summary>post data</summary>
-            public string PostContent;
-
-            /// <inheritdoc />
-            /// <summary>constructor</summary>
-            /// <param name="method">http method used</param>
-            /// <param name="uri">uri used</param>
-            /// <param name="postContent">post content sent (if any)</param>
-            public HttpRequestSentEventArgs(string method, Uri uri, string postContent = null)
-            {
-                Method = method;
-                Uri = uri;
-                PostContent = postContent;
-            }
-        }
-
         /// <summary>list of projects in the current testrail instance</summary>
         private readonly Lazy<IList<Project>> _projects;
 
@@ -637,14 +602,8 @@ namespace TestRail
         public RequestResult<Plan> ClosePlan(ulong planId)
         {
             var uri = _CreateUri_(CommandType.Close, CommandAction.Plan, planId);
-            var result = SendPostCommand<Plan>(uri);
 
-            if (result.StatusCode != HttpStatusCode.OK)
-            {
-                OnOperationFailed(this, $"Could not close plan: {result.Payload.Id}");
-            }
-
-            return result;
+            return SendPostCommand<Plan>(uri);
         }
 
         /// <summary>Closes an existing test run and archives its tests and results. Please note: Closing a test run cannot be undone.</summary>
@@ -653,14 +612,8 @@ namespace TestRail
         public RequestResult<Run> CloseRun(ulong runId)
         {
             var uri = _CreateUri_(CommandType.Close, CommandAction.Run, runId);
-            var result = SendPostCommand<Run>(uri);
 
-            if (result.StatusCode != HttpStatusCode.OK)
-            {
-                OnOperationFailed(this, $"Could not close run : {result.Payload.Id}");
-            }
-
-            return result;
+            return SendPostCommand<Run>(uri);
         }
         #endregion Close Commands
 
@@ -1127,7 +1080,6 @@ namespace TestRail
         private CommandResult _CallEndpoint(string uri, RequestType type, JObject json = null)
         {
             uri = BaseUrl + uri;
-            OnHttpRequestSent(this, new HttpRequestSentEventArgs(type.GetStringValue(), new Uri(uri)));
 
             CommandResult commandResult;
             string postContent = null;
@@ -1159,16 +1111,6 @@ namespace TestRail
             catch (Exception e)
             {
                 commandResult = new CommandResult(false, e.ToString());
-            }
-
-            if (!commandResult.WasSuccessful)
-            {
-                OnOperationFailed(this, $"HTTP RESPONSE: {commandResult.Value}");
-            }
-
-            else
-            {
-                OnHttpResponseReceived(this, commandResult.Value);
             }
 
             return commandResult;
