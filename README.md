@@ -17,13 +17,18 @@ Solution was built using Visual Studio 2017 (make sure you have the latest versi
 - `NuGet push TestRail.<version>.nupkg`
 
 ## Version History
+#### 3.0
+- A successful command will now return the appropriate TestRail object according to the official documentation.
+  - For example: `AddResult()` will now return the newly created `Result` objects.
+  - Official documentation can be found here: http://docs.gurock.com/testrail-api2/start
+- An unsuccessful command will now include the exception/error that was thrown to better understand what went wrong.
+#### 2.0.3
+- Add the ability to delete a test run.
+#### 2.0.2
+- Add Milestones property to handle sub-milestones in GetMilestone call.
 #### 2.0.1
-- Created a new enum for `CommandActions` like: plan, run, case, etc.
-  - There was already an enum for `CommandTypes` like: get, add, delete, etc. The new enum simply standardized the creation of the URI for the Test Rail endpoints
-  - Added a dependency for the enum to be correctly parsed with the required underscores needed by Test Rail
-- Updated methods that were missing intellisense/xml documentation
-- Cleaned up the code with ReSharper suggestions
-- Moved some files around so the project is structured a little better
+- Add description to Section and add custom to run, plan, and other APIs.
+- Fix dotnet core bug with HttpWebRequest.
 #### 2.0
 - Converted the application to .Net Standard 2.0
   - The client should work with any project on: .Net Framework 4.5, 4.6.1, .Net Core &gt;= 2.0, and .Net Standard &gt;= 2.0.
