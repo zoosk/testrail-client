@@ -675,10 +675,12 @@ namespace TestRail
 
         /// <summary>gets runs associated with a project</summary>
         /// <param name="projectID">id of the project</param>
+        /// <param name="offset">Where to start counting the test cases from (the offset)</param>
         /// <returns>runs associated with the project</returns>
-        public List<Run> GetRuns(ulong projectID)
+        public List<Run> GetRuns(ulong projectID, ulong offset = 0)
         {
-            var uri = _CreateUri_(_CommandType_.get, _NODE_RUNS_, projectID);
+            var options = offset > 0 ? $"&offset={offset}" : null;
+            var uri = _CreateUri_(_CommandType_.get, _NODE_RUNS_, projectID, null, options);
             return _GetItems_(_NODE_RUNS_, uri, Run.Parse);
         }
 
