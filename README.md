@@ -3,6 +3,21 @@ testrail-client
 
 .Net Standard 2.0 implementation of the TestRail API.
 
+### Getting Started
+
+```C#
+var client = new TestRailClient("https://[your-organization].testrail.io", username, password);
+var project = client.GetProjects().First();
+var runs = client.GetRuns(project.ID);
+var suite = client.GetSuites(project.ID).First();
+var cases = client.GetCases(project.ID, suite.ID);
+for (var case in cases) {
+    Console.WriteLine($"Test Case {case.ID}: {case.Title}");
+}
+```
+
+### To Modify
+
 Solution was built using Visual Studio 2017 (make sure you have the latest version).
 
 ## To Release a New Version
