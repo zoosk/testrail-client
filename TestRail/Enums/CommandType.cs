@@ -1,4 +1,4 @@
-﻿using EnumStringValues;
+﻿using System.ComponentModel;
 
 namespace TestRail.Enums
 {
@@ -6,23 +6,23 @@ namespace TestRail.Enums
     public enum CommandType
     {
         /// <summary>For get commands.</summary>
-        [StringValue("get")]
+        [Description("get")]
         Get,
 
         /// <summary>For add commands.</summary>
-        [StringValue("add")]
+        [Description("add")]
         Add,
 
         /// <summary>For update commands.</summary>
-        [StringValue("update")]
+        [Description("update")]
         Update,
 
         /// <summary>For delete commands.</summary>
-        [StringValue("delete")]
+        [Description("delete")]
         Delete,
 
         /// <summary>For close commands.</summary>
-        [StringValue("close")]
+        [Description("close")]
         Close
     }
 }

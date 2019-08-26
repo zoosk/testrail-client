@@ -1,4 +1,4 @@
-﻿using EnumStringValues;
+﻿using System.ComponentModel;
 
 namespace TestRail.Enums
 {
@@ -6,11 +6,11 @@ namespace TestRail.Enums
     public enum RequestType
     {
         /// <summary>Used for GET requests.</summary>
-        [StringValue("GET")]
+        [Description("GET")]
         Get,
 
         /// <summary>Used for POST requests.</summary>
-        [StringValue("POST")]
-        Post,
+        [Description("POST")]
+        Post
     }
 }
