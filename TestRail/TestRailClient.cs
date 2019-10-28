@@ -657,9 +657,9 @@ namespace TestRail
         /// <param name="projectID">id of the project</param>
         /// <param name="suiteID">id of the suite</param>
         /// <returns>sections associated with the suite</returns>
-        public List<Section> GetSections(ulong projectID, ulong suiteID)
+        public List<Section> GetSections(ulong projectID, ulong? suiteID = null)
         {
-            var options = $"&suite_id={suiteID}";
+            var options = suiteID.HasValue ? $"&suite_id={suiteID}" : string.Empty;
             var uri = _CreateUri_(_CommandType_.get, _NODE_SECTIONS_, projectID, null, options);
             return _GetItems_(_NODE_SECTIONS_, uri, Section.Parse);
         }
