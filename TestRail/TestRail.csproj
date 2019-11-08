@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net461;net45</TargetFrameworks>
     <PackageId>TestRail</PackageId>
-    <Version>2.0.4</Version>
+    <Version>2.0.5</Version>
     <PackageVersion>$(Version)</PackageVersion>
     <Title>TestRail Client</Title>
     <Authors>TestRail Client Committers</Authors>
@@ -12,6 +12,8 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Description>.Net Standard 2.0 implementation of the TestRail API</Description>
     <PackageReleaseNotes>
+    ##2.0.5
+      - Make GetSections's suiteID parameter optional.
     ##2.0.4
       - Add offset parameter to GetRuns method (allows ability to get more than 250 most recent runs) 
     ##2.0.3
