@@ -1056,33 +1056,31 @@ namespace TestRail
             catch (Exception thrownException)
             {
                 var message = thrownException.Message;
+                var statusCode = HttpStatusCode.InternalServerError; // 500 is the default in this case
 
                 // Return a response object for the most popular errors
                 if (message.Contains("400"))
-                    return new RequestResult<T>(HttpStatusCode.BadRequest, thrownException: thrownException);
+                    statusCode = HttpStatusCode.BadRequest;
 
                 if (message.Contains("401"))
-                    return new RequestResult<T>(HttpStatusCode.Unauthorized, thrownException: thrownException);
+                    statusCode = HttpStatusCode.Unauthorized;
 
                 if (message.Contains("403"))
-                    return new RequestResult<T>(HttpStatusCode.Forbidden, thrownException: thrownException);
+                    statusCode = HttpStatusCode.Forbidden;
 
                 if (message.Contains("404"))
-                    return new RequestResult<T>(HttpStatusCode.NotFound, thrownException: thrownException);
-
-                if (message.Contains("500"))
-                    return new RequestResult<T>(HttpStatusCode.InternalServerError, thrownException: thrownException);
+                    statusCode = HttpStatusCode.NotFound;
 
                 if (message.Contains("502"))
-                    return new RequestResult<T>(HttpStatusCode.BadGateway, thrownException: thrownException);
+                    statusCode = HttpStatusCode.BadGateway;
 
                 if (message.Contains("503"))
-                    return new RequestResult<T>(HttpStatusCode.ServiceUnavailable, thrownException: thrownException);
+                    statusCode = HttpStatusCode.ServiceUnavailable;
 
                 if (message.Contains("504"))
-                    return new RequestResult<T>(HttpStatusCode.GatewayTimeout, thrownException: thrownException);
+                    statusCode = HttpStatusCode.GatewayTimeout;
 
-                throw;
+                return new RequestResult<T>(statusCode, thrownException: thrownException);
             }
         }
 
