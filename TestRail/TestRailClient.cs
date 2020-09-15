@@ -355,7 +355,7 @@ namespace TestRail
         /// <param name="projectId">The ID of the project the milestone should be added to.</param>
         /// <param name="name">The name of the milestone (required).</param>
         /// <param name="description">The description of the milestone.</param>
-        /// <param name="parentId">The ID of the parent milestone, if any (for sub-milestones) (available since TestRail 5.3).</param> 
+        /// <param name="parentId">The ID of the parent milestone, if any (for sub-milestones) (available since TestRail 5.3).</param>
         /// <param name="dueOn">The due date of the milestone (as UNIX timestamp).</param>
         /// <returns>If successful, this method returns the new milestone.</returns>
         public RequestResult<Milestone> AddMilestone(ulong projectId, string name, string description = null, ulong? parentId = null, DateTime? dueOn = null)
@@ -804,9 +804,9 @@ namespace TestRail
         /// <param name="projectId">id of the project</param>
         /// <param name="suiteId">id of the suite</param>
         /// <returns>sections associated with the suite</returns>
-        public RequestResult<IList<Section>> GetSections(ulong projectId, ulong suiteId)
+        public RequestResult<IList<Section>> GetSections(ulong projectId, ulong? suiteId = null)
         {
-            var options = $"&suite_id={suiteId}";
+            var options = suiteId.HasValue ? $"&suite_id={suiteId}" : string.Empty;
             var uri = _CreateUri_(CommandType.Get, CommandAction.Sections, projectId, null, options);
 
             return _SendGetCommand<IList<Section>>(uri);
