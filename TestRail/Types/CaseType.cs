@@ -1,13 +1,14 @@
-﻿using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace TestRail.Types
 {
+    /// <inheritdoc />
     /// <summary>stores information about a case type</summary>
     public class CaseType : BaseTestRailType
     {
         #region Public Properties
         /// <summary>ID of the case type</summary>
-        public ulong? ID { get; protected set; }
+        public ulong? Id { get; protected set; }
 
         /// <summary>Name of the case type</summary>
         public string Name { get; protected set; }
@@ -29,14 +30,15 @@ namespace TestRail.Types
         /// <returns>suite corresponding to the json</returns>
         public static CaseType Parse(JObject json)
         {
-            var ct = new CaseType
+            var caseType = new CaseType
             {
                 JsonFromResponse = json,
-                ID = (ulong?)json["id"],
+                Id = (ulong?)json["id"],
                 Name = (string)json["name"],
-                IsDefault = (bool?)json["is_default"],
+                IsDefault = (bool?)json["is_default"]
             };
-            return ct;
+
+            return caseType;
         }
         #endregion Public Methods
     }

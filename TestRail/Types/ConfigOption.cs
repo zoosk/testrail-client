@@ -1,7 +1,8 @@
-﻿using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace TestRail.Types
 {
+    /// <inheritdoc />
     /// <summary>stores information about an option for a case field's configuration</summary>
     public class ConfigOption : BaseTestRailType
     {
@@ -24,15 +25,16 @@ namespace TestRail.Types
         /// <param name="json">converts the json object to a ConfigOption</param>
         public static ConfigOption Parse(JObject json)
         {
-            var co = new ConfigOption
+            var configOption = new ConfigOption
             {
                 JsonFromResponse = json,
                 IsRequired = (bool?)json["is_required"],
                 DefaultValue = (string)json["default_value"],
                 Format = (string)json["format"],
-                Rows = (string)json["rows"],
+                Rows = (string)json["rows"]
             };
-            return co;
+
+            return configOption;
         }
         #endregion Public Methods
     }

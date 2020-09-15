@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
 using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace TestRail.Types
 {
-    /// <summary>stores informations about the context for a case field's config section</summary>
+    /// <inheritdoc />
+    /// <summary>stores information about the context for a case field's config section</summary>
     public class ConfigContext : BaseTestRailType
     {
         #region Public Properties
@@ -12,7 +13,7 @@ namespace TestRail.Types
         public bool? IsGlobal { get; private set; }
 
         /// <summary>List of project IDs</summary>
-        public List<string> ProjectIDs { get; private set; }
+        public List<string> ProjectIds { get; private set; }
         #endregion Public Properties
 
         #region Public Methods
@@ -20,7 +21,7 @@ namespace TestRail.Types
         /// <param name="json">takes a json object and converts it to a ConfigContext</param>
         public static ConfigContext Parse(JObject json)
         {
-            var cc = new ConfigContext
+            var configContext = new ConfigContext
             {
                 JsonFromResponse = json,
                 IsGlobal = (bool?)json["is_global"],
@@ -28,17 +29,21 @@ namespace TestRail.Types
 
             // check to see if the project ids is empty 
             var jval = json["project_ids"];
+
             if (null != jval && jval.HasValues)
             {
                 // add values to the list if not empty
-                cc.ProjectIDs = new List<string>();
+                configContext.ProjectIds = new List<string>();
+
                 var jarray = (JArray)jval;
+
                 foreach (var jsonItem in jarray.Cast<JValue>())
                 {
-                    cc.ProjectIDs.Add((string)jsonItem);
+                    configContext.ProjectIds.Add((string)jsonItem);
                 }
             }
-            return cc;
+
+            return configContext;
         }
         #endregion Public Methods
     }

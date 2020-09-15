@@ -1,14 +1,15 @@
-﻿using System;
 using Newtonsoft.Json.Linq;
+using System;
 
 namespace TestRail.Types
 {
+    /// <inheritdoc />
     /// <summary>stores information about a project</summary>
     public class Project : BaseTestRailType
     {
         #region Public Properties
         /// <summary>id of the project</summary>
-        public ulong ID { get; private set; }
+        public ulong Id { get; private set; }
 
         /// <summary>name of the project</summary>
         public string Name { get; set; }
@@ -19,10 +20,7 @@ namespace TestRail.Types
         /// <summary>announcement associated with the project</summary>
         public string Announcement { get; set; }
 
-        /// <summary>
-        /// true if the announcement should be displayed on the project's overview page and
-        /// false otherwise
-        /// </summary>
+        /// <summary>true if the announcement should be displayed on the project's overview page and false otherwise</summary>
         public bool? ShowAnnouncement { get; set; }
 
         /// <summary>true if the project has been completed</summary>
@@ -45,18 +43,19 @@ namespace TestRail.Types
         /// <returns>project corresponding to the json</returns>
         public static Project Parse(JObject json)
         {
-            var p = new Project
+            var project = new Project
             {
                 JsonFromResponse = json,
-                ID = (ulong)json["id"],
+                Id = (ulong)json["id"],
                 Name = (string)json["name"],
                 Announcement = (string)json["announcement"],
                 ShowAnnouncement = (bool?)json["show_announcement"],
                 IsCompleted = (bool?)json["is_completed"],
                 Url = (string)json["url"],
-                CompletedOn = null == (int?)json["completed_on"] ? (DateTime?)null : new DateTime(1970, 1, 1).AddSeconds((int)json["completed_on"]),
+                CompletedOn = null == (int?)json["completed_on"] ? (DateTime?)null : new DateTime(1970, 1, 1).AddSeconds((int)json["completed_on"])
             };
-            return p;
+
+            return project;
         }
 
         /// <summary>Creates a json object for this class</summary>
@@ -64,10 +63,27 @@ namespace TestRail.Types
         public JObject GetJson()
         {
             dynamic jsonParams = new JObject();
-            if (!string.IsNullOrWhiteSpace(Name)) { jsonParams.name = Name; }
-            if (!string.IsNullOrWhiteSpace(Announcement)) { jsonParams.announcement = Announcement; }
-            if (null != ShowAnnouncement) { jsonParams.show_announcement = ShowAnnouncement.Value; }
-            if (null != IsCompleted) { jsonParams.is_completed = IsCompleted.Value; }
+
+            if (!string.IsNullOrWhiteSpace(Name))
+            {
+                jsonParams.name = Name;
+            }
+
+            if (!string.IsNullOrWhiteSpace(Announcement))
+            {
+                jsonParams.announcement = Announcement;
+            }
+
+            if (null != ShowAnnouncement)
+            {
+                jsonParams.show_announcement = ShowAnnouncement.Value;
+            }
+
+            if (null != IsCompleted)
+            {
+                jsonParams.is_completed = IsCompleted.Value;
+            }
+
             return jsonParams;
         }
         #endregion Public Methods

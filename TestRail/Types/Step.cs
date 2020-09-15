@@ -1,17 +1,22 @@
-﻿using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
+using TestRail.Enums;
 
 namespace TestRail.Types
 {
+    /// <inheritdoc />
     /// <summary>stores information about a step</summary>
     public class Step : BaseTestRailType
     {
         #region Public Fields
         /// <summary>description of the step</summary>
         public string Description;
+
         /// <summary>expected result for the step</summary>
         public string Expected;
+
         /// <summary>actual result for the step</summary>
         public string Actual;
+
         /// <summary>result of the step</summary>
         public ResultStatus? Status;
         #endregion Public Fields
@@ -22,15 +27,16 @@ namespace TestRail.Types
         /// <returns>step corresponding to the json</returns>
         public static Step Parse(JObject json)
         {
-            var s = new Step
+            var step = new Step
             {
                 JsonFromResponse = json,
                 Description = (string)json["content"],
                 Expected = (string)json["expected"],
                 Actual = (string)json["actual"],
-                Status = null == (int?)json["status_id"] ? (ResultStatus?)null : (ResultStatus)(int)json["status_id"],
+                Status = null == (int?)json["status_id"] ? (ResultStatus?)null : (ResultStatus)(int)json["status_id"]
             };
-            return s;
+
+            return step;
         }
 
         /// <summary>Get the json object that describes this class</summary>
@@ -38,10 +44,27 @@ namespace TestRail.Types
         public JObject GetJsonObject()
         {
             dynamic json = new JObject();
-            if (!string.IsNullOrWhiteSpace(Description)) { json.content = Description; }
-            if (!string.IsNullOrWhiteSpace(Expected)) { json.expected = Expected; }
-            if (!string.IsNullOrWhiteSpace(Actual)) { json.actual = Actual; }
-            if (null != Status) { json.status_id = (int)Status; }
+
+            if (!string.IsNullOrWhiteSpace(Description))
+            {
+                json.content = Description;
+            }
+
+            if (!string.IsNullOrWhiteSpace(Expected))
+            {
+                json.expected = Expected;
+            }
+
+            if (!string.IsNullOrWhiteSpace(Actual))
+            {
+                json.actual = Actual;
+            }
+
+            if (null != Status)
+            {
+                json.status_id = (int)Status;
+            }
+
             return json;
         }
         #endregion Public Methods

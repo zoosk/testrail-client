@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace TestRail
+namespace TestRail.Utils
 {
     /// <summary>extension methods for the datetime class</summary>
     public static class DateTimeExtensions

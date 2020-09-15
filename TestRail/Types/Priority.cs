@@ -1,13 +1,14 @@
-﻿using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace TestRail.Types
 {
+    /// <inheritdoc />
     /// <summary>stores information about a priority</summary>
     public class Priority : BaseTestRailType
     {
         #region Public Properties
         /// <summary>id of the priority</summary>
-        public ulong ID { get; private set; }
+        public ulong Id { get; private set; }
 
         /// <summary>name of the priority</summary>
         public string Name { get; private set; }
@@ -35,16 +36,17 @@ namespace TestRail.Types
         /// <returns>plan corresponding to the json</returns>
         public static Priority Parse(JObject json)
         {
-            var p = new Priority
+            var priority = new Priority
             {
                 JsonFromResponse = json,
-                ID = (ulong)json["id"],
+                Id = (ulong)json["id"],
                 Name = (string)json["name"],
                 ShortName = (string)json["short_name"],
                 IsDefault = (bool)json["is_default"],
-                PriorityLevel = (int)json["priority"],
+                PriorityLevel = (int)json["priority"]
             };
-            return p;
+
+            return priority;
         }
         #endregion Public Methods
     }
