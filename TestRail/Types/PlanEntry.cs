@@ -72,32 +72,14 @@ namespace TestRail.Types
         {
             dynamic jsonParams = new JObject();
 
-            if (null != SuiteId)
-            {
-                jsonParams.suite_id = SuiteId;
-            }
-
-            if (!string.IsNullOrWhiteSpace(Name))
-            {
-                jsonParams.name = Name;
-            }
-
-            if (null != AssignedToId)
-            {
-                jsonParams.assignedto_id = AssignedToId.Value;
-            }
+            if (null != SuiteId) { jsonParams.suite_id = SuiteId; }
+            if (!string.IsNullOrWhiteSpace(Name)) { jsonParams.name = Name; }
+            if (null != AssignedToId) { jsonParams.assignedto_id = AssignedToId.Value; }
 
             if (null != CaseIds && 0 < CaseIds.Count)
             {
-                var jarray = new JArray();
-
-                foreach (var caseId in CaseIds)
-                {
-                    jarray.Add(caseId);
-                }
-
                 jsonParams.include_all = false;
-                jsonParams.case_ids = jarray;
+                jsonParams.case_ids = JArray.FromObject(CaseIds);
             }
 
             else
@@ -105,29 +87,8 @@ namespace TestRail.Types
                 jsonParams.include_all = true;
             }
 
-            if (null != ConfigIDs && 0 < ConfigIDs.Count)
-            {
-                var jarray = new JArray();
-
-                foreach (var configId in ConfigIDs)
-                {
-                    jarray.Add(configId);
-                }
-
-                jsonParams.config_ids = jarray;
-            }
-
-            if (null != RunList && 0 < RunList.Count)
-            {
-                var jarray = new JArray();
-
-                foreach (var run in RunList)
-                {
-                    jarray.Add(run.GetJson());
-                }
-
-                jsonParams.runs = jarray;
-            }
+            if (null != ConfigIDs && 0 < ConfigIDs.Count) { jsonParams.config_ids = JArray.FromObject(ConfigIDs); }
+            if (null != RunList && 0 < RunList.Count) { jsonParams.runs = JArray.FromObject(RunList); }
 
             return jsonParams;
         }
