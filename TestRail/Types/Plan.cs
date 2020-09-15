@@ -141,20 +141,9 @@ namespace TestRail.Types
         {
             dynamic jsonParams = new JObject();
 
-            if (!string.IsNullOrWhiteSpace(Name))
-            {
-                jsonParams.name = Name;
-            }
-
-            if (!string.IsNullOrWhiteSpace(Description))
-            {
-                jsonParams.description = Description;
-            }
-
-            if (null != MilestoneId)
-            {
-                jsonParams.milestone_id = MilestoneId;
-            }
+            if (!string.IsNullOrWhiteSpace(Name)) { jsonParams.name = Name; }
+            if (!string.IsNullOrWhiteSpace(Description)) { jsonParams.description = Description; }
+            if (null != MilestoneId) { jsonParams.milestone_id = MilestoneId; }
 
             if (null != Entries && 0 < Entries.Count)
             {

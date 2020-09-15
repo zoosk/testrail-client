@@ -84,35 +84,12 @@ namespace TestRail.Types
         {
             dynamic jsonParams = new JObject();
 
-            if (!string.IsNullOrWhiteSpace(Title))
-            {
-                jsonParams.title = Title;
-            }
-
-            if (null != TypeId)
-            {
-                jsonParams.type_id = TypeId.Value;
-            }
-
-            if (null != PriorityId)
-            {
-                jsonParams.priority_id = PriorityId.Value;
-            }
-
-            if (!string.IsNullOrWhiteSpace(Estimate))
-            {
-                jsonParams.estimate = Estimate;
-            }
-
-            if (null != MilestoneId)
-            {
-                jsonParams.milestone_id = MilestoneId.Value;
-            }
-
-            if (!string.IsNullOrWhiteSpace(References))
-            {
-                jsonParams.refs = References;
-            }
+            if (!string.IsNullOrWhiteSpace(Title)) { jsonParams.title = Title; }
+            if (null != TypeId) { jsonParams.type_id = TypeId.Value; }
+            if (null != PriorityId) { jsonParams.priority_id = PriorityId.Value; }
+            if (!string.IsNullOrWhiteSpace(Estimate)) { jsonParams.estimate = Estimate; }
+            if (null != MilestoneId) { jsonParams.milestone_id = MilestoneId.Value; }
+            if (!string.IsNullOrWhiteSpace(References)) { jsonParams.refs = References; }
 
             return jsonParams;
         }
