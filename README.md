@@ -32,6 +32,8 @@ Solution was built using Visual Studio 2017 (make sure you have the latest versi
 - `NuGet push TestRail.<version>.nupkg`
 
 ## Version History
+#### 3.0.1
+- Fixed an issue in the `AddRun()` method that made it impossible to add a new run if there is no milestone in project.
 #### 3.0
 - A successful command will now return the appropriate TestRail object according to the official documentation.
   - For example: `AddResult()` will now return the newly created `Result` objects.
