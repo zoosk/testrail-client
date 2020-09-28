@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net461;net45</TargetFrameworks>
     <PackageId>TestRail</PackageId>
-    <Version>3.0</Version>
+    <Version>3.0.1</Version>
     <PackageVersion>$(Version)</PackageVersion>
     <Title>TestRail Client</Title>
     <Authors>TestRail Client Committers</Authors>
@@ -12,10 +12,7 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Description>.Net Standard 2.0 implementation of the TestRail API</Description>
     <PackageReleaseNotes>
-    - A successful command will now return the appropriate TestRail object according to the official documentation.
-      - For example: `AddResult()` will now return the newly created `Result` objects.
-      - Official documentation can be found here: http://docs.gurock.com/testrail-api2/start
-    - An unsuccessful command will now include the exception/error that was thrown to better understand what went wrong.
+    - Fixed an issue in the `AddRun()` method that made it impossible to add a new run if there is no milestone in project.
     </PackageReleaseNotes>
     <Copyright>Copyright 2017</Copyright>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
