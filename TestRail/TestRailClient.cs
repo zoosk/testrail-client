@@ -196,7 +196,7 @@ namespace TestRail
         /// <param name="customFields">Custom fields are supported as well and must be submitted with their system name, prefixed with 'custom_', e.g. custom_preconds</param>
         /// <returns>If successful, this method returns the new test case.</returns>
         public RequestResult<Case> AddCase(ulong sectionId, string title, ulong? typeId = null, ulong? priorityId = null,
-            string estimate = null, ulong? milestoneId = null, string refs = null, JObject customFields = null)
+            string estimate = null, ulong? milestoneId = null, string refs = null, JObject customFields = null, ulong? templateId = null)
         {
             if (string.IsNullOrWhiteSpace(title))
             {
@@ -212,7 +212,8 @@ namespace TestRail
                 PriorityId = priorityId,
                 Estimate = estimate,
                 MilestoneId = milestoneId,
-                References = refs
+                References = refs,
+                TemplateId = templateId
             };
 
             var jsonParams = JsonUtility.Merge(tmpCase.GetJson(), customFields);
