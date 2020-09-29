@@ -194,6 +194,7 @@ namespace TestRail
         /// <param name="milestoneId">The ID of the milestone to link to the test case.</param>
         /// <param name="refs">A comma-separated list of references/requirements.</param>
         /// <param name="customFields">Custom fields are supported as well and must be submitted with their system name, prefixed with 'custom_', e.g. custom_preconds</param>
+        /// <param name="templateId">The ID of the template (field layout) (requires <b>TestRail 5.2</b> or later).</param>
         /// <returns>If successful, this method returns the new test case.</returns>
         public RequestResult<Case> AddCase(ulong sectionId, string title, ulong? typeId = null, ulong? priorityId = null,
             string estimate = null, ulong? milestoneId = null, string refs = null, JObject customFields = null, ulong? templateId = null)
