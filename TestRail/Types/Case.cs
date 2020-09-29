@@ -43,6 +43,9 @@ namespace TestRail.Types
 
         /// <summary>suite id for this case</summary>
         public ulong? SuiteId { get; set; }
+
+        /// <summary>id of the template (field layout)</summary>
+        public ulong? TemplateId { get; set; }
         #endregion Public Properties
 
         #region Public Methods
