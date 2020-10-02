@@ -99,6 +99,11 @@ namespace TestRail
             return _SendPostCommand<Result>(uri, jsonParams);
         }
 
+        public RequestResult<IList<Result>> AddResults(ulong runId)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Adds a new test result, comment or assigns a test.
         /// It's recommended to use AddResultsForCases() instead if you plan to add results for multiple test cases.
@@ -133,8 +138,10 @@ namespace TestRail
             return _SendPostCommand<Result>(uri, jsonParams);
         }
 
-        // TODO: - Add a method called AddResultsForCases()
-        // http://docs.gurock.com/testrail-api2/reference-results#add_results_for_cases
+        public RequestResult<IList<Result>> AddResultForCases(ulong runId)
+        {
+            throw new NotImplementedException();
+        }
 
         /// <summary>Creates a new test run.</summary>
         /// <param name="projectId">The ID of the project the test run should be added to.</param>
