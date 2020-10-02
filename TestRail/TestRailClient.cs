@@ -99,9 +99,11 @@ namespace TestRail
             return _SendPostCommand<Result>(uri, jsonParams);
         }
 
-        public RequestResult<IList<Result>> AddResults(ulong runId)
+        public RequestResult<IList<Result>> AddResults(ulong runId, BulkResults results)
         {
-            throw new NotImplementedException();
+            var uri = _CreateUri_(CommandType.Add, CommandAction.Results, runId);
+
+            return _SendPostCommand<IList<Result>>(uri, results.GetJson());
         }
 
         /// <summary>
