@@ -140,7 +140,7 @@ namespace TestRail
             return _SendPostCommand<Result>(uri, jsonParams);
         }
 
-        public RequestResult<IList<Result>> AddResultForCases(ulong runId, BulkResults results)
+        public RequestResult<IList<Result>> AddResultsForCases(ulong runId, BulkResults results)
         {
             var uri = _CreateUri_(CommandType.Add, CommandAction.ResultsForCases, runId);
 
