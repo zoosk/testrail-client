@@ -99,6 +99,13 @@ namespace TestRail
             return _SendPostCommand<Result>(uri, jsonParams);
         }
 
+        /// <summary>
+        /// Adds one or more new test results, comments or assigns one or more tests.
+        /// Ideal for test automation to bulk-add multiple test results in one step.
+        /// </summary>
+        /// <param name="runId">The ID of the test run the results should be added to.</param>
+        /// <param name="results">Bulk results to submit, please note that all referenced tests must belong to the same test run.</param>
+        /// <returns>If successful, this method returns the new test results in the same order as the list of the request.</returns>
         public RequestResult<IList<Result>> AddResults(ulong runId, BulkResults results)
         {
             var uri = _CreateUri_(CommandType.Add, CommandAction.Results, runId);
@@ -140,6 +147,13 @@ namespace TestRail
             return _SendPostCommand<Result>(uri, jsonParams);
         }
 
+        /// <summary>
+        /// Adds one or more new test results, comments or assigns one or more tests (using the case IDs).
+        /// Ideal for test automation to bulk-add multiple test results in one step.
+        /// </summary>
+        /// <param name="runId">The ID of the test run the results should be added to.</param>
+        /// <param name="results">Bulk results to submit, please note that all referenced tests must belong to the same test run.</param>
+        /// <returns>If successful, this method returns the new test results in the same order as the list of the request.</returns>
         public RequestResult<IList<Result>> AddResultsForCases(ulong runId, BulkResults results)
         {
             var uri = _CreateUri_(CommandType.Add, CommandAction.ResultsForCases, runId);
