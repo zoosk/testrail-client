@@ -79,6 +79,11 @@ namespace TestRail.Types
         {
             dynamic jsonParams = new JObject();
 
+            if (TestId > 0)
+            {
+                jsonParams.test_id = TestId;
+            }
+
             if (null != StatusId)
             {
                 jsonParams.status_id = (int)StatusId;
