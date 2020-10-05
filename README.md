@@ -32,6 +32,12 @@ Solution was built using Visual Studio 2017 (make sure you have the latest versi
 - `NuGet push TestRail.<version>.nupkg`
 
 ## Version History
+#### 3.1.0
+- Updated the `AddCase()` method to include the template id in the request.
+- Created new methods `AddResults()` and `AddResultsForCases()` to submit results in bulk.
+- Updated the `GetResults()`, `GetResultsForCase()`, and `GetResultsForRun()` methods to allow filtering by status id.
+
+**NOTE:** Custom fields are not yet supported when making bulk submissions.
 #### 3.0.1
 - Fixed an issue in the `AddRun()` method that made it impossible to add a new run if there is no milestone in project.
 #### 3.0
