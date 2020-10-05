@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net461;net45</TargetFrameworks>
     <PackageId>TestRail</PackageId>
-    <Version>3.0.1</Version>
+    <Version>3.1.0</Version>
     <PackageVersion>$(Version)</PackageVersion>
     <Title>TestRail Client</Title>
     <Authors>TestRail Client Committers</Authors>
@@ -12,7 +12,11 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Description>.Net Standard 2.0 implementation of the TestRail API</Description>
     <PackageReleaseNotes>
-    - Fixed an issue in the `AddRun()` method that made it impossible to add a new run if there is no milestone in project.
+    - Updated the `AddCase()` method to include the template id in the request.
+    - Created new methods `AddResults()` and `AddResultsForCases()` to submit results in bulk.
+    - Updated the `GetResults()`, `GetResultsForCase()`, and `GetResultsForRun()` methods to allow filtering by status id.
+
+    **NOTE:** Custom fields are not yet supported when making bulk submissions.
     </PackageReleaseNotes>
     <Copyright>Copyright 2017</Copyright>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
@@ -28,11 +32,6 @@
     <Reference Include="System.Web" />
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Enums\" />
-    <Folder Include="Types\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -15,6 +15,9 @@ namespace TestRail.Types
         /// <summary>ID of the test</summary>
         public ulong TestId { get; set; }
 
+        /// <summary>case ID of the test</summary>
+        public ulong CaseId { get; set; }
+
         /// <summary>ID of the test status</summary>
         public ulong? StatusId { get; set; }
 
@@ -58,6 +61,7 @@ namespace TestRail.Types
                 JsonFromResponse = json,
                 Id = (ulong)json["id"],
                 TestId = (ulong)json["test_id"],
+                CaseId = (ulong)json["case_id"],
                 StatusId = (ulong?)json["status_id"],
                 CreatedBy = (ulong?)json["created_by"],
                 CreatedOn = null == (int?)json["created_on"] ? (DateTime?)null : new DateTime(1970, 1, 1).AddSeconds((int)json["created_on"]),
@@ -78,6 +82,16 @@ namespace TestRail.Types
         public virtual JObject GetJson()
         {
             dynamic jsonParams = new JObject();
+
+            if (TestId > 0)
+            {
+                jsonParams.test_id = TestId;
+            }
+
+            if (CaseId > 0)
+            {
+                jsonParams.case_id = CaseId;
+            }
 
             if (null != StatusId)
             {

@@ -100,6 +100,20 @@ namespace TestRail
         }
 
         /// <summary>
+        /// Adds one or more new test results, comments or assigns one or more tests.
+        /// Ideal for test automation to bulk-add multiple test results in one step.
+        /// </summary>
+        /// <param name="runId">The ID of the test run the results should be added to.</param>
+        /// <param name="results">Bulk results to submit, please note that all referenced tests must belong to the same test run.</param>
+        /// <returns>If successful, this method returns the new test results in the same order as the list of the request.</returns>
+        public RequestResult<IList<Result>> AddResults(ulong runId, BulkResults results)
+        {
+            var uri = _CreateUri_(CommandType.Add, CommandAction.Results, runId);
+
+            return _SendPostCommand<IList<Result>>(uri, results.GetJson());
+        }
+
+        /// <summary>
         /// Adds a new test result, comment or assigns a test.
         /// It's recommended to use AddResultsForCases() instead if you plan to add results for multiple test cases.
         /// </summary>
@@ -133,8 +147,19 @@ namespace TestRail
             return _SendPostCommand<Result>(uri, jsonParams);
         }
 
-        // TODO: - Add a method called AddResultsForCases()
-        // http://docs.gurock.com/testrail-api2/reference-results#add_results_for_cases
+        /// <summary>
+        /// Adds one or more new test results, comments or assigns one or more tests (using the case IDs).
+        /// Ideal for test automation to bulk-add multiple test results in one step.
+        /// </summary>
+        /// <param name="runId">The ID of the test run the results should be added to.</param>
+        /// <param name="results">Bulk results to submit, please note that all referenced tests must belong to the same test run.</param>
+        /// <returns>If successful, this method returns the new test results in the same order as the list of the request.</returns>
+        public RequestResult<IList<Result>> AddResultsForCases(ulong runId, BulkResults results)
+        {
+            var uri = _CreateUri_(CommandType.Add, CommandAction.ResultsForCases, runId);
+
+            return _SendPostCommand<IList<Result>>(uri, results.GetJson());
+        }
 
         /// <summary>Creates a new test run.</summary>
         /// <param name="projectId">The ID of the project the test run should be added to.</param>
@@ -194,9 +219,10 @@ namespace TestRail
         /// <param name="milestoneId">The ID of the milestone to link to the test case.</param>
         /// <param name="refs">A comma-separated list of references/requirements.</param>
         /// <param name="customFields">Custom fields are supported as well and must be submitted with their system name, prefixed with 'custom_', e.g. custom_preconds</param>
+        /// <param name="templateId">The ID of the template (field layout) (requires <b>TestRail 5.2</b> or later).</param>
         /// <returns>If successful, this method returns the new test case.</returns>
         public RequestResult<Case> AddCase(ulong sectionId, string title, ulong? typeId = null, ulong? priorityId = null,
-            string estimate = null, ulong? milestoneId = null, string refs = null, JObject customFields = null)
+            string estimate = null, ulong? milestoneId = null, string refs = null, JObject customFields = null, ulong? templateId = null)
         {
             if (string.IsNullOrWhiteSpace(title))
             {
@@ -212,7 +238,8 @@ namespace TestRail
                 PriorityId = priorityId,
                 Estimate = estimate,
                 MilestoneId = milestoneId,
-                References = refs
+                References = refs,
+                TemplateId = templateId
             };
 
             var jsonParams = JsonUtility.Merge(tmpCase.GetJson(), customFields);
@@ -933,11 +960,23 @@ namespace TestRail
         /// <summary>Returns a list of test results for a test</summary>
         /// <param name="testId">id of the test</param>
         /// <param name="limit">(optional) maximum amount of test results to return, latest first</param>
+        /// <param name="statusIds">a list of status IDs to filter by</param>
         /// <returns>list containing the results for the given test</returns>
-        public RequestResult<IList<Result>> GetResults(ulong testId, ulong? limit = null)
+        public RequestResult<IList<Result>> GetResults(ulong testId, ulong? limit = null, IList<ResultStatus> statusIds = null)
         {
-            var optional = (limit.HasValue) ? $"&limit={limit.Value}" : string.Empty;
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Results, testId, null, optional);
+            var filters = new StringBuilder(string.Empty);
+
+            if (statusIds != null && statusIds.Any())
+            {
+                filters.Append($"&status_id={string.Join(",", statusIds)}");
+            }
+
+            if (limit.HasValue)
+            {
+                filters.Append($"&limit={limit.Value}");
+            }
+
+            var uri = _CreateUri_(CommandType.Get, CommandAction.Results, testId, null, filters.ToString());
 
             return _SendGetCommand<IList<Result>>(uri);
         }
@@ -946,11 +985,23 @@ namespace TestRail
         /// <param name="runId">id of the test run</param>
         /// <param name="caseId">id of the test case</param>
         /// <param name="limit">(optional) maximum amount of test results to return, latest first</param>
+        /// <param name="statusIds">a list of status IDs to filter by</param>
         /// <returns>list of test results for a case</returns>
-        public RequestResult<IList<Result>> GetResultsForCase(ulong runId, ulong caseId, ulong? limit = null)
+        public RequestResult<IList<Result>> GetResultsForCase(ulong runId, ulong caseId, ulong? limit = null, IList<ResultStatus> statusIds = null)
         {
-            var optional = limit.HasValue ? $"&limit={limit.Value}" : string.Empty;
-            var uri = _CreateUri_(CommandType.Get, CommandAction.ResultsForCase, runId, caseId, optional);
+            var filters = new StringBuilder(string.Empty);
+
+            if (statusIds != null && statusIds.Any())
+            {
+                filters.Append($"&status_id={string.Join(",", statusIds)}");
+            }
+
+            if (limit.HasValue)
+            {
+                filters.Append($"&limit={limit.Value}");
+            }
+
+            var uri = _CreateUri_(CommandType.Get, CommandAction.ResultsForCase, runId, caseId, filters.ToString());
 
             return _SendGetCommand<IList<Result>>(uri);
         }
@@ -958,11 +1009,23 @@ namespace TestRail
         /// <summary>Return the list of test results for a test run</summary>
         /// <param name="runId">id of the rest run</param>
         /// <param name="limit">(optional) maximum amount of test results to return, latest first</param>
+        /// <param name="statusIds">a list of status IDs to filter by</param>
         /// <returns>list of test results for a test run</returns>
-        public RequestResult<IList<Result>> GetResultsForRun(ulong runId, ulong? limit = null)
+        public RequestResult<IList<Result>> GetResultsForRun(ulong runId, ulong? limit = null, IList<ResultStatus> statusIds = null)
         {
-            var optional = limit.HasValue ? $"&limit={limit.Value}" : string.Empty;
-            var uri = _CreateUri_(CommandType.Get, CommandAction.ResultsForRun, runId, null, optional);
+            var filters = new StringBuilder(string.Empty);
+
+            if (statusIds != null && statusIds.Any())
+            {
+                filters.Append($"&status_id={string.Join(",", statusIds)}");
+            }
+
+            if (limit.HasValue)
+            {
+                filters.Append($"&limit={limit.Value}");
+            }
+
+            var uri = _CreateUri_(CommandType.Get, CommandAction.ResultsForRun, runId, null, filters.ToString());
 
             return _SendGetCommand<IList<Result>>(uri);
         }

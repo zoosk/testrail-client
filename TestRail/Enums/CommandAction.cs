@@ -73,6 +73,10 @@ namespace TestRail.Enums
         [Description("results_for_case")]
         ResultsForCase,
 
+        /// <summary>Used to access the results for a group of cases.</summary>
+        [Description("results_for_cases")]
+        ResultsForCases,
+
         /// <summary>Used to access the test results for a run.</summary>
         [Description("results_for_run")]
         ResultsForRun,
