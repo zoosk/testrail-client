@@ -985,11 +985,23 @@ namespace TestRail
         /// <param name="runId">id of the test run</param>
         /// <param name="caseId">id of the test case</param>
         /// <param name="limit">(optional) maximum amount of test results to return, latest first</param>
+        /// <param name="statusIds">a list of status IDs to filter by</param>
         /// <returns>list of test results for a case</returns>
-        public RequestResult<IList<Result>> GetResultsForCase(ulong runId, ulong caseId, ulong? limit = null)
+        public RequestResult<IList<Result>> GetResultsForCase(ulong runId, ulong caseId, ulong? limit = null, IList<ResultStatus> statusIds = null)
         {
-            var optional = limit.HasValue ? $"&limit={limit.Value}" : string.Empty;
-            var uri = _CreateUri_(CommandType.Get, CommandAction.ResultsForCase, runId, caseId, optional);
+            var filters = new StringBuilder(string.Empty);
+
+            if (statusIds != null && statusIds.Any())
+            {
+                filters.Append($"&status_id={string.Join(",", statusIds)}");
+            }
+
+            if (limit.HasValue)
+            {
+                filters.Append($"&limit={limit.Value}");
+            }
+
+            var uri = _CreateUri_(CommandType.Get, CommandAction.ResultsForCase, runId, caseId, filters.ToString());
 
             return _SendGetCommand<IList<Result>>(uri);
         }
