@@ -15,6 +15,8 @@
     - Updated the `AddCase()` method to include the template id in the request.
     - Created new methods `AddResults()` and `AddResultsForCases()` to submit results in bulk.
     - Updated the `GetResults()`, `GetResultsForCase()`, and `GetResultsForRun()` methods to allow filtering by status id.
+
+    **NOTE:** Custom fields are not yet supported when making bulk submissions.
     </PackageReleaseNotes>
     <Copyright>Copyright 2017</Copyright>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
