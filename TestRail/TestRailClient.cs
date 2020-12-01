@@ -1173,7 +1173,7 @@ namespace TestRail
             // Build request
             var request = new TestRailRequest(uri, type.GetStringValue());
 
-            request.AddHeaders(new Dictionary<string, string> { { "Authorization", AuthInfo } });
+            request.AddHeaders(new Dictionary<string, string> { { "Authorization", $"Basic {AuthInfo}" } });
             request.Accepts("application/json");
             request.ContentType("application/json");
 
