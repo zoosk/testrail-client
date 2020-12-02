@@ -39,7 +39,7 @@ namespace TestRail
         public TestRailClient(string baseUrl, string userName, string password)
         {
             BaseUrl = baseUrl;
-            AuthInfo = Convert.ToBase64String(Encoding.Default.GetBytes($"{userName}:{password}"));
+            AuthInfo = "Basic " + Convert.ToBase64String(Encoding.Default.GetBytes($"{userName}:{password}"));
 
             _projects = new Lazy<IList<Project>>(_GetProjects);
 
