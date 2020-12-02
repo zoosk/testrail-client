@@ -56,12 +56,13 @@ namespace TestRail.Types
         /// <returns>a Result</returns>
         public static Result Parse(JObject json)
         {
+            json.TryGetValue("case_id", out var caseIDToken);
             var result = new Result
             {
                 JsonFromResponse = json,
                 Id = (ulong)json["id"],
                 TestId = (ulong)json["test_id"],
-                CaseId = (ulong)json["case_id"],
+                CaseId = caseIDToken != null ? caseIDToken.Value<ulong>() : default,
                 StatusId = (ulong?)json["status_id"],
                 CreatedBy = (ulong?)json["created_by"],
                 CreatedOn = null == (int?)json["created_on"] ? (DateTime?)null : new DateTime(1970, 1, 1).AddSeconds((int)json["created_on"]),
