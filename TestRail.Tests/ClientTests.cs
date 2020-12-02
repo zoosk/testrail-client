@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using System.IO;
+using System.Net;
 using Xunit;
 
 namespace TestRail.Tests
@@ -21,8 +22,9 @@ namespace TestRail.Tests
         {
             var section = _configuration.GetSection("TestRail");
             var client = new TestRailClient(section["baseurl"], section["username"], section["password"]);
+            var response = client.GetCase(1);
 
-            Assert.NotNull(client.Projects);
+            Assert.NotEqual(HttpStatusCode.Unauthorized, response.StatusCode);
         }
     }
 }
