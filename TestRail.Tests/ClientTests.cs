@@ -7,22 +7,23 @@ namespace TestRail.Tests
 {
     public class ClientTests
     {
-        private readonly IConfigurationRoot _configuration;
+        private readonly TestRailClient _client;
 
         public ClientTests()
         {
-            _configuration = new ConfigurationBuilder()
+            var configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile(path: "appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
+            var section = configuration.GetSection("TestRail");
+
+            _client = new TestRailClient(section["baseurl"], section["username"], section["password"]);
         }
 
         [Fact]
         public void Authentication_Is_Successful()
         {
-            var section = _configuration.GetSection("TestRail");
-            var client = new TestRailClient(section["baseurl"], section["username"], section["password"]);
-            var response = client.GetCase(1);
+            var response = _client.GetCase(1);
 
             Assert.NotEqual(HttpStatusCode.Unauthorized, response.StatusCode);
         }
