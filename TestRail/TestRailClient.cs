@@ -985,9 +985,10 @@ namespace TestRail
         /// <param name="runId">id of the test run</param>
         /// <param name="caseId">id of the test case</param>
         /// <param name="limit">(optional) maximum amount of test results to return, latest first</param>
+        /// <param name="offset">(optional) offset of test results to return</param>
         /// <param name="statusIds">a list of status IDs to filter by</param>
         /// <returns>list of test results for a case</returns>
-        public RequestResult<IList<Result>> GetResultsForCase(ulong runId, ulong caseId, ulong? limit = null, IList<ResultStatus> statusIds = null)
+        public RequestResult<IList<Result>> GetResultsForCase(ulong runId, ulong caseId, ulong? limit = null, ulong? offset = null, IList<ResultStatus> statusIds = null)
         {
             var filters = new StringBuilder(string.Empty);
 
@@ -999,6 +1000,11 @@ namespace TestRail
             if (limit.HasValue)
             {
                 filters.Append($"&limit={limit.Value}");
+            }
+
+            if (offset.HasValue)
+            {
+                filters.Append($"&offset={offset.Value}");
             }
 
             var uri = _CreateUri_(CommandType.Get, CommandAction.ResultsForCase, runId, caseId, filters.ToString());
@@ -1009,9 +1015,10 @@ namespace TestRail
         /// <summary>Return the list of test results for a test run</summary>
         /// <param name="runId">id of the rest run</param>
         /// <param name="limit">(optional) maximum amount of test results to return, latest first</param>
+        /// <param name="offset">(optional) offset of test results to return</param>
         /// <param name="statusIds">a list of status IDs to filter by</param>
         /// <returns>list of test results for a test run</returns>
-        public RequestResult<IList<Result>> GetResultsForRun(ulong runId, ulong? limit = null, IList<ResultStatus> statusIds = null)
+        public RequestResult<IList<Result>> GetResultsForRun(ulong runId, ulong? limit = null, ulong? offset = null, IList<ResultStatus> statusIds = null)
         {
             var filters = new StringBuilder(string.Empty);
 
@@ -1023,6 +1030,11 @@ namespace TestRail
             if (limit.HasValue)
             {
                 filters.Append($"&limit={limit.Value}");
+            }
+
+            if(offset.HasValue)
+            {
+                filters.Append($"&offset={offset.Value}");
             }
 
             var uri = _CreateUri_(CommandType.Get, CommandAction.ResultsForRun, runId, null, filters.ToString());
@@ -1161,7 +1173,7 @@ namespace TestRail
             // Build request
             var request = new TestRailRequest(uri, type.GetStringValue());
 
-            request.AddHeaders(new Dictionary<string, string> { { "Authorization", AuthInfo } });
+            request.AddHeaders(new Dictionary<string, string> { { "Authorization", $"Basic {AuthInfo}" } });
             request.Accepts("application/json");
             request.ContentType("application/json");
 

@@ -1,5 +1,9 @@
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 
 namespace TestRail.Utils
@@ -32,7 +36,37 @@ namespace TestRail.Utils
             if (rawJson != null)
             {
                 RawJson = rawJson;
-                Payload = JsonConvert.DeserializeObject<T>(RawJson);
+                // Welcome to the nightmare zone
+                var parseType = typeof(T);
+                var isList = typeof(System.Collections.IEnumerable).IsAssignableFrom(typeof(T));
+                if (isList)
+                {
+                    parseType = typeof(T).GetGenericArguments().Single();
+                }
+
+                var staticConstructionMethod = parseType.GetMethod(nameof(Types.Case.Parse));
+                if(staticConstructionMethod == null)
+                {
+                    Payload = JsonConvert.DeserializeObject<T>(RawJson);
+                }
+                else
+                {
+                    if(isList)
+                    {
+                        var unwrapped = JsonConvert.DeserializeObject<List<JObject>>(rawJson);
+                        Payload = (T)Activator.CreateInstance(typeof(List<>).MakeGenericType(parseType));
+                        var list = Payload as IList;
+                        foreach(var value in unwrapped)
+                        {
+                            var obj = staticConstructionMethod.Invoke(null, new object[] { value });
+                            list.Add(obj);
+                        }
+                    }
+                    else
+                    {
+                        Payload = (T)staticConstructionMethod.Invoke(null, new object[] { new JObject(rawJson) });
+                    }
+                }
             }
 
             StatusCode = status;
