@@ -1032,7 +1032,7 @@ namespace TestRail
                 filters.Append($"&limit={limit.Value}");
             }
 
-            if(offset.HasValue)
+            if (offset.HasValue)
             {
                 filters.Append($"&offset={offset.Value}");
             }

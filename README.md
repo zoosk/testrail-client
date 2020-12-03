@@ -31,7 +31,14 @@ Solution was built using Visual Studio 2017 (make sure you have the latest versi
   - The new .nupkg file will be in the `TestRail\bin\Release\` directory.
 - `NuGet push TestRail.<version>.nupkg`
 
+## Unit Testing
+- Update the `appsettings.json` with the correct values for the TestRail instance you want to hit.
+- Run the unit tests from VS Test Explorer or by running `dotnet test TestRail.Tests\TestRail.Tests.csproj` from the root directory.
+
 ## Version History
+#### 3.1.1
+- Fixed a bug with the client not being able to authenticate.
+- Added a testing project.
 #### 3.1.0
 - Updated the `AddCase()` method to include the template id in the request.
 - Created new methods `AddResults()` and `AddResultsForCases()` to submit results in bulk.

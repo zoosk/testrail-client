@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net461;net45</TargetFrameworks>
     <PackageId>TestRail</PackageId>
-    <Version>3.1.0</Version>
+    <Version>3.1.1</Version>
     <PackageVersion>$(Version)</PackageVersion>
     <Title>TestRail Client</Title>
     <Authors>TestRail Client Committers</Authors>
@@ -12,11 +12,8 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Description>.Net Standard 2.0 implementation of the TestRail API</Description>
     <PackageReleaseNotes>
-    - Updated the `AddCase()` method to include the template id in the request.
-    - Created new methods `AddResults()` and `AddResultsForCases()` to submit results in bulk.
-    - Updated the `GetResults()`, `GetResultsForCase()`, and `GetResultsForRun()` methods to allow filtering by status id.
-
-    **NOTE:** Custom fields are not yet supported when making bulk submissions.
+    - Fixed a bug with the client not being able to authenticate.
+    - Added a testing project.
     </PackageReleaseNotes>
     <Copyright>Copyright 2017</Copyright>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
