@@ -39,7 +39,7 @@ namespace TestRail
         public TestRailClient(string baseUrl, string userName, string password)
         {
             BaseUrl = baseUrl;
-            AuthInfo = "Basic " + Convert.ToBase64String(Encoding.Default.GetBytes($"{userName}:{password}"));
+            AuthInfo = Convert.ToBase64String(Encoding.Default.GetBytes($"{userName}:{password}"));
 
             _projects = new Lazy<IList<Project>>(_GetProjects);
 
@@ -1032,7 +1032,7 @@ namespace TestRail
                 filters.Append($"&limit={limit.Value}");
             }
 
-            if(offset.HasValue)
+            if (offset.HasValue)
             {
                 filters.Append($"&offset={offset.Value}");
             }
