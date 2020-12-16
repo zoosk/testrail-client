@@ -64,7 +64,7 @@ namespace TestRail.Utils
                     }
                     else
                     {
-                        Payload = (T)staticConstructionMethod.Invoke(null, new object[] { new JObject(rawJson) });
+                        Payload = (T)staticConstructionMethod.Invoke(null, new object[] { JObject.Parse(rawJson) });
                     }
                 }
             }
