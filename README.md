@@ -36,6 +36,8 @@ Solution was built using Visual Studio 2017 (make sure you have the latest versi
 - Run the unit tests from VS Test Explorer or by running `dotnet test TestRail.Tests\TestRail.Tests.csproj` from the root directory.
 
 ## Version History
+#### 3.1.2
+- Fix error on JObject creation in RequestResult
 #### 3.1.1
 - Fixed a bug with the client not being able to authenticate.
 - Added a testing project.
