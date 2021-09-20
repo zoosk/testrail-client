@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -69,12 +68,10 @@ namespace TestRail.Utils
         {
             var response = (HttpWebResponse)_request.GetResponse();
 
-            using (var reader = new StreamReader(response.GetResponseStream() ?? throw new InvalidOperationException(), Encoding.UTF8))
-            {
-                var responseFromServer = reader.ReadToEnd();
+            using var reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+            var responseFromServer = reader.ReadToEnd();
 
-                return new RequestResult<T>(response.StatusCode, responseFromServer);
-            }
+            return new RequestResult<T>(response.StatusCode, responseFromServer);
         }
     }
 }

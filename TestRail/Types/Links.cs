@@ -1,10 +1,7 @@
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
 
 namespace TestRail.Types
 {
-    /// <inheritdoc />
     /// <summary>Link object for moving through groups of returned items based on pagination</summary>
     public class Links
     {

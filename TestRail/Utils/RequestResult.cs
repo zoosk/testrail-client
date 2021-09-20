@@ -38,28 +38,27 @@ namespace TestRail.Utils
                 RawJson = rawJson;
                 // Welcome to the nightmare zone
                 var parseType = typeof(T);
-                var isList = typeof(System.Collections.IEnumerable).IsAssignableFrom(typeof(T));
+                var isList = typeof(IEnumerable).IsAssignableFrom(typeof(T));
                 if (isList)
                 {
                     parseType = typeof(T).GetGenericArguments().Single();
                 }
 
                 var staticConstructionMethod = parseType.GetMethod(nameof(Types.Case.Parse));
-                if(staticConstructionMethod == null)
+                if (staticConstructionMethod == null)
                 {
                     Payload = JsonConvert.DeserializeObject<T>(RawJson);
                 }
                 else
                 {
-                    if(isList)
+                    if (isList)
                     {
                         var unwrapped = JsonConvert.DeserializeObject<List<JObject>>(rawJson);
                         Payload = (T)Activator.CreateInstance(typeof(List<>).MakeGenericType(parseType));
                         var list = Payload as IList;
-                        foreach(var value in unwrapped)
+                        foreach (var obj in unwrapped.Select(value => staticConstructionMethod.Invoke(null, new object[] { value })))
                         {
-                            var obj = staticConstructionMethod.Invoke(null, new object[] { value });
-                            list.Add(obj);
+                            list?.Add(obj);
                         }
                     }
                     else
