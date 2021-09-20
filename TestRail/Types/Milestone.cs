@@ -65,8 +65,8 @@ namespace TestRail.Types
                 Description = (string)json["description"],
                 IsCompleted = (bool?)json["is_completed"],
                 IsStarted = (bool?)json["is_started"],
-                DueOn = null == (int?)json["due_on"] ? (DateTime?)null : new DateTime(1970, 1, 1).AddSeconds((int)json["due_on"]),
-                CompletedOn = null == (int?)json["completed_on"] ? (DateTime?)null : new DateTime(1970, 1, 1).AddSeconds((int)json["completed_on"]),
+                DueOn = null == (int?)json["due_on"] ? null : new DateTime(1970, 1, 1).AddSeconds((int)json["due_on"]),
+                CompletedOn = null == (int?)json["completed_on"] ? null : new DateTime(1970, 1, 1).AddSeconds((int)json["completed_on"]),
                 ProjectId = (ulong)json["project_id"],
                 Url = (string)json["url"]
             };

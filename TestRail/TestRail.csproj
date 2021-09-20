@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net461;net45</TargetFrameworks>
+    <TargetFrameworks>net5.0</TargetFrameworks>
     <PackageId>LGC-TestRail</PackageId>
     <Version>1.0.0</Version>
     <PackageVersion>$(Version)</PackageVersion>
@@ -10,25 +10,15 @@
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0.html</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/zoosk/testrail-client</RepositoryUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Description>.Net Standard 2.0 implementation of the TestRail API</Description>
+    <PackageDescription>.Net 5.0 implementation of the TestRail API</PackageDescription>
+    <Description>.Net 5.0 implementation of the TestRail API</Description>
     <PackageReleaseNotes>
-    - Fix error on JObject creation in RequestResult
+      - Updated for TestRail APIs changes to batch endpoints
     </PackageReleaseNotes>
+    <RepositoryUrl>https://github.com/DrMarkDunne/testrail-client</RepositoryUrl>
     <Copyright>Copyright 2017</Copyright>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' Or  '$(TargetFramework)' == 'net45'">
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Net.Http.WebRequest" />
-    <Reference Include="System.Reflection" />
-    <Reference Include="System.Runtime" />
-    <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Web" />
-    <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
