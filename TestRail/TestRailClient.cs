@@ -770,13 +770,13 @@ namespace TestRail
         /// <param name="suiteId">id of the suite</param>
         /// <param name="sectionId">(optional) id of the section</param>
         /// <returns>cases associated with the suite</returns>
-        public RequestResult<IList<Case>> GetCases(ulong projectId, ulong suiteId, ulong? sectionId = null)
+        public RequestResult<Cases> GetCases(ulong projectId, ulong suiteId, ulong? sectionId = null)
         {
             var optionalSectionId = sectionId.HasValue ? $"&section_id={sectionId.Value}" : string.Empty;
             var options = $"&suite_id={suiteId}{optionalSectionId}";
             var uri = _CreateUri_(CommandType.Get, CommandAction.Cases, projectId, null, options);
 
-            return _SendGetCommand<IList<Case>>(uri);
+            return _SendGetCommand<Cases>(uri);
         }
 
         /// <summary>returns a list of available test case custom fields</summary>
@@ -810,11 +810,11 @@ namespace TestRail
         /// <summary>gets suites associated with a project</summary>
         /// <param name="projectId">id of the project</param>
         /// <returns>suites associated with the project</returns>
-        public RequestResult<IList<Suite>> GetSuites(ulong projectId)
+        public RequestResult<Suites> GetSuites(ulong projectId)
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Suites, projectId);
 
-            return _SendGetCommand<IList<Suite>>(uri);
+            return _SendGetCommand<Suites>(uri);
         }
 
         /// <summary>gets a section</summary>
@@ -874,11 +874,11 @@ namespace TestRail
         /// <summary>gets plans associated with a project</summary>
         /// <param name="projectId">id of the project</param>
         /// <returns>plans associated with the project</returns>
-        public RequestResult<IList<Plan>> GetPlans(ulong projectId)
+        public RequestResult<Plans> GetPlans(ulong projectId)
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Plans, projectId);
 
-            return _SendGetCommand<IList<Plan>>(uri);
+            return _SendGetCommand<Plans>(uri);
         }
 
         /// <summary>gets a milestone</summary>
@@ -913,11 +913,11 @@ namespace TestRail
 
         /// <summary>gets all projects contained in the testrail instance</summary>
         /// <returns>list containing all the projects</returns>
-        public RequestResult<IList<Project>> GetProjects()
+        public RequestResult<Projects> GetProjects()
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Projects);
 
-            return _SendGetCommand<IList<Project>>(uri);
+            return _SendGetCommand<Projects>(uri);
         }
 
         /// <summary>Get User for user id</summary>
@@ -1196,7 +1196,7 @@ namespace TestRail
         {
             var validCases = GetCases(projectId, suiteId).Payload;
 
-            return validCases.Any(tmpCase => tmpCase.Id.HasValue && caseIds.Contains(tmpCase.Id.Value));
+            return validCases.CasesList.Any(tmpCase => tmpCase.Id.HasValue && caseIds.Contains(tmpCase.Id.Value));
         }
 
         /// <summary>Create a priority dictionary</summary>
