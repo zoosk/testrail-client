@@ -47,7 +47,7 @@ namespace TestRail.Tests
         [Fact]
         public void Get_Plans()
         {
-            var response = _client.GetPlans(19);
+            var response = _client.GetPlans(1);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
@@ -55,7 +55,7 @@ namespace TestRail.Tests
         [Fact]
         public void Get_Suites()
         {
-            var response = _client.GetSuites(19);
+            var response = _client.GetSuites(1);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
