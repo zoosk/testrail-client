@@ -71,8 +71,7 @@ namespace TestRail.Types
                 Url = (string)json["url"]
             };
 
-            var jarray = json["milestones"] as JArray;
-            if (null != jarray)
+            if (json["milestones"] is JArray jarray)
             {
                 milestone.Milestones = JsonUtility.ConvertJArrayToList(jarray, Parse);
             }

@@ -36,9 +36,7 @@ namespace TestRail.Types
                 ProjectId = (ulong)json["project_id"]
             };
 
-            var jarray = json["configs"] as JArray;
-
-            if (null != jarray)
+            if (json["configs"] is JArray jarray)
             {
                 configurationGroup.Configurations = JsonUtility.ConvertJArrayToList(jarray, Configuration.Parse);
             }

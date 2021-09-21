@@ -43,7 +43,7 @@ namespace TestRail.Types
                 Limit = (ulong)json["limit"],
                 Size = (ulong)json["size"],
                 Links = JsonConvert.DeserializeObject<Links>(json["_links"].ToString()),
-                PlansList = JsonConvert.DeserializeObject<List<Plan>>(json["cases"].ToString())
+                PlansList = JsonConvert.DeserializeObject<List<Plan>>(json["plans"].ToString())
             };
 
             return plans;

@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 
@@ -9,21 +10,27 @@ namespace TestRail.Types
     {
         #region Public Properties
         /// <summary>id of the project</summary>
+        [JsonProperty(PropertyName = "id", Required = Required.Always)]
         public ulong Id { get; private set; }
 
         /// <summary>name of the project</summary>
+        [JsonProperty(PropertyName = "name", Required = Required.Always)]
         public string Name { get; set; }
 
         /// <summary>url of the project</summary>
+        [JsonProperty(PropertyName = "url", Required = Required.Always)]
         public string Url { get; private set; }
 
         /// <summary>announcement associated with the project</summary>
+        [JsonProperty(PropertyName = "announcement")]
         public string Announcement { get; set; }
 
         /// <summary>true if the announcement should be displayed on the project's overview page and false otherwise</summary>
+        [JsonProperty(PropertyName = "show_announcement")]
         public bool? ShowAnnouncement { get; set; }
 
         /// <summary>true if the project has been completed</summary>
+        [JsonProperty(PropertyName = "is_completed")]
         public bool? IsCompleted { get; set; }
 
         /// <summary>date on which the milestone was completed</summary>

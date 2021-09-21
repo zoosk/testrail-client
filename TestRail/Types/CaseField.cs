@@ -70,9 +70,7 @@ namespace TestRail.Types
                 DisplayOrder = (ulong?)json["display_order"]
             };
 
-            var jarray = json["configs"] as JArray;
-
-            if (null != jarray)
+            if (json["configs"] is JArray jarray)
             {
                 caseField.Configs = JsonUtility.ConvertJArrayToList(jarray, Config.Parse);
             }

@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -12,75 +13,97 @@ namespace TestRail.Types
     {
         #region Public Properties
         /// <summary>id of the plan</summary>
+        [JsonProperty(PropertyName = "id", Required = Required.Always)]
         public ulong Id { get; set; }
 
         /// <summary>name of the plan</summary>
+        [JsonProperty(PropertyName = "name", Required = Required.Always)]
         public string Name { get; set; }
 
         /// <summary>description of the plan</summary>
+        [JsonProperty(PropertyName = "description")]
         public string Description { get; set; }
 
         /// <summary>id of the milestone associated with the plan</summary>
+        [JsonProperty(PropertyName = "milestone_id")]
         public ulong? MilestoneId { get; set; }
 
         /// <summary>The ID of the user who created the test plan</summary>
+        [JsonProperty(PropertyName = "created_by")]
         public uint CreatedBy { get; set; }
 
         /// <summary>The date/time when the test plan was created</summary>
         public DateTime CreatedOn { get; set; }
 
         /// <summary>true if the plan has been completed</summary>
+        [JsonProperty(PropertyName = "is_completed")]
         public bool IsCompleted { get; set; }
 
         /// <summary>date on which the plan was completed</summary>
         public DateTime? CompletedOn { get; set; }
 
         /// <summary>number of tests in the plan that passed</summary>
+        [JsonProperty(PropertyName = "passed_count")]
         public uint PassedCount { get; set; }
 
         /// <summary>number of tests in the plan that are blocked</summary>
+        [JsonProperty(PropertyName = "blocked_count")]
         public uint BlockedCount { get; set; }
 
         /// <summary>number of tests in the plan that are untested</summary>
+        [JsonProperty(PropertyName = "untested_count")]
         public uint UntestedCount { get; set; }
 
         /// <summary>number of tests in the plan that need to be retested</summary>
+        [JsonProperty(PropertyName = "retest_count")]
         public uint RetestCount { get; set; }
 
         /// <summary>number of tests in the plan that failed</summary>
+        [JsonProperty(PropertyName = "failed_count")]
         public uint FailedCount { get; set; }
 
         /// <summary>id of the project associated with the plan</summary>
+        [JsonProperty(PropertyName = "project_id")]
         public ulong ProjectId { get; set; }
 
         /// <summary>ID of the user the plan is assigned to</summary>
+        [JsonProperty(PropertyName = "assignedto_id")]
         public ulong? AssignedToId { get; set; }
 
         /// <summary>url to view the results of the plan</summary>
+        [JsonProperty(PropertyName = "url")]
         public string Url { get; set; }
 
         /// <summary>Custom Status 1 Count</summary>
+        [JsonProperty(PropertyName = "custom_status1_count")]
         public ulong CustomStatus1Count { get; set; }
 
         /// <summary>Custom Status 2 Count</summary>
+        [JsonProperty(PropertyName = "custom_status2_count")]
         public ulong CustomStatus2Count { get; set; }
 
         /// <summary>Custom Status 3 Count></summary>
+        [JsonProperty(PropertyName = "custom_status3_count")]
         public ulong CustomStatus3Count { get; set; }
 
         /// <summary>Custom Status 4 Count</summary>
+        [JsonProperty(PropertyName = "custom_status4_count")]
         public ulong CustomStatus4Count { get; set; }
 
         /// <summary>Custom Status 5 Count</summary>
+        [JsonProperty(PropertyName = "custom_status5_count")]
         public ulong CustomStatus5Count { get; set; }
 
         /// <summary>Custom Status 6 Count</summary>
+        [JsonProperty(PropertyName = "custom_status6_count")]
         public ulong CustomStatus6Count { get; set; }
 
         /// <summary>Custom Status 7 Count</summary>
+        [JsonProperty(PropertyName = "custom_status7_count")]
         public ulong CustomStatus7Count { get; set; }
 
         /// <summary>A list of 'plan entries', i.e. group of test runs</summary>
+        [JsonProperty(PropertyName = "entries")]
         public List<PlanEntry> Entries { get; set; }
         #endregion Public Properties
 
@@ -125,11 +148,9 @@ namespace TestRail.Types
                 CustomStatus7Count = (ulong)json["custom_status7_count"]
             };
 
-            var jarray = json["entries"] as JArray;
-
-            if (null != jarray)
+            if (json["entries"] is JArray jArray)
             {
-                plan.Entries = JsonUtility.ConvertJArrayToList(jarray, PlanEntry.Parse);
+                plan.Entries = JsonUtility.ConvertJArrayToList(jArray, PlanEntry.Parse);
             }
 
             return plan;
