@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net5.0</TargetFrameworks>
     <PackageId>LGC-TestRail</PackageId>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <PackageVersion>$(Version)</PackageVersion>
     <Title>TestRail Client</Title>
     <Authors>TestRail Client Committers</Authors>
