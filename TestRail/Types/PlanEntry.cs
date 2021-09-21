@@ -52,15 +52,13 @@ namespace TestRail.Types
                 Name = (string)json["name"],
                 AssignedToId = (ulong?)json["assignedto_id"],
                 IncludeAll = (bool?)json["include_all"],
-                RunIdList = _ConvertToRunIDs(json["runs"] as JArray),
-                CaseIds = _ConvertToCaseIDs(json["case_ids"] as JArray)
+                RunIdList = ConvertToRunIDs(json["runs"] as JArray),
+                CaseIds = ConvertToCaseIDs(json["case_ids"] as JArray)
             };
 
-            var jarray = json["runs"] as JArray;
-
-            if (null != jarray)
+            if (json["runs"] is JArray jArray)
             {
-                planEntry.RunList = JsonUtility.ConvertJArrayToList(jarray, Run.Parse);
+                planEntry.RunList = JsonUtility.ConvertJArrayToList(jArray, Run.Parse);
             }
 
             return planEntry;
@@ -98,7 +96,7 @@ namespace TestRail.Types
         /// <summary>Convert the JArray to a list of Run IDs</summary>
         /// <param name="jarray">json to parse</param>
         /// <returns>a list of run IDs, list of size 0 if none exist</returns>
-        private static List<ulong> _ConvertToRunIDs(JArray jarray)
+        private static List<ulong> ConvertToRunIDs(JArray jarray)
         {
             var list = new List<ulong>();
 
@@ -114,7 +112,7 @@ namespace TestRail.Types
         /// <summary>Convert the Jarray to a list of case IDs</summary>
         /// <param name="jarray">json to parse</param>
         /// <returns>a list of case IDs, list of size 0 if none exist</returns>
-        private static List<ulong> _ConvertToCaseIDs(JArray jarray)
+        private static List<ulong> ConvertToCaseIDs(JArray jarray)
         {
             var list = new List<ulong>();
 

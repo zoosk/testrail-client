@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace TestRail.Types
@@ -8,18 +9,23 @@ namespace TestRail.Types
     {
         #region Public Properties
         /// <summary>id of the suite</summary>
+        [JsonProperty(PropertyName = "id", Required = Required.Always)]
         public ulong? Id { get; set; }
 
         /// <summary>name of the suite</summary>
+        [JsonProperty(PropertyName = "name", Required = Required.Always)]
         public string Name { get; set; }
 
         /// <summary>description of the suite</summary>
+        [JsonProperty(PropertyName = "description")]
         public string Description { get; set; }
 
         /// <summary>id of the project associated with the suite</summary>
+        [JsonProperty(PropertyName = "project_id")]
         public ulong? ProjectId { get; set; }
 
         /// <summary>url to view the suite</summary>
+        [JsonProperty(PropertyName = "url")]
         public string Url { get; set; }
         #endregion Public Properties
 

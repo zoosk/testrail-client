@@ -27,5 +27,37 @@ namespace TestRail.Tests
 
             Assert.NotEqual(HttpStatusCode.Unauthorized, response.StatusCode);
         }
+
+        [Fact]
+        public void Get_Projects()
+        {
+            var response = _client.GetProjects();
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        [Fact]
+        public void Get_Cases()
+        {
+            var response = _client.GetCases(1, 1);
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        [Fact]
+        public void Get_Plans()
+        {
+            var response = _client.GetPlans(19);
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        [Fact]
+        public void Get_Suites()
+        {
+            var response = _client.GetSuites(19);
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
     }
 }

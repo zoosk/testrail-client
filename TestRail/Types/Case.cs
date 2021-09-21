@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 
@@ -9,39 +10,50 @@ namespace TestRail.Types
     {
         #region Public Properties
         /// <summary>id of the case</summary>
+        [JsonProperty(PropertyName = "id", Required = Required.Always)]
         public ulong? Id { get; set; }
 
         /// <summary>title of the case</summary>
+        [JsonProperty(PropertyName = "title", Required = Required.Always)]
         public string Title { get; set; }
 
         /// <summary>section id of the case</summary>
+        [JsonProperty(PropertyName = "section_id")]
         public ulong? SectionId { get; set; }
 
         /// <summary>type id of the case</summary>
+        [JsonProperty(PropertyName = "type_id")]
         public ulong? TypeId { get; set; }
 
         /// <summary>priority id of the case</summary>
+        [JsonProperty(PropertyName = "priority_id")]
         public ulong? PriorityId { get; set; }
 
         /// <summary>references for the case</summary>
+        [JsonProperty(PropertyName = "refs")]
         public string References { get; set; }
 
         /// <summary>the milestone this case was associated with</summary>
+        [JsonProperty(PropertyName = "milestone_id")]
         public ulong? MilestoneId { get; set; }
 
         /// <summary>the user who created this case</summary>
+        [JsonProperty(PropertyName = "created_by")]
         public ulong? CreatedBy { get; set; }
 
         /// <summary>creation date</summary>
         public DateTime? CreatedOn { get; set; }
 
         /// <summary>estimate time this case will take</summary>
+        [JsonProperty(PropertyName = "estimate")]
         public string Estimate { get; set; }
 
         /// <summary>estimate forecast</summary>
+        [JsonProperty(PropertyName = "estimate_forecast")]
         public string EstimateForecast { get; set; }
 
         /// <summary>suite id for this case</summary>
+        [JsonProperty(PropertyName = "suite_id")]
         public ulong? SuiteId { get; set; }
 
         /// <summary>id of the template (field layout)</summary>

@@ -41,10 +41,10 @@ namespace TestRail
             BaseUrl = baseUrl;
             AuthInfo = Convert.ToBase64String(Encoding.Default.GetBytes($"{userName}:{password}"));
 
-            _projects = new Lazy<IList<Project>>(_GetProjects);
+            _projects = new Lazy<IList<Project>>(GetProjectsOld);
 
             // set up the lazy loading of the priority dictionary (priority id to priority value)
-            LazyPriorityIdToLevel = new Lazy<IDictionary<ulong, int>>(_CreatePrioritiesDict);
+            LazyPriorityIdToLevel = new Lazy<IDictionary<ulong, int>>(CreatePrioritiesDict);
         }
         #endregion Constructor
 
@@ -81,7 +81,7 @@ namespace TestRail
         public RequestResult<Result> AddResult(ulong testId, ResultStatus? status, string comment = null,
             string version = null, TimeSpan? elapsed = null, string defects = null, ulong? assignedToId = null, JObject customs = null)
         {
-            var uri = _CreateUri_(CommandType.Add, CommandAction.Result, testId);
+            var uri = CreateUri_(CommandType.Add, CommandAction.Result, testId);
 
             var result = new Result
             {
@@ -96,7 +96,7 @@ namespace TestRail
 
             var jsonParams = JsonUtility.Merge(result.GetJson(), customs);
 
-            return _SendPostCommand<Result>(uri, jsonParams);
+            return SendPostCommand<Result>(uri, jsonParams);
         }
 
         /// <summary>
@@ -108,9 +108,9 @@ namespace TestRail
         /// <returns>If successful, this method returns the new test results in the same order as the list of the request.</returns>
         public RequestResult<IList<Result>> AddResults(ulong runId, BulkResults results)
         {
-            var uri = _CreateUri_(CommandType.Add, CommandAction.Results, runId);
+            var uri = CreateUri_(CommandType.Add, CommandAction.Results, runId);
 
-            return _SendPostCommand<IList<Result>>(uri, results.GetJson());
+            return SendPostCommand<IList<Result>>(uri, results.GetJson());
         }
 
         /// <summary>
@@ -130,7 +130,7 @@ namespace TestRail
         public RequestResult<Result> AddResultForCase(ulong runId, ulong caseId, ResultStatus? status, string comment = null,
             string version = null, TimeSpan? elapsed = null, string defects = null, ulong? assignedToId = null, JObject customs = null)
         {
-            var uri = _CreateUri_(CommandType.Add, CommandAction.ResultForCase, runId, caseId);
+            var uri = CreateUri_(CommandType.Add, CommandAction.ResultForCase, runId, caseId);
 
             var result = new Result
             {
@@ -144,7 +144,7 @@ namespace TestRail
 
             var jsonParams = JsonUtility.Merge(result.GetJson(), customs);
 
-            return _SendPostCommand<Result>(uri, jsonParams);
+            return SendPostCommand<Result>(uri, jsonParams);
         }
 
         /// <summary>
@@ -156,9 +156,9 @@ namespace TestRail
         /// <returns>If successful, this method returns the new test results in the same order as the list of the request.</returns>
         public RequestResult<IList<Result>> AddResultsForCases(ulong runId, BulkResults results)
         {
-            var uri = _CreateUri_(CommandType.Add, CommandAction.ResultsForCases, runId);
+            var uri = CreateUri_(CommandType.Add, CommandAction.ResultsForCases, runId);
 
-            return _SendPostCommand<IList<Result>>(uri, results.GetJson());
+            return SendPostCommand<IList<Result>>(uri, results.GetJson());
         }
 
         /// <summary>Creates a new test run.</summary>
@@ -179,7 +179,7 @@ namespace TestRail
             // validates whether we are in include all or custom case selection mode
             if (null != caseIds)
             {
-                var atLeastOneCaseFoundInSuite = _CasesFoundInSuite(projectId, suiteId, caseIds);
+                var atLeastOneCaseFoundInSuite = CasesFoundInSuite(projectId, suiteId, caseIds);
 
                 if (atLeastOneCaseFoundInSuite)
                 {
@@ -192,7 +192,7 @@ namespace TestRail
                 }
             }
 
-            var uri = _CreateUri_(CommandType.Add, CommandAction.Run, projectId);
+            var uri = CreateUri_(CommandType.Add, CommandAction.Run, projectId);
 
             var run = new Run
             {
@@ -207,7 +207,7 @@ namespace TestRail
 
             var jsonParams = JsonUtility.Merge(run.GetJson(), customs);
 
-            return _SendPostCommand<Run>(uri, jsonParams);
+            return SendPostCommand<Run>(uri, jsonParams);
         }
 
         /// <summary>Creates a new test case.</summary>
@@ -229,7 +229,7 @@ namespace TestRail
                 return new RequestResult<Case>(HttpStatusCode.BadRequest, thrownException: new ArgumentNullException(nameof(title)));
             }
 
-            var uri = _CreateUri_(CommandType.Add, CommandAction.Case, sectionId);
+            var uri = CreateUri_(CommandType.Add, CommandAction.Case, sectionId);
 
             var tmpCase = new Case
             {
@@ -244,7 +244,7 @@ namespace TestRail
 
             var jsonParams = JsonUtility.Merge(tmpCase.GetJson(), customFields);
 
-            return _SendPostCommand<Case>(uri, jsonParams);
+            return SendPostCommand<Case>(uri, jsonParams);
         }
 
         /// <summary>Creates a new project (admin status required).</summary>
@@ -259,7 +259,7 @@ namespace TestRail
                 return new RequestResult<Project>(HttpStatusCode.BadRequest, thrownException: new ArgumentNullException(nameof(projectName)));
             }
 
-            var uri = _CreateUri_(CommandType.Add, CommandAction.Project);
+            var uri = CreateUri_(CommandType.Add, CommandAction.Project);
 
             var project = new Project
             {
@@ -268,7 +268,7 @@ namespace TestRail
                 ShowAnnouncement = showAnnouncement
             };
 
-            return _SendPostCommand<Project>(uri, project.GetJson());
+            return SendPostCommand<Project>(uri, project.GetJson());
         }
 
         /// <summary>Creates a new section.</summary>
@@ -285,7 +285,7 @@ namespace TestRail
                 return new RequestResult<Section>(HttpStatusCode.BadRequest, thrownException: new ArgumentNullException(nameof(name)));
             }
 
-            var uri = _CreateUri_(CommandType.Add, CommandAction.Section, projectId);
+            var uri = CreateUri_(CommandType.Add, CommandAction.Section, projectId);
 
             var section = new Section
             {
@@ -295,7 +295,7 @@ namespace TestRail
                 Description = description
             };
 
-            return _SendPostCommand<Section>(uri, section.GetJson());
+            return SendPostCommand<Section>(uri, section.GetJson());
         }
 
         /// <summary>Creates a new test suite.</summary>
@@ -310,7 +310,7 @@ namespace TestRail
                 return new RequestResult<Suite>(HttpStatusCode.BadRequest, thrownException: new ArgumentNullException(nameof(name)));
             }
 
-            var uri = _CreateUri_(CommandType.Add, CommandAction.Suite, projectId);
+            var uri = CreateUri_(CommandType.Add, CommandAction.Suite, projectId);
 
             var suite = new Suite
             {
@@ -318,7 +318,7 @@ namespace TestRail
                 Description = description
             };
 
-            return _SendPostCommand<Suite>(uri, suite.GetJson());
+            return SendPostCommand<Suite>(uri, suite.GetJson());
         }
 
         /// <summary>Creates a new test plan.</summary>
@@ -337,7 +337,7 @@ namespace TestRail
                 return new RequestResult<Plan>(HttpStatusCode.BadRequest, thrownException: new ArgumentNullException(nameof(name)));
             }
 
-            var uri = _CreateUri_(CommandType.Add, CommandAction.Plan, projectId);
+            var uri = CreateUri_(CommandType.Add, CommandAction.Plan, projectId);
 
             var plan = new Plan
             {
@@ -349,7 +349,7 @@ namespace TestRail
 
             var jsonParams = JsonUtility.Merge(plan.GetJson(), customs);
 
-            return _SendPostCommand<Plan>(uri, jsonParams);
+            return SendPostCommand<Plan>(uri, jsonParams);
         }
 
         /// <summary>Adds one or more new test runs to a test plan.</summary>
@@ -363,7 +363,7 @@ namespace TestRail
         public RequestResult<PlanEntry> AddPlanEntry(ulong planId, ulong suiteId, string name = null, ulong? assignedToId = null,
             List<ulong> caseIds = null, JObject customs = null)
         {
-            var uri = _CreateUri_(CommandType.Add, CommandAction.PlanEntry, planId);
+            var uri = CreateUri_(CommandType.Add, CommandAction.PlanEntry, planId);
 
             var planEntry = new PlanEntry
             {
@@ -375,7 +375,7 @@ namespace TestRail
 
             var jsonParams = JsonUtility.Merge(planEntry.GetJson(), customs);
 
-            return _SendPostCommand<PlanEntry>(uri, jsonParams);
+            return SendPostCommand<PlanEntry>(uri, jsonParams);
         }
 
         /// <summary>Creates a new milestone.</summary>
@@ -387,7 +387,7 @@ namespace TestRail
         /// <returns>If successful, this method returns the new milestone.</returns>
         public RequestResult<Milestone> AddMilestone(ulong projectId, string name, string description = null, ulong? parentId = null, DateTime? dueOn = null)
         {
-            var uri = _CreateUri_(CommandType.Add, CommandAction.Milestone, projectId);
+            var uri = CreateUri_(CommandType.Add, CommandAction.Milestone, projectId);
 
             var milestone = new Milestone
             {
@@ -397,7 +397,7 @@ namespace TestRail
                 ParentId = parentId
             };
 
-            return _SendPostCommand<Milestone>(uri, milestone.GetJson());
+            return SendPostCommand<Milestone>(uri, milestone.GetJson());
         }
         #endregion Add Commands
 
@@ -420,7 +420,7 @@ namespace TestRail
                 return new RequestResult<Case>(HttpStatusCode.BadRequest, thrownException: new ArgumentNullException(nameof(title)));
             }
 
-            var uri = _CreateUri_(CommandType.Update, CommandAction.Case, caseId);
+            var uri = CreateUri_(CommandType.Update, CommandAction.Case, caseId);
 
             var tmpCase = new Case
             {
@@ -434,7 +434,7 @@ namespace TestRail
 
             var jsonParams = JsonUtility.Merge(tmpCase.GetJson(), customs);
 
-            return _SendPostCommand<Case>(uri, jsonParams);
+            return SendPostCommand<Case>(uri, jsonParams);
         }
 
         /// <summary>Updates an existing milestone (partial updates are supported, i.e. you can submit and update specific fields only).</summary>
@@ -446,7 +446,7 @@ namespace TestRail
         /// <returns>If successful, this method returns the updated milestone.</returns>
         public RequestResult<Milestone> UpdateMilestone(ulong milestoneId, string name = null, string description = null, DateTime? dueOn = null, bool? isCompleted = null)
         {
-            var uri = _CreateUri_(CommandType.Update, CommandAction.Milestone, milestoneId);
+            var uri = CreateUri_(CommandType.Update, CommandAction.Milestone, milestoneId);
 
             var milestone = new Milestone
             {
@@ -456,7 +456,7 @@ namespace TestRail
                 IsCompleted = isCompleted
             };
 
-            return _SendPostCommand<Milestone>(uri, milestone.GetJson());
+            return SendPostCommand<Milestone>(uri, milestone.GetJson());
         }
 
         /// <summary>Updates an existing test plan (partial updates are supported, i.e. you can submit and update specific fields only).</summary>
@@ -468,7 +468,7 @@ namespace TestRail
         /// <returns>If successful, this method returns the updated test plan.</returns>
         public RequestResult<Plan> UpdatePlan(ulong planId, string name = null, string description = null, ulong? milestoneId = null, JObject customs = null)
         {
-            var uri = _CreateUri_(CommandType.Update, CommandAction.Plan, planId);
+            var uri = CreateUri_(CommandType.Update, CommandAction.Plan, planId);
 
             var plan = new Plan
             {
@@ -479,7 +479,7 @@ namespace TestRail
 
             var jsonParams = JsonUtility.Merge(plan.GetJson(), customs);
 
-            return _SendPostCommand<Plan>(uri, jsonParams);
+            return SendPostCommand<Plan>(uri, jsonParams);
         }
 
         /// <summary>Updates one or more existing test runs in a plan (partial updates are supported, i.e. you can submit and update specific fields only).</summary>
@@ -492,7 +492,7 @@ namespace TestRail
         /// <returns>If successful, this method returns the updated test plan entry including test runs.</returns>
         public RequestResult<PlanEntry> UpdatePlanEntry(ulong planId, string entryId, string name = null, ulong? assignedToId = null, List<ulong> caseIds = null, JObject customs = null)
         {
-            var uri = _CreateUri_(CommandType.Update, CommandAction.PlanEntry, planId, null, null, entryId);
+            var uri = CreateUri_(CommandType.Update, CommandAction.PlanEntry, planId, null, null, entryId);
 
             var planEntry = new PlanEntry
             {
@@ -503,7 +503,7 @@ namespace TestRail
 
             var jsonParams = JsonUtility.Merge(planEntry.GetJson(), customs);
 
-            return _SendPostCommand<PlanEntry>(uri, jsonParams);
+            return SendPostCommand<PlanEntry>(uri, jsonParams);
         }
 
         /// <summary>Updates an existing project (admin status required; partial updates are supported, i.e. you can submit and update specific fields only).</summary>
@@ -515,7 +515,7 @@ namespace TestRail
         /// <returns>If successful, this method returns the updated project.</returns>
         public RequestResult<Project> UpdateProject(ulong projectId, string projectName, string announcement = null, bool? showAnnouncement = null, bool? isCompleted = null)
         {
-            var uri = _CreateUri_(CommandType.Update, CommandAction.Project, projectId);
+            var uri = CreateUri_(CommandType.Update, CommandAction.Project, projectId);
 
             var project = new Project
             {
@@ -525,7 +525,7 @@ namespace TestRail
                 IsCompleted = isCompleted
             };
 
-            return _SendPostCommand<Project>(uri, project.GetJson());
+            return SendPostCommand<Project>(uri, project.GetJson());
         }
 
         /// <summary>Updates an existing test run (partial updates are supported, i.e. you can submit and update specific fields only).</summary>
@@ -544,7 +544,7 @@ namespace TestRail
             // validates whether we are in include all or custom case selection mode
             if (null != existingRun?.ProjectId && existingRun.SuiteId.HasValue && null != caseIds)
             {
-                var atLeastOneCaseFoundInSuite = _CasesFoundInSuite(existingRun.ProjectId.Value, existingRun.SuiteId.Value, caseIds);
+                var atLeastOneCaseFoundInSuite = CasesFoundInSuite(existingRun.ProjectId.Value, existingRun.SuiteId.Value, caseIds);
 
                 if (atLeastOneCaseFoundInSuite)
                 {
@@ -557,7 +557,7 @@ namespace TestRail
                 }
             }
 
-            var uri = _CreateUri_(CommandType.Update, CommandAction.Run, runId);
+            var uri = CreateUri_(CommandType.Update, CommandAction.Run, runId);
 
             var newRun = new Run
             {
@@ -570,23 +570,22 @@ namespace TestRail
 
             var jsonParams = JsonUtility.Merge(newRun.GetJson(), customs);
 
-            return _SendPostCommand<Run>(uri, jsonParams);
+            return SendPostCommand<Run>(uri, jsonParams);
         }
 
         /// <summary>Updates an existing section (partial updates are supported, i.e. you can submit and update specific fields only).</summary>
         /// <param name="sectionId">The ID of the section.</param>
         /// <param name="name">The name of the section.</param>
-        /// <param name="description">The description of the section (added with TestRail 4.0).</param>
         /// <param name="customs">Custom fields are also included in the response and use their system name prefixed with 'custom_' as their field identifier.</param>
         /// <returns>If successful, this method returns the updated section.</returns>
-        public RequestResult<Section> UpdateSection(ulong sectionId, string name, string description = null, JObject customs = null)
+        public RequestResult<Section> UpdateSection(ulong sectionId, string name, JObject customs = null)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
                 return new RequestResult<Section>(HttpStatusCode.BadRequest, thrownException: new ArgumentNullException(nameof(name)));
             }
 
-            var uri = _CreateUri_(CommandType.Update, CommandAction.Section, sectionId);
+            var uri = CreateUri_(CommandType.Update, CommandAction.Section, sectionId);
 
             var section = new Section
             {
@@ -596,7 +595,7 @@ namespace TestRail
 
             var jsonParams = JsonUtility.Merge(section.GetJson(), customs);
 
-            return _SendPostCommand<Section>(uri, jsonParams);
+            return SendPostCommand<Section>(uri, jsonParams);
         }
 
         /// <summary>Updates an existing test suite (partial updates are supported, i.e. you can submit and update specific fields only).</summary>
@@ -607,7 +606,7 @@ namespace TestRail
         /// <returns>If successful, this method returns the updated test suite.</returns>
         public RequestResult<Suite> UpdateSuite(ulong suiteId, string name = null, string description = null, JObject customs = null)
         {
-            var uri = _CreateUri_(CommandType.Update, CommandAction.Suite, suiteId);
+            var uri = CreateUri_(CommandType.Update, CommandAction.Suite, suiteId);
 
             var s = new Suite
             {
@@ -617,7 +616,7 @@ namespace TestRail
 
             var jsonParams = JsonUtility.Merge(s.GetJson(), customs);
 
-            return _SendPostCommand<Suite>(uri, jsonParams);
+            return SendPostCommand<Suite>(uri, jsonParams);
         }
         #endregion Update Commands
 
@@ -627,9 +626,9 @@ namespace TestRail
         /// <returns>If successful, this method returns the closed test plan.</returns>
         public RequestResult<Plan> ClosePlan(ulong planId)
         {
-            var uri = _CreateUri_(CommandType.Close, CommandAction.Plan, planId);
+            var uri = CreateUri_(CommandType.Close, CommandAction.Plan, planId);
 
-            return _SendPostCommand<Plan>(uri);
+            return SendPostCommand<Plan>(uri);
         }
 
         /// <summary>Closes an existing test run and archives its tests and results. Please note: Closing a test run cannot be undone.</summary>
@@ -637,9 +636,9 @@ namespace TestRail
         /// <returns>If successful, this method returns the closed test run.</returns>
         public RequestResult<Run> CloseRun(ulong runId)
         {
-            var uri = _CreateUri_(CommandType.Close, CommandAction.Run, runId);
+            var uri = CreateUri_(CommandType.Close, CommandAction.Run, runId);
 
-            return _SendPostCommand<Run>(uri);
+            return SendPostCommand<Run>(uri);
         }
         #endregion Close Commands
 
@@ -649,9 +648,9 @@ namespace TestRail
         /// <returns>Please note: Deleting a milestone cannot be undone.</returns>
         public RequestResult<Milestone> DeleteMilestone(ulong milestoneId)
         {
-            var uri = _CreateUri_(CommandType.Delete, CommandAction.Milestone, milestoneId);
+            var uri = CreateUri_(CommandType.Delete, CommandAction.Milestone, milestoneId);
 
-            return _SendPostCommand<Milestone>(uri);
+            return SendPostCommand<Milestone>(uri);
         }
 
         /// <summary>Deletes an existing test case. This action requires the account to have permissions to delete.</summary>
@@ -661,9 +660,9 @@ namespace TestRail
         /// </returns>
         public RequestResult<Case> DeleteCase(ulong caseId)
         {
-            var uri = _CreateUri_(CommandType.Delete, CommandAction.Case, caseId);
+            var uri = CreateUri_(CommandType.Delete, CommandAction.Case, caseId);
 
-            return _SendPostCommand<Case>(uri);
+            return SendPostCommand<Case>(uri);
         }
 
         /// <summary>Deletes an existing test plan. This action requires the account to have permissions to delete.</summary>
@@ -671,9 +670,9 @@ namespace TestRail
         /// <returns>Please note: Deleting a test plan cannot be undone and also permanently deletes all test runs and results of the test plan.</returns>
         public RequestResult<Plan> DeletePlan(ulong planId)
         {
-            var uri = _CreateUri_(CommandType.Delete, CommandAction.Plan, planId);
+            var uri = CreateUri_(CommandType.Delete, CommandAction.Plan, planId);
 
-            return _SendPostCommand<Plan>(uri);
+            return SendPostCommand<Plan>(uri);
         }
 
         /// <summary>Deletes one or more existing test runs from a plan. This action requires the account to have permissions to delete.</summary>
@@ -682,9 +681,9 @@ namespace TestRail
         /// <returns>Please note: Deleting a test run from a plan cannot be undone and also permanently deletes all related test results.</returns>
         public RequestResult<PlanEntry> DeletePlanEntry(ulong planId, string entryId)
         {
-            var uri = _CreateUri_(CommandType.Delete, CommandAction.PlanEntry, planId, null, null, entryId);
+            var uri = CreateUri_(CommandType.Delete, CommandAction.PlanEntry, planId, null, null, entryId);
 
-            return _SendPostCommand<PlanEntry>(uri);
+            return SendPostCommand<PlanEntry>(uri);
         }
 
         /// <summary>Deletes an existing project (admin status required). This action requires the account to have permissions to delete.</summary>
@@ -694,9 +693,9 @@ namespace TestRail
         /// </returns>
         public RequestResult<Project> DeleteProject(ulong projectId)
         {
-            var uri = _CreateUri_(CommandType.Delete, CommandAction.Project, projectId);
+            var uri = CreateUri_(CommandType.Delete, CommandAction.Project, projectId);
 
-            return _SendPostCommand<Project>(uri);
+            return SendPostCommand<Project>(uri);
         }
 
         /// <summary>Deletes an existing section. This action requires the account to have permissions to delete.</summary>
@@ -706,9 +705,9 @@ namespace TestRail
         /// </returns>
         public RequestResult<Section> DeleteSection(ulong sectionId)
         {
-            var uri = _CreateUri_(CommandType.Delete, CommandAction.Section, sectionId);
+            var uri = CreateUri_(CommandType.Delete, CommandAction.Section, sectionId);
 
-            return _SendPostCommand<Section>(uri);
+            return SendPostCommand<Section>(uri);
         }
 
         /// <summary>Deletes an existing test suite. This action requires the account to have permissions to delete.</summary>
@@ -718,9 +717,9 @@ namespace TestRail
         /// </returns>
         public RequestResult<Suite> DeleteSuite(ulong suiteId)
         {
-            var uri = _CreateUri_(CommandType.Delete, CommandAction.Suite, suiteId);
+            var uri = CreateUri_(CommandType.Delete, CommandAction.Suite, suiteId);
 
-            return _SendPostCommand<Suite>(uri);
+            return SendPostCommand<Suite>(uri);
         }
 
         /// <summary>Deletes an existing test run. This action requires the account to have permissions to delete.</summary>
@@ -728,9 +727,9 @@ namespace TestRail
         /// <returns>Please note: Deleting a test run cannot be undone and also permanently deletes all tests and results of the test run.</returns>
         public RequestResult<Result> DeleteRun(ulong runId)
         {
-            var uri = _CreateUri_(CommandType.Delete, CommandAction.Run, runId);
+            var uri = CreateUri_(CommandType.Delete, CommandAction.Run, runId);
 
-            return _SendPostCommand<Result>(uri);
+            return SendPostCommand<Result>(uri);
         }
         #endregion Delete Commands
 
@@ -740,9 +739,9 @@ namespace TestRail
         /// <returns>information about the test</returns>
         public RequestResult<Test> GetTest(ulong testId)
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Test, testId);
+            var uri = CreateUri_(CommandType.Get, CommandAction.Test, testId);
 
-            return _SendGetCommand<Test>(uri);
+            return SendGetCommand<Test>(uri);
         }
 
         /// <summary>gets tests associated with a run</summary>
@@ -750,9 +749,9 @@ namespace TestRail
         /// <returns>tests associated with the run</returns>
         public RequestResult<IList<Test>> GetTests(ulong runId)
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Tests, runId);
+            var uri = CreateUri_(CommandType.Get, CommandAction.Tests, runId);
 
-            return _SendGetCommand<IList<Test>>(uri);
+            return SendGetCommand<IList<Test>>(uri);
         }
 
         /// <summary>gets a case</summary>
@@ -760,9 +759,9 @@ namespace TestRail
         /// <returns>information about the case</returns>
         public RequestResult<Case> GetCase(ulong caseId)
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Case, caseId);
+            var uri = CreateUri_(CommandType.Get, CommandAction.Case, caseId);
 
-            return _SendGetCommand<Case>(uri);
+            return SendGetCommand<Case>(uri);
         }
 
         /// <summary>gets cases associated with a suite</summary>
@@ -774,27 +773,27 @@ namespace TestRail
         {
             var optionalSectionId = sectionId.HasValue ? $"&section_id={sectionId.Value}" : string.Empty;
             var options = $"&suite_id={suiteId}{optionalSectionId}";
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Cases, projectId, null, options);
+            var uri = CreateUri_(CommandType.Get, CommandAction.Cases, projectId, null, options);
 
-            return _SendGetCommand<Cases>(uri);
+            return SendGetCommand<Cases>(uri);
         }
 
         /// <summary>returns a list of available test case custom fields</summary>
         /// <returns>a list of custom field definitions</returns>
         public RequestResult<IList<CaseField>> GetCaseFields()
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.CaseFields);
+            var uri = CreateUri_(CommandType.Get, CommandAction.CaseFields);
 
-            return _SendGetCommand<IList<CaseField>>(uri);
+            return SendGetCommand<IList<CaseField>>(uri);
         }
 
         /// <summary>returns a list of available case types</summary>
         /// <returns>a list of test case types, each has a unique ID and a name.</returns>
         public RequestResult<IList<CaseType>> GetCaseTypes()
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.CaseTypes);
+            var uri = CreateUri_(CommandType.Get, CommandAction.CaseTypes);
 
-            return _SendGetCommand<IList<CaseType>>(uri);
+            return SendGetCommand<IList<CaseType>>(uri);
         }
 
         /// <summary>gets a suite</summary>
@@ -802,19 +801,19 @@ namespace TestRail
         /// <returns>information about the suite</returns>
         public RequestResult<Suite> GetSuite(ulong suiteId)
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Suite, suiteId);
+            var uri = CreateUri_(CommandType.Get, CommandAction.Suite, suiteId);
 
-            return _SendGetCommand<Suite>(uri);
+            return SendGetCommand<Suite>(uri);
         }
 
         /// <summary>gets suites associated with a project</summary>
         /// <param name="projectId">id of the project</param>
         /// <returns>suites associated with the project</returns>
-        public RequestResult<Suites> GetSuites(ulong projectId)
+        public RequestResult<List<Suite>> GetSuites(ulong projectId)
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Suites, projectId);
+            var uri = CreateUri_(CommandType.Get, CommandAction.Suites, projectId);
 
-            return _SendGetCommand<Suites>(uri);
+            return SendGetCommand<List<Suite>>(uri);
         }
 
         /// <summary>gets a section</summary>
@@ -822,9 +821,9 @@ namespace TestRail
         /// <returns>information about the section</returns>
         public RequestResult<Section> GetSection(ulong sectionId)
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Section, sectionId);
+            var uri = CreateUri_(CommandType.Get, CommandAction.Section, sectionId);
 
-            return _SendGetCommand<Section>(uri);
+            return SendGetCommand<Section>(uri);
         }
 
         /// <summary>gets sections associated with a suite</summary>
@@ -834,9 +833,9 @@ namespace TestRail
         public RequestResult<IList<Section>> GetSections(ulong projectId, ulong? suiteId = null)
         {
             var options = suiteId.HasValue ? $"&suite_id={suiteId}" : string.Empty;
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Sections, projectId, null, options);
+            var uri = CreateUri_(CommandType.Get, CommandAction.Sections, projectId, null, options);
 
-            return _SendGetCommand<IList<Section>>(uri);
+            return SendGetCommand<IList<Section>>(uri);
         }
 
         /// <summary>gets a run</summary>
@@ -844,9 +843,9 @@ namespace TestRail
         /// <returns>information about the run</returns>
         public RequestResult<Run> GetRun(ulong runId)
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Run, runId);
+            var uri = CreateUri_(CommandType.Get, CommandAction.Run, runId);
 
-            return _SendGetCommand<Run>(uri);
+            return SendGetCommand<Run>(uri);
         }
 
         /// <summary>gets runs associated with a project</summary>
@@ -856,9 +855,9 @@ namespace TestRail
         public RequestResult<IList<Run>> GetRuns(ulong projectId, ulong offset = 0)
         {
             var options = offset > 0 ? $"&offset={offset}" : null;
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Runs, projectId, null, options);
+            var uri = CreateUri_(CommandType.Get, CommandAction.Runs, projectId, null, options);
 
-            return _SendGetCommand<IList<Run>>(uri);
+            return SendGetCommand<IList<Run>>(uri);
         }
 
         /// <summary>gets a plan</summary>
@@ -866,9 +865,9 @@ namespace TestRail
         /// <returns>information about the plan</returns>
         public RequestResult<Plan> GetPlan(ulong planId)
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Plan, planId);
+            var uri = CreateUri_(CommandType.Get, CommandAction.Plan, planId);
 
-            return _SendGetCommand<Plan>(uri);
+            return SendGetCommand<Plan>(uri);
         }
 
         /// <summary>gets plans associated with a project</summary>
@@ -876,9 +875,9 @@ namespace TestRail
         /// <returns>plans associated with the project</returns>
         public RequestResult<Plans> GetPlans(ulong projectId)
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Plans, projectId);
+            var uri = CreateUri_(CommandType.Get, CommandAction.Plans, projectId);
 
-            return _SendGetCommand<Plans>(uri);
+            return SendGetCommand<Plans>(uri);
         }
 
         /// <summary>gets a milestone</summary>
@@ -886,9 +885,9 @@ namespace TestRail
         /// <returns>information about the milestone</returns>
         public RequestResult<Milestone> GetMilestone(ulong milestoneId)
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Milestone, milestoneId);
+            var uri = CreateUri_(CommandType.Get, CommandAction.Milestone, milestoneId);
 
-            return _SendGetCommand<Milestone>(uri);
+            return SendGetCommand<Milestone>(uri);
         }
 
         /// <summary>gets milestones associated with a project</summary>
@@ -896,9 +895,9 @@ namespace TestRail
         /// <returns>milestone associated with project</returns>
         public RequestResult<IList<Milestone>> GetMilestones(ulong projectId)
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Milestones, projectId);
+            var uri = CreateUri_(CommandType.Get, CommandAction.Milestones, projectId);
 
-            return _SendGetCommand<IList<Milestone>>(uri);
+            return SendGetCommand<IList<Milestone>>(uri);
         }
 
         /// <summary>gets a project</summary>
@@ -906,18 +905,18 @@ namespace TestRail
         /// <returns>information about the project</returns>
         public RequestResult<Project> GetProject(ulong projectId)
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Project, projectId);
+            var uri = CreateUri_(CommandType.Get, CommandAction.Project, projectId);
 
-            return _SendGetCommand<Project>(uri);
+            return SendGetCommand<Project>(uri);
         }
 
         /// <summary>gets all projects contained in the testrail instance</summary>
         /// <returns>list containing all the projects</returns>
         public RequestResult<Projects> GetProjects()
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Projects);
+            var uri = CreateUri_(CommandType.Get, CommandAction.Projects);
 
-            return _SendGetCommand<Projects>(uri);
+            return SendGetCommand<Projects>(uri);
         }
 
         /// <summary>Get User for user id</summary>
@@ -925,9 +924,9 @@ namespace TestRail
         /// <returns>a User object</returns>
         public RequestResult<User> GetUser(ulong userId)
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.User, userId);
+            var uri = CreateUri_(CommandType.Get, CommandAction.User, userId);
 
-            return _SendGetCommand<User>(uri);
+            return SendGetCommand<User>(uri);
         }
 
         /// <summary>Find a user by their email address</summary>
@@ -943,18 +942,18 @@ namespace TestRail
             }
 
             var optionalParam = $"&email={email}";
-            var uri = _CreateUri_(CommandType.Get, CommandAction.UserByEmail, null, null, optionalParam);
+            var uri = CreateUri_(CommandType.Get, CommandAction.UserByEmail, null, null, optionalParam);
 
-            return _SendGetCommand<User>(uri);
+            return SendGetCommand<User>(uri);
         }
 
         /// <summary>Get a list of users in the testrail instance</summary>
         /// <returns>List of users</returns>
         public RequestResult<IList<User>> GetUsers()
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Users);
+            var uri = CreateUri_(CommandType.Get, CommandAction.Users);
 
-            return _SendGetCommand<IList<User>>(uri);
+            return SendGetCommand<IList<User>>(uri);
         }
 
         /// <summary>Returns a list of test results for a test</summary>
@@ -976,9 +975,9 @@ namespace TestRail
                 filters.Append($"&limit={limit.Value}");
             }
 
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Results, testId, null, filters.ToString());
+            var uri = CreateUri_(CommandType.Get, CommandAction.Results, testId, null, filters.ToString());
 
-            return _SendGetCommand<IList<Result>>(uri);
+            return SendGetCommand<IList<Result>>(uri);
         }
 
         /// <summary>Return the list of test results for a test run and the case combination</summary>
@@ -1007,9 +1006,9 @@ namespace TestRail
                 filters.Append($"&offset={offset.Value}");
             }
 
-            var uri = _CreateUri_(CommandType.Get, CommandAction.ResultsForCase, runId, caseId, filters.ToString());
+            var uri = CreateUri_(CommandType.Get, CommandAction.ResultsForCase, runId, caseId, filters.ToString());
 
-            return _SendGetCommand<IList<Result>>(uri);
+            return SendGetCommand<IList<Result>>(uri);
         }
 
         /// <summary>Return the list of test results for a test run</summary>
@@ -1037,27 +1036,27 @@ namespace TestRail
                 filters.Append($"&offset={offset.Value}");
             }
 
-            var uri = _CreateUri_(CommandType.Get, CommandAction.ResultsForRun, runId, null, filters.ToString());
+            var uri = CreateUri_(CommandType.Get, CommandAction.ResultsForRun, runId, null, filters.ToString());
 
-            return _SendGetCommand<IList<Result>>(uri);
+            return SendGetCommand<IList<Result>>(uri);
         }
 
         /// <summary>Returns the list of statuses available to test rail</summary>
         /// <returns>list of possible statuses</returns>
         public RequestResult<IList<Status>> GetStatuses()
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Statuses);
+            var uri = CreateUri_(CommandType.Get, CommandAction.Statuses);
 
-            return _SendGetCommand<IList<Status>>(uri);
+            return SendGetCommand<IList<Status>>(uri);
         }
 
         /// <summary>Get a list of all available priorities</summary>
         /// <returns>list of priorities</returns>
         public RequestResult<IList<Priority>> GetPriorities()
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Priorities);
+            var uri = CreateUri_(CommandType.Get, CommandAction.Priorities);
 
-            return _SendGetCommand<IList<Priority>>(uri);
+            return SendGetCommand<IList<Priority>>(uri);
         }
 
         /// <summary>Returns a list of Config Groups available in a Project</summary>
@@ -1065,9 +1064,9 @@ namespace TestRail
         /// <returns>list of ConfigurationGroup</returns>
         public RequestResult<IList<ConfigurationGroup>> GetConfigurationGroups(ulong projectId)
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Configs, projectId);
+            var uri = CreateUri_(CommandType.Get, CommandAction.Configs, projectId);
 
-            return _SendGetCommand<IList<ConfigurationGroup>>(uri);
+            return SendGetCommand<IList<ConfigurationGroup>>(uri);
         }
         #endregion Get Commands
         #endregion Public Methods
@@ -1081,7 +1080,7 @@ namespace TestRail
         /// <param name="options">(optional)additional options to include in the uri</param>
         /// <param name="id2Str">(optional)additional parameters to append to the uri</param>
         /// <returns>the newly created uri</returns>
-        protected static string _CreateUri_(CommandType commandType, CommandAction actionName, ulong? id1 = null,
+        protected static string CreateUri_(CommandType commandType, CommandAction actionName, ulong? id1 = null,
             ulong? id2 = null, string options = null, string id2Str = null)
         {
             var commandString = commandType.GetStringValue();
@@ -1099,18 +1098,18 @@ namespace TestRail
         /// <param name="uri">The endpoint to send the request to.</param>
         /// <param name="jsonParams">JSON object to include in the request.</param>
         /// <returns>The result of the request.</returns>
-        private RequestResult<T> _SendPostCommand<T>(string uri, JObject jsonParams = null)
+        private RequestResult<T> SendPostCommand<T>(string uri, JObject jsonParams = null)
         {
-            return _SendCommand<T>(uri, RequestType.Post, jsonParams);
+            return SendCommand<T>(uri, RequestType.Post, jsonParams);
         }
 
         /// <summary>Used to send a GET request.</summary>
         /// <typeparam name="T">The type to deserialize the response to.</typeparam>
         /// <param name="uri">The endpoint to send the request to.</param>
         /// <returns>The result of the request.</returns>
-        private RequestResult<T> _SendGetCommand<T>(string uri)
+        private RequestResult<T> SendGetCommand<T>(string uri)
         {
-            return _SendCommand<T>(uri, RequestType.Get);
+            return SendCommand<T>(uri, RequestType.Get);
         }
 
         /// <summary>Used to build a request.</summary>
@@ -1119,11 +1118,11 @@ namespace TestRail
         /// <param name="type">The type of request.</param>
         /// <param name="jsonParams">JSON object to include in the request.</param>
         /// <returns>The result of the request.</returns>
-        private RequestResult<T> _SendCommand<T>(string uri, RequestType type, JObject jsonParams = null)
+        private RequestResult<T> SendCommand<T>(string uri, RequestType type, JObject jsonParams = null)
         {
             try
             {
-                return _CallEndpoint<T>(uri, type, jsonParams);
+                return CallEndpoint<T>(uri, type, jsonParams);
             }
 
             // If there is an error, will try to create a new result object
@@ -1165,7 +1164,7 @@ namespace TestRail
         /// <param name="type">The type of request to build: GEt, POST, etc.</param>
         /// <param name="json">Parameters to send formatted as a single JSON object.</param>
         /// <returns>Result of the call.</returns>
-        private RequestResult<T> _CallEndpoint<T>(string uri, RequestType type, JObject json = null)
+        private RequestResult<T> CallEndpoint<T>(string uri, RequestType type, JObject json = null)
         {
             // Build full uri
             uri = BaseUrl + uri;
@@ -1192,7 +1191,7 @@ namespace TestRail
         /// <param name="suiteId">id of the suite</param>
         /// <param name="caseIds">collection of case ids to check</param>
         /// <returns>true if at least one case exists in the project and suite id combination, otherwise false</returns>
-        private bool _CasesFoundInSuite(ulong projectId, ulong suiteId, ICollection<ulong> caseIds)
+        private bool CasesFoundInSuite(ulong projectId, ulong suiteId, ICollection<ulong> caseIds)
         {
             var validCases = GetCases(projectId, suiteId).Payload;
 
@@ -1201,7 +1200,7 @@ namespace TestRail
 
         /// <summary>Create a priority dictionary</summary>
         /// <returns>dictionary of priority ID (from test rail) to priority levels(where Higher value means higher priority)</returns>
-        private IDictionary<ulong, int> _CreatePrioritiesDict()
+        private IDictionary<ulong, int> CreatePrioritiesDict()
         {
             var tmpDict = new Dictionary<ulong, int>();
             var priorityList = GetPriorities().Payload;
@@ -1214,11 +1213,11 @@ namespace TestRail
             return tmpDict;
         }
 
-        private IList<Project> _GetProjects()
+        private IList<Project> GetProjectsOld()
         {
-            var uri = _CreateUri_(CommandType.Get, CommandAction.Projects);
+            var uri = CreateUri_(CommandType.Get, CommandAction.Projects);
 
-            var items = _SendGetCommand<IList<Project>>(uri);
+            var items = SendGetCommand<IList<Project>>(uri);
 
             return items.Payload;
         }
