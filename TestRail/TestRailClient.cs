@@ -1,5 +1,7 @@
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -752,7 +754,7 @@ namespace TestRail
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Tests, runId);
 
-            return _SendGetCommand<IList<Test>>(uri);
+            return _SendGetCommand<IList<Test>>(uri, CommandAction.Tests);
         }
 
         /// <summary>gets a case</summary>
@@ -776,7 +778,7 @@ namespace TestRail
             var options = $"&suite_id={suiteId}{optionalSectionId}";
             var uri = _CreateUri_(CommandType.Get, CommandAction.Cases, projectId, null, options);
 
-            return _SendGetCommand<IList<Case>>(uri);
+            return _SendGetCommand<IList<Case>>(uri, CommandAction.Cases);
         }
 
         /// <summary>returns a list of available test case custom fields</summary>
@@ -836,7 +838,7 @@ namespace TestRail
             var options = suiteId.HasValue ? $"&suite_id={suiteId}" : string.Empty;
             var uri = _CreateUri_(CommandType.Get, CommandAction.Sections, projectId, null, options);
 
-            return _SendGetCommand<IList<Section>>(uri);
+            return _SendGetCommand<IList<Section>>(uri, CommandAction.Sections);
         }
 
         /// <summary>gets a run</summary>
@@ -858,7 +860,7 @@ namespace TestRail
             var options = offset > 0 ? $"&offset={offset}" : null;
             var uri = _CreateUri_(CommandType.Get, CommandAction.Runs, projectId, null, options);
 
-            return _SendGetCommand<IList<Run>>(uri);
+            return _SendGetCommand<IList<Run>>(uri, CommandAction.Runs);
         }
 
         /// <summary>gets a plan</summary>
@@ -878,7 +880,7 @@ namespace TestRail
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Plans, projectId);
 
-            return _SendGetCommand<IList<Plan>>(uri);
+            return _SendGetCommand<IList<Plan>>(uri, CommandAction.Plans);
         }
 
         /// <summary>gets a milestone</summary>
@@ -898,7 +900,7 @@ namespace TestRail
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Milestones, projectId);
 
-            return _SendGetCommand<IList<Milestone>>(uri);
+            return _SendGetCommand<IList<Milestone>>(uri, CommandAction.Milestones);
         }
 
         /// <summary>gets a project</summary>
@@ -917,7 +919,7 @@ namespace TestRail
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Projects);
 
-            return _SendGetCommand<IList<Project>>(uri);
+            return _SendGetCommand<IList<Project>>(uri, CommandAction.Projects);
         }
 
         /// <summary>Get User for user id</summary>
@@ -978,7 +980,7 @@ namespace TestRail
 
             var uri = _CreateUri_(CommandType.Get, CommandAction.Results, testId, null, filters.ToString());
 
-            return _SendGetCommand<IList<Result>>(uri);
+            return _SendGetCommand<IList<Result>>(uri, CommandAction.Results);
         }
 
         /// <summary>Return the list of test results for a test run and the case combination</summary>
@@ -1009,7 +1011,7 @@ namespace TestRail
 
             var uri = _CreateUri_(CommandType.Get, CommandAction.ResultsForCase, runId, caseId, filters.ToString());
 
-            return _SendGetCommand<IList<Result>>(uri);
+            return _SendGetCommand<IList<Result>>(uri, CommandAction.ResultsForCase);
         }
 
         /// <summary>Return the list of test results for a test run</summary>
@@ -1039,7 +1041,7 @@ namespace TestRail
 
             var uri = _CreateUri_(CommandType.Get, CommandAction.ResultsForRun, runId, null, filters.ToString());
 
-            return _SendGetCommand<IList<Result>>(uri);
+            return _SendGetCommand<IList<Result>>(uri, CommandAction.ResultsForRun);
         }
 
         /// <summary>Returns the list of statuses available to test rail</summary>
@@ -1112,6 +1114,48 @@ namespace TestRail
         {
             return _SendCommand<T>(uri, RequestType.Get);
         }
+
+        /// <summary>Used to send a GET request for Bulk API</summary>
+        /// <typeparam name="T">The type to deserialize the response to.</typeparam>
+        /// <param name="uri">The endpoint to send the request to.</param>
+        /// <param name="type">The type of the JSON Bulk Property to look for (e.g. cases, projects, etc.)</param>
+        /// <returns>The List result of the request.</returns>
+        private RequestResult<T> _SendGetCommand<T>(string uri, CommandAction type)
+        {
+            var strType = type.ToString().ToLower();
+            var temp = _SendGetCommand<BulkAPI>(uri);
+            var list = WrappedList<T>(temp.Payload.DataItems[strType].ToString());
+
+            while (temp.Payload._Links.Next != null)
+            {
+                temp = _SendGetCommand<BulkAPI>($"?{temp.Payload._Links.Next}");
+                var additionalList = WrappedList<T>(temp.Payload.DataItems[strType].ToString());
+                foreach (var item in additionalList)
+                {
+                    list.Add(item);
+                }
+            };
+
+            return new RequestResult<T>(temp.StatusCode, thrownException: temp.ThrownException, payload: (T)list);
+        }
+
+        private IList WrappedList<T>(string unwrappedJson)
+        {
+            var parseType = typeof(T).GetGenericArguments().Single();
+            var staticConstructionMethod = parseType.GetMethod(nameof(Types.Case.Parse));
+            var unwrapped = JsonConvert.DeserializeObject<List<JObject>>(unwrappedJson);
+            var payload = (T)Activator.CreateInstance(typeof(List<>).MakeGenericType(parseType));
+            var list = payload as IList;
+
+            foreach (var value in unwrapped)
+            {
+                var obj = staticConstructionMethod.Invoke(null, new object[] { value });
+                list.Add(obj);
+            }
+
+            return list;
+        }
+
 
         /// <summary>Used to build a request.</summary>
         /// <typeparam name="T">The type to deserialize the response to.</typeparam>
