@@ -1011,7 +1011,7 @@ namespace TestRail
 
             var uri = _CreateUri_(CommandType.Get, CommandAction.ResultsForCase, runId, caseId, filters.ToString());
 
-            return _SendGetCommand<IList<Result>>(uri, CommandAction.ResultsForCase);
+            return _SendGetCommand<IList<Result>>(uri, CommandAction.Results);
         }
 
         /// <summary>Return the list of test results for a test run</summary>
@@ -1041,7 +1041,7 @@ namespace TestRail
 
             var uri = _CreateUri_(CommandType.Get, CommandAction.ResultsForRun, runId, null, filters.ToString());
 
-            return _SendGetCommand<IList<Result>>(uri, CommandAction.ResultsForRun);
+            return _SendGetCommand<IList<Result>>(uri, CommandAction.Results);
         }
 
         /// <summary>Returns the list of statuses available to test rail</summary>
