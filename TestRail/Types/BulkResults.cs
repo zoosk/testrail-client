@@ -41,14 +41,16 @@ namespace TestRail.Types
         /// <returns>json object that represents this class</returns>
         public virtual JObject GetJson()
         {
-            dynamic jsonParams = new JObject();
-
-            jsonParams.results = new List<JObject>();
+            var jResults = new JArray();
 
             foreach (var result in Results)
             {
-                jsonParams.Add(result.GetJson());
+                jResults.Add(result.GetJson());
             }
+
+            dynamic jsonParams = new JObject();
+
+            jsonParams.results = jResults;
 
             return jsonParams;
         }
