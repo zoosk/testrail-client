@@ -75,7 +75,8 @@ namespace TestRail.Types
                 CreatedOn = null == (int?)json["created_on"] ? (DateTime?)null : new DateTime(1970, 1, 1).AddSeconds((int)json["created_on"]),
                 Estimate = (string)json["estimate"],
                 EstimateForecast = (string)json["estimate_forecast"],
-                SuiteId = (ulong)json["suite_id"]
+                SuiteId = (ulong)json["suite_id"],
+                TemplateId = (ulong?)json["template_id"]
             };
 
             return newCase;
@@ -93,6 +94,7 @@ namespace TestRail.Types
             if (!string.IsNullOrWhiteSpace(Estimate)) { jsonParams.estimate = Estimate; }
             if (null != MilestoneId) { jsonParams.milestone_id = MilestoneId.Value; }
             if (!string.IsNullOrWhiteSpace(References)) { jsonParams.refs = References; }
+            if (null != TemplateId) { jsonParams.template_id = TemplateId.Value; }
 
             return jsonParams;
         }
