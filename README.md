@@ -36,6 +36,10 @@ Solution was built using Visual Studio 2017 (make sure you have the latest versi
 - Run the unit tests from VS Test Explorer or by running `dotnet test TestRail.Tests\TestRail.Tests.csproj` from the root directory.
 
 ## Version History
+#### 3.2.0
+- Fix for "Could not determine JSON object type" error on bulk results
+- Support for Bulk API Endpoints
+- Fix templateId parameter for Cases
 #### 3.1.2
 - Fix error on JObject creation in RequestResult
 #### 3.1.1
