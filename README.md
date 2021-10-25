@@ -36,6 +36,8 @@ Solution was built using Visual Studio 2017 (make sure you have the latest versi
 - Run the unit tests from VS Test Explorer or by running `dotnet test TestRail.Tests\TestRail.Tests.csproj` from the root directory.
 
 ## Version History
+#### 3.2.1
+- Fix for Support for Bulk API Endpoints: Fixed projects lazy loading on the client's initialization.
 #### 3.2.0
 - Fix for "Could not determine JSON object type" error on bulk results
 - Support for Bulk API Endpoints
