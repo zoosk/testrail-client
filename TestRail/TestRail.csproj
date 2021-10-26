@@ -12,9 +12,7 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Description>.Net Standard 2.0 implementation of the TestRail API</Description>
     <PackageReleaseNotes>
-    - Fix for "Could not determine JSON object type" error on bulk results
-    - Support for Bulk API Endpoints
-    - Fix templateId parameter for Cases
+    - Fix Bulk API Endpoint bug for client class lazy loading of projects
     </PackageReleaseNotes>
     <Copyright>Copyright 2017</Copyright>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
