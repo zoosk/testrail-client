@@ -172,16 +172,15 @@ namespace TestRail
         /// <param name="assignedToId">The ID of the user the test run should be assigned to.</param>
         /// <param name="caseIds">An array of case IDs for the custom case selection.</param>
         /// <param name="customs">Custom fields are supported as well and must be submitted with their system name, prefixed with 'custom_', e.g. custom_comment</param>
+        /// <param name="includeAll">True for including all test cases of the test suite and false for a custom case selection.</param>
         /// <returns>If successful, this method returns the new test run.</returns>
-        public RequestResult<Run> AddRun(ulong projectId, ulong suiteId, string name, string description, ulong? milestoneId = null,
-            ulong? assignedToId = null, HashSet<ulong> caseIds = null, JObject customs = null)
+        public RequestResult<Run> AddRun(ulong projectId, ulong? suiteId, string name, string description, ulong? milestoneId = null,
+            ulong? assignedToId = null, HashSet<ulong> caseIds = null, JObject customs = null, bool includeAll = true)
         {
-            var includeAll = true;
-
             // validates whether we are in include all or custom case selection mode
-            if (null != caseIds)
+            if (null != caseIds && suiteId.HasValue)
             {
-                var atLeastOneCaseFoundInSuite = _CasesFoundInSuite(projectId, suiteId, caseIds);
+                var atLeastOneCaseFoundInSuite = _CasesFoundInSuite(projectId, suiteId.Value, caseIds);
 
                 if (atLeastOneCaseFoundInSuite)
                 {
