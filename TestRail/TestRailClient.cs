@@ -36,8 +36,8 @@ namespace TestRail
         #region Constructor
         /// <summary>Constructor.</summary>
         /// <param name="baseUrl">Base URL for TestRail.</param>
-        /// <param name="userName">User name</param>
-        /// <param name="password">Password</param>
+        /// <param name="userName">User name.</param>
+        /// <param name="password">Password or API key.</param>
         public TestRailClient(string baseUrl, string userName, string password)
         {
             BaseUrl = baseUrl;
