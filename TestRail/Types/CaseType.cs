@@ -2,32 +2,30 @@ using Newtonsoft.Json.Linq;
 
 namespace TestRail.Types
 {
-    /// <inheritdoc />
-    /// <summary>stores information about a case type</summary>
+    /// <summary>Stores information about a case type.</summary>
     public class CaseType : BaseTestRailType
     {
         #region Public Properties
-        /// <summary>ID of the case type</summary>
+        /// <summary>ID of the case type.</summary>
         public ulong? Id { get; protected set; }
 
-        /// <summary>Name of the case type</summary>
+        /// <summary>Name of the case type.</summary>
         public string Name { get; protected set; }
 
-        /// <summary>is the case type the default</summary>
+        /// <summary>Is the case type the default?</summary>
         public bool? IsDefault { get; protected set; }
         #endregion Public Properties
 
         #region Public Methods
-        /// <summary>string representation of the object</summary>
-        /// <returns>string representation of the object</returns>
+        /// <inheritdoc />
         public override string ToString()
         {
             return Name;
         }
 
-        /// <summary>parses json into a suite</summary>
-        /// <param name="json">json to parse</param>
-        /// <returns>suite corresponding to the json</returns>
+        /// <summary>Parses JSON into a suite</summary>
+        /// <param name="json">JSON to parse</param>
+        /// <returns>Suite corresponding to the JSON.</returns>
         public static CaseType Parse(JObject json)
         {
             var caseType = new CaseType

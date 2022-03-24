@@ -4,28 +4,27 @@ using TestRail.Utils;
 
 namespace TestRail.Types
 {
-    /// <inheritdoc />
-    /// <summary>store information about a configuration group in testrail</summary>
+    /// <summary>Stores information about a configuration group in TestRail.</summary>
     public class ConfigurationGroup : BaseTestRailType
     {
         #region Public Properties
-        /// <summary>id of the current configuration group</summary>
+        /// <summary>ID of the current configuration group.</summary>
         public ulong Id { get; set; }
 
-        /// <summary>project id associated with the current configuration group</summary>
+        /// <summary>Project id associated with the current configuration group.</summary>
         public ulong ProjectId { get; set; }
 
-        /// <summary>name of the currenct configuration group</summary>
+        /// <summary>Name of the current configuration group.</summary>
         public string Name { get; set; }
 
-        /// <summary>list of configuations associated with the current configuration group</summary>
+        /// <summary>List of configurations associated with the current configuration group.</summary>
         public List<Configuration> Configurations { get; set; }
         #endregion Public Properties
 
         #region Public Methods
-        /// <summary>parses json into a ConfigurationGroup</summary>
-        /// <param name="json">json to parse</param>
-        /// <returns>ConfigurationGroup corresponding to the json</returns>
+        /// <summary>Parses JSON into a ConfigurationGroup.</summary>
+        /// <param name="json">JSON to parse.</param>
+        /// <returns>ConfigurationGroup corresponding to the JSON.</returns>
         public static ConfigurationGroup Parse(JObject json)
         {
             var configurationGroup = new ConfigurationGroup

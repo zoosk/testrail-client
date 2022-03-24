@@ -6,13 +6,13 @@ using TestRail.Types;
 
 namespace TestRail.Utils
 {
-    /// <summary>Helper class for Json Objects</summary>
+    /// <summary>Helper class for JSON Objects</summary>
     internal static class JsonUtility
     {
-        /// <summary>Merge two Json Objects</summary>
-        /// <param name="obj1">object 1 to merge</param>
-        /// <param name="obj2">object 2 to merge</param>
-        /// <returns>a non null Json object (NOTE: may be empty)</returns>
+        /// <summary>Merge two JSON Objects</summary>
+        /// <param name="obj1">Object 1 to merge</param>
+        /// <param name="obj2">Object 2 to merge</param>
+        /// <returns>A non null JSON object (NOTE: may be empty)</returns>
         internal static JObject Merge(JObject obj1, JObject obj2)
         {
             if (null == obj1)
@@ -36,10 +36,10 @@ namespace TestRail.Utils
             return obj1;
         }
 
-        /// <summary>Converts a JArray into a List of type T</summary>
-        /// <param name="jarray">JArray to parse</param>
-        /// <param name="parse">The method being used to parse the JArray</param>
-        /// <returns>returns a list of objects corresponding to the json, empty list if nothing exists</returns>
+        /// <summary>Converts a JArray into a List of type T.</summary>
+        /// <param name="jarray">JArray to parse.</param>
+        /// <param name="parse">The method being used to parse the JArray.</param>
+        /// <returns>Returns a list of objects corresponding to the json, empty list if nothing exists.</returns>
         internal static List<T> ConvertJArrayToList<T>(JArray jarray, Func<JObject, T> parse) where T : BaseTestRailType
         {
             var list = new List<T>();

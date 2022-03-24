@@ -5,56 +5,54 @@ using TestRail.Utils;
 
 namespace TestRail.Types
 {
-    /// <inheritdoc />
-    /// <summary>stores information about a milestone</summary>
+    /// <summary>Stores information about a milestone.</summary>
     public class Milestone : BaseTestRailType
     {
         #region Public Properties
-        /// <summary>id of the milestone</summary>
+        /// <summary>ID of the milestone.</summary>
         public ulong Id { get; private set; }
 
-        /// <summary>name of the milestone</summary>
+        /// <summary>Name of the milestone.</summary>
         public string Name { get; set; }
 
-        /// <summary>description of the milestone</summary>
+        /// <summary>Description of the milestone.</summary>
         public string Description { get; set; }
 
-        /// <summary>id of the parent milestone of the sub-milestone</summary>
+        /// <summary>ID of the parent milestone of the sub-milestone.</summary>
         public ulong? ParentId { private get; set; }
 
-        /// <summary>list of the sub-milestones</summary>
+        /// <summary>List of the sub-milestones.</summary>
         public List<Milestone> Milestones { get; set; }
 
-        /// <summary>true if the milestone is completed</summary>
+        /// <summary>True if the milestone is completed.</summary>
         public bool? IsCompleted { get; set; }
 
-        /// <summary>true if the milestone is started</summary>
+        /// <summary>True if the milestone is started.</summary>
         public bool? IsStarted { get; set; }
 
-        /// <summary>date on which the milestone is due</summary>
+        /// <summary>Date on which the milestone is due.</summary>
         public DateTime? DueOn { get; set; }
 
-        /// <summary>date on which the milestone was completed</summary>
+        /// <summary>Date on which the milestone was completed.</summary>
         public DateTime? CompletedOn { get; private set; }
 
-        /// <summary>id of the project with which the milestone is associated</summary>
+        /// <summary>ID of the project with which the milestone is associated.</summary>
         public ulong ProjectId { get; private set; }
 
-        /// <summary>the url for to view the milestone</summary>
+        /// <summary>The url for to view the milestone.</summary>
         public string Url { get; private set; }
         #endregion Public Properties
 
         #region Public Methods
-        /// <summary>string representation of the object</summary>
-        /// <returns>string representation of the object</returns>
+        /// <inheritdoc />
         public override string ToString()
         {
             return Name;
         }
 
-        /// <summary>parses json into a milestone</summary>
-        /// <param name="json">json to parse</param>
-        /// <returns>milestone corresponding to the json</returns>
+        /// <summary>Parses JSON into a milestone.</summary>
+        /// <param name="json">JSON to parse.</param>
+        /// <returns>Milestone corresponding to the JSON.</returns>
         public static Milestone Parse(JObject json)
         {
             var milestone = new Milestone
@@ -80,8 +78,8 @@ namespace TestRail.Types
             return milestone;
         }
 
-        /// <summary>Creates a json object for this class</summary>
-        /// <returns>json object that represents this class</returns>
+        /// <summary>Creates a JSON object for this class.</summary>
+        /// <returns>JSON object that represents this class.</returns>
         public JObject GetJson()
         {
             dynamic jsonParams = new JObject();

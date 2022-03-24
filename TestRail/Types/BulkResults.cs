@@ -4,18 +4,16 @@ using System.Text;
 
 namespace TestRail.Types
 {
-    /// <inheritdoc />
-    /// <summary>stores information about the result of a test</summary>
+    /// <summary>Stores information about the result of a test.</summary>
     public class BulkResults : BaseTestRailType
     {
         #region Public Properties
-        /// <summary>list of results</summary>
+        /// <summary>List of results.</summary>
         public IList<Result> Results { get; set; }
         #endregion Public Properties
 
         #region Public Methods
-        /// <summary>string representation of the object</summary>
-        /// <returns>string representation of the object</returns>
+        /// <inheritdoc />
         public override string ToString()
         {
             var builder = new StringBuilder("[");
@@ -37,8 +35,8 @@ namespace TestRail.Types
             return builder.ToString();
         }
 
-        /// <summary>Returns a json object that represents this class</summary>
-        /// <returns>json object that represents this class</returns>
+        /// <summary>Returns a JSON object that represents this class.</summary>
+        /// <returns>JSON object that represents this class.</returns>
         public virtual JObject GetJson()
         {
             var jResults = new JArray();

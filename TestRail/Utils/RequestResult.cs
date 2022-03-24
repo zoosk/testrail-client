@@ -24,14 +24,14 @@ namespace TestRail.Utils
         /// <summary>The exception that was throw when the response was received.</summary>
         public Exception ThrownException { get; }
 
-        /// <summary>The raw JSON returned. </summary>
+        /// <summary>The raw JSON returned.</summary>
         public string RawJson { get; }
 
         /// <summary>Constructor for creating a new container for a web response.</summary>
         /// <param name="status">The type response code returned.</param>
         /// <param name="rawJson">The raw JSON to deserialize.</param>
         /// <param name="thrownException">The exception that was throw when the response was received.</param>
-        /// <param name="payload">The payload to pass if already existing</param>
+        /// <param name="payload">The payload to pass if already existing.</param>
         public RequestResult(HttpStatusCode status, string rawJson = null, Exception thrownException = null, T payload = default(T))
         {
             if (rawJson != null)

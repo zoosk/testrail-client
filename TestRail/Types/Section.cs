@@ -2,44 +2,42 @@ using Newtonsoft.Json.Linq;
 
 namespace TestRail.Types
 {
-    /// <inheritdoc />
-    /// <summary>stores information about a section</summary>
+    /// <summary>Stores information about a section.</summary>
     public class Section : BaseTestRailType
     {
         #region Public Properties
-        /// <summary>id of the section</summary>
+        /// <summary>ID of the section.</summary>
         public ulong? Id { get; set; }
 
-        /// <summary>name of the section</summary>
+        /// <summary>Name of the section.</summary>
         public string Name { get; set; }
 
-        /// <summary>description of the section</summary>
+        /// <summary>Description of the section.</summary>
         public string Description { get; set; }
 
-        /// <summary>id of the parent section of the section</summary>
+        /// <summary>ID of the parent section of the section.</summary>
         public ulong? ParentId { get; set; }
 
-        /// <summary>depth of the section</summary>
+        /// <summary>Depth of the section.</summary>
         public uint? Depth { get; set; }
 
-        /// <summary>display order of the section</summary>
+        /// <summary>Display order of the section.</summary>
         public uint? DisplayOrder { get; set; }
 
-        /// <summary>id of the suite associated with the section</summary>
+        /// <summary>ID of the suite associated with the section.</summary>
         public ulong? SuiteId { get; set; }
         #endregion Public Properties
 
         #region Public Methods
-        /// <summary>string representation of the object</summary>
-        /// <returns>string representation of the object</returns>
+        /// <inheritdoc />
         public override string ToString()
         {
             return Name;
         }
 
-        /// <summary>parses json into a section</summary>
-        /// <param name="json">json to parse</param>
-        /// <returns>section corresponding to the json</returns>
+        /// <summary>Parses JSON into a section.</summary>
+        /// <param name="json">JSON to parse.</param>
+        /// <returns>Section corresponding to the JSON.</returns>
         public static Section Parse(JObject json)
         {
             var section = new Section
@@ -57,8 +55,8 @@ namespace TestRail.Types
             return section;
         }
 
-        /// <summary>Creates a json object for this class</summary>
-        /// <returns>json object that represents this class</returns>
+        /// <summary>Creates a JSON object for this class.</summary>
+        /// <returns>JSON object that represents this class.</returns>
         public JObject GetJson()
         {
             dynamic jsonParams = new JObject();

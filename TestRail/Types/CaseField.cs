@@ -4,56 +4,54 @@ using TestRail.Utils;
 
 namespace TestRail.Types
 {
-    /// <inheritdoc />
-    /// <summary>stores information about a case field</summary>
+    /// <summary>Stores information about a case field.</summary>
     public class CaseField : BaseTestRailType
     {
         #region Public Properties
-        /// <summary>id of the field</summary>
+        /// <summary>ID of the field.</summary>
         public ulong? Id { get; private set; }
 
-        /// <summary>easy name of the custom case field</summary>
+        /// <summary>Easy name of the custom case field.</summary>
         public string Name { get; private set; }
 
-        /// <summary>system name of the custom case field</summary>
+        /// <summary>System name of the custom case field.</summary>
         public string SystemName { get; private set; }
 
-        /// <summary>entity id</summary>
+        /// <summary>Entity ID.</summary>
         public ulong? EntityId { get; private set; }
 
-        /// <summary>display label for the custom case field</summary>
+        /// <summary>Display label for the custom case field.</summary>
         public string Label { get; private set; }
 
-        /// <summary>description of the custom case field</summary>
+        /// <summary>Description of the custom case field.</summary>
         public string Description { get; private set; }
 
-        /// <summary>type of custom case field as described by the case type</summary>
+        /// <summary>Type of custom case field as described by the case type.</summary>
         public ulong? TypeId { get; private set; }
 
-        /// <summary>location id</summary>
+        /// <summary>Location ID.</summary>
         public ulong? LocationId { get; private set; }
 
-        /// <summary>display order</summary>
+        /// <summary>Display order.</summary>
         public ulong? DisplayOrder { get; private set; }
 
-        /// <summary>list of configurations for this case field</summary>
+        /// <summary>List of configurations for this case field.</summary>
         public List<Config> Configs { get; private set; }
 
-        /// <summary>is multi</summary>
+        /// <summary>Is multi?</summary>
         public bool? IsMulti { get; private set; }
         #endregion Public Properties
 
         #region Public Methods
-        /// <summary>string representation of the object</summary>
-        /// <returns>string representation of the object</returns>
+        /// <inheritdoc />
         public override string ToString()
         {
             return Name;
         }
 
-        /// <summary>Parses the json object into a CaseField object</summary>
-        /// <param name="json">json to parse into a CaseField</param>
-        /// <returns>CaseField corresponding to the json</returns>
+        /// <summary>Parses the JSON object into a CaseField object.</summary>
+        /// <param name="json">JSON to parse into a CaseField.</param>
+        /// <returns>CaseField corresponding to the json.</returns>
         public static CaseField Parse(JObject json)
         {
             var caseField = new CaseField

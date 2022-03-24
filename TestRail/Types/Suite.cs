@@ -2,38 +2,36 @@ using Newtonsoft.Json.Linq;
 
 namespace TestRail.Types
 {
-    /// <inheritdoc />
-    /// <summary>stores information about a suite</summary>
+    /// <summary>Stores information about a suite.</summary>
     public class Suite : BaseTestRailType
     {
         #region Public Properties
-        /// <summary>id of the suite</summary>
+        /// <summary>ID of the suite.</summary>
         public ulong? Id { get; set; }
 
-        /// <summary>name of the suite</summary>
+        /// <summary>Name of the suite.</summary>
         public string Name { get; set; }
 
-        /// <summary>description of the suite</summary>
+        /// <summary>Description of the suite.</summary>
         public string Description { get; set; }
 
-        /// <summary>id of the project associated with the suite</summary>
+        /// <summary>ID of the project associated with the suite.</summary>
         public ulong? ProjectId { get; set; }
 
-        /// <summary>url to view the suite</summary>
+        /// <summary>URL to view the suite.</summary>
         public string Url { get; set; }
         #endregion Public Properties
 
         #region Public Methods
-        /// <summary>string representation of the object</summary>
-        /// <returns>string representation of the object</returns>
+        /// <inheritdoc />
         public override string ToString()
         {
             return Name;
         }
 
-        /// <summary>parses json into a suite</summary>
-        /// <param name="json">json to parse</param>
-        /// <returns>suite corresponding to the json</returns>
+        /// <summary>Parses JSON into a suite.</summary>
+        /// <param name="json">JSON to parse.</param>
+        /// <returns>Suite corresponding to the JSON.</returns>
         public static Suite Parse(JObject json)
         {
             var suite = new Suite
@@ -49,8 +47,8 @@ namespace TestRail.Types
             return suite;
         }
 
-        /// <summary>Creates a json object for this class</summary>
-        /// <returns>json object that represents this class</returns>
+        /// <summary>Creates a JSON object for this class.</summary>
+        /// <returns>JSON object that represents this class.</returns>
         public JObject GetJson()
         {
             dynamic jsonParams = new JObject();

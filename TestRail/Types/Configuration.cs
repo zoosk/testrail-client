@@ -2,25 +2,24 @@ using Newtonsoft.Json.Linq;
 
 namespace TestRail.Types
 {
-    /// <inheritdoc />
-    /// <summary>stores details about a configuration in testrail</summary>
+    /// <summary>Stores details about a configuration in TestRail.</summary>
     public class Configuration : BaseTestRailType
     {
         #region Public Properties
-        /// <summary>id of the current configuration</summary>
+        /// <summary>ID of the current configuration.</summary>
         public ulong Id { get; set; }
 
-        /// <summary>group id of the current configuration</summary>
+        /// <summary>group id of the current configuration.</summary>
         public ulong ConfigurationGroupId { get; set; }
 
-        /// <summary>name of the current configuration</summary>
+        /// <summary>name of the current configuration.</summary>
         public string Name { get; set; }
         #endregion Public Properties
 
         #region Public Methods
-        /// <summary>parses json into a Configuration</summary>
-        /// <param name="json">json to parse</param>
-        /// <returns>Configuration corresponding to the json</returns>
+        /// <summary>Parses JSON into a Configuration.</summary>
+        /// <param name="json">JSON to parse.</param>
+        /// <returns>Configuration corresponding to the JSON.</returns>
         public static Configuration Parse(JObject json)
         {
             var configuration = new Configuration
