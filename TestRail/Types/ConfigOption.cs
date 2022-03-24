@@ -2,27 +2,26 @@ using Newtonsoft.Json.Linq;
 
 namespace TestRail.Types
 {
-    /// <inheritdoc />
-    /// <summary>stores information about an option for a case field's configuration</summary>
+    /// <summary>Stores information about an option for a case field's configuration.</summary>
     public class ConfigOption : BaseTestRailType
     {
         #region Public Properties
-        /// <summary>is this option required</summary>
+        /// <summary>Is this option required?</summary>
         public bool? IsRequired { get; private set; }
 
-        /// <summary>Default value for the option</summary>
+        /// <summary>Default value for the option.</summary>
         public string DefaultValue { get; private set; }
 
-        /// <summary>format of the option</summary>
+        /// <summary>Format of the option.</summary>
         public string Format { get; private set; }
 
-        /// <summary>row</summary>
+        /// <summary>Row.</summary>
         public string Rows { get; private set; }
         #endregion Public Properties
 
         #region Public Methods
-        /// <summary>parse a json object into a Config Option</summary>
-        /// <param name="json">converts the json object to a ConfigOption</param>
+        /// <summary>Parse a JSON object into a Config Option.</summary>
+        /// <param name="json">Converts the JSON object to a ConfigOption.</param>
         public static ConfigOption Parse(JObject json)
         {
             var configOption = new ConfigOption

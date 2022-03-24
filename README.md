@@ -3,6 +3,8 @@ testrail-client
 
 .Net Standard 2.0 implementation of the TestRail API.
 
+[![NuGet Badge](https://buildstats.info/nuget/TestRail)](https://www.nuget.org/packages/TestRail/)
+
 ### Getting Started
 
 ```C#

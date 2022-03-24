@@ -13,9 +13,9 @@ namespace TestRail.Utils
     {
         private readonly HttpWebRequest _request;
 
-        /// <summary>constructor</summary>
-        /// <param name="url">url for the request</param>
-        /// <param name="requestType">designate the request being built as a GET or POST request</param>
+        /// <summary>Constructor.</summary>
+        /// <param name="url">URL for the request.</param>
+        /// <param name="requestType">Designate the request being built as a GET or POST request.</param>
         public TestRailRequest(string url, string requestType)
         {
             _request = (HttpWebRequest)WebRequest.Create(url);
@@ -24,8 +24,8 @@ namespace TestRail.Utils
             _request.Method = requestType;
         }
 
-        /// <summary>add headers to the request</summary>
-        /// <param name="headers">key value pairs to be added to the headers</param>
+        /// <summary>Add headers to the request.</summary>
+        /// <param name="headers">Key value pairs to be added to the headers.</param>
         public void AddHeaders(IDictionary<string, string> headers)
         {
             foreach (var header in headers)
@@ -34,22 +34,22 @@ namespace TestRail.Utils
             }
         }
 
-        /// <summary>what type of data the request will accept</summary>
-        /// <param name="accept">set the type, ex: 'application/json'</param>
+        /// <summary>What type of data the request will accept.</summary>
+        /// <param name="accept">Set the type, ex: 'application/json'.</param>
         public void Accepts(string accept)
         {
             _request.Accept = accept;
         }
 
-        /// <summary>what type of data the request contains</summary>
-        /// <param name="contentType">set the type, ex: 'application/json'</param>
+        /// <summary>What type of data the request contains.</summary>
+        /// <param name="contentType">Set the type, ex: 'application/json'.</param>
         public void ContentType(string contentType)
         {
             _request.ContentType = contentType;
         }
 
-        /// <summary>add a body to the request</summary>
-        /// <param name="bodyString">the text to add to the body</param>
+        /// <summary>Add a body to the request.</summary>
+        /// <param name="bodyString">The text to add to the body.</param>
         public void AddBody(string bodyString)
         {
             var byteArray = Encoding.UTF8.GetBytes(bodyString);
@@ -62,9 +62,9 @@ namespace TestRail.Utils
             requestDataStream.Close();
         }
 
-        /// <summary>send the request and get a response</summary>
-        /// <typeparam name="T">the type to deserialize to</typeparam>
-        /// <returns>if successful, will return a new RequestResult object</returns>
+        /// <summary>Send the request and get a response.</summary>
+        /// <typeparam name="T">The type to deserialize to.</typeparam>
+        /// <returns>If successful, will return a new RequestResult object.</returns>
         public RequestResult<T> Execute<T>()
         {
             var response = (HttpWebResponse)_request.GetResponse();

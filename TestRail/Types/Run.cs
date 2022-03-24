@@ -4,107 +4,105 @@ using System.Collections.Generic;
 
 namespace TestRail.Types
 {
-    /// <inheritdoc />
-    /// <summary>stores information about a run</summary>
+    /// <summary>Stores information about a run.</summary>
     public class Run : BaseTestRailType
     {
         #region Public Properties
-        /// <summary>id of the run</summary>
+        /// <summary>ID of the run.</summary>
         public ulong? Id { get; private set; }
 
-        /// <summary>name of the run</summary>
+        /// <summary>Name of the run.</summary>
         public string Name { get; set; }
 
-        /// <summary>description of the run</summary>
+        /// <summary>Description of the run.</summary>
         public string Description { get; set; }
 
-        /// <summary>id of the suite associated with the run</summary>
+        /// <summary>ID of the suite associated with the run.</summary>
         public ulong? SuiteId { get; set; }
 
-        /// <summary>id of the milestone associated with the run</summary>
+        /// <summary>ID of the milestone associated with the run.</summary>
         public ulong? MilestoneId { get; set; }
 
-        /// <summary>config for the run</summary>
+        /// <summary>Config for the run.</summary>
         public string Config { get; private set; }
 
-        /// <summary>true if the run has been completes</summary>
+        /// <summary>True if the run has been completed.</summary>
         public bool? IsCompleted { get; private set; }
 
-        /// <summary>date on which the run which was completed</summary>
+        /// <summary>Date on which the run which was completed.</summary>
         public DateTime? CompletedOn { get; private set; }
 
-        /// <summary>date on which the run which was created</summary>
+        /// <summary>Date on which the run which was created.</summary>
         public DateTime? CreatedOn { get; private set; }
 
-        /// <summary>number of tests in the plan that passed</summary>
+        /// <summary>Number of tests in the plan that passed.</summary>
         public uint? PassedCount { get; private set; }
 
-        /// <summary>number of tests in the plan that are blocked</summary>
+        /// <summary>Number of tests in the plan that are blocked.</summary>
         public uint? BlockedCount { get; private set; }
 
-        /// <summary>number of tests in the plan that are untested</summary>
+        /// <summary>Number of tests in the plan that are untested.</summary>
         public uint? UntestedCount { get; private set; }
 
-        /// <summary>number of tests in the plan that need to be retested</summary>
+        /// <summary>Number of tests in the plan that need to be retested.</summary>
         public uint? RetestCount { get; private set; }
 
-        /// <summary>number of tests in the plan that failed</summary>
+        /// <summary>Number of tests in the plan that failed.</summary>
         public uint? FailedCount { get; private set; }
 
-        /// <summary>id of the project associated with the run</summary>
+        /// <summary>ID of the project associated with the run.</summary>
         public ulong? ProjectId { get; private set; }
 
-        /// <summary>id of the plan associated with the run</summary>
+        /// <summary>ID of the plan associated with the run.</summary>
         public ulong? PlanId { get; private set; }
 
-        /// <summary>is of the user it is assigned to</summary>
+        /// <summary>Is of the user it is assigned to.</summary>
         public ulong? AssignedTo { get; set; }
 
-        /// <summary>true if the test run includes all test cases and false otherwise</summary>
+        /// <summary>True if the test run includes all test cases and false otherwise.</summary>
         public bool IncludeAll { get; set; }
 
-        /// <summary>the amount of tests in the test run with the respective custom status</summary>
+        /// <summary>The amount of tests in the test run with the respective custom status.</summary>
         public ulong CustomStatus1Count { get; private set; }
 
-        /// <summary>the amount of tests in the test run with the respective custom status</summary>
+        /// <summary>The amount of tests in the test run with the respective custom status.</summary>
         public ulong CustomStatus2Count { get; private set; }
 
-        /// <summary>the amount of tests in the test run with the respective custom status</summary>
+        /// <summary>The amount of tests in the test run with the respective custom status.</summary>
         public ulong CustomStatus3Count { get; private set; }
 
-        /// <summary>the amount of tests in the test run with the respective custom status</summary>
+        /// <summary>The amount of tests in the test run with the respective custom status.</summary>
         public ulong CustomStatus4Count { get; private set; }
 
-        /// <summary>the amount of tests in the test run with the respective custom status</summary>
+        /// <summary>The amount of tests in the test run with the respective custom status.</summary>
         public ulong CustomStatus5Count { get; private set; }
 
-        /// <summary>the amount of tests in the test run with the respective custom status</summary>
+        /// <summary>The amount of tests in the test run with the respective custom status.</summary>
         public ulong CustomStatus6Count { get; private set; }
 
-        /// <summary>the amount of tests in the test run with the respective custom status</summary>
+        /// <summary>The amount of tests in the test run with the respective custom status.</summary>
         public ulong CustomStatus7Count { get; private set; }
 
-        /// <summary>the address/URL of the test run in the user interface</summary>
+        /// <summary>The address/URL of the test run in the user interface.</summary>
         public string Url { get; private set; }
 
-        /// <summary>an array of case IDs for the custom case selection</summary>
+        /// <summary>An array of case IDs for the custom case selection.</summary>
         public HashSet<ulong> CaseIds { get; set; }
 
-        /// <summary>an array of case IDs for the custom case selection</summary>
+        /// <summary>An array of case IDs for the custom case selection.</summary>
         public List<ulong> ConfigIds { get; set; }
         #endregion Public Properties
 
         #region Public Methods
-        /// <summary>string representation of the object</summary>
-        /// <returns>string representation of the object</returns>
+        /// <inheritdoc />
         public override string ToString()
         {
             return Name;
         }
 
-        /// <summary>parses json into a run</summary>
-        /// <param name="json">json to parse</param>
-        /// <returns>run corresponding to the json</returns>
+        /// <summary>Parses JSON into a run.</summary>
+        /// <param name="json">JSON to parse.</param>
+        /// <returns>Run corresponding to the JSON.</returns>
         public static Run Parse(JObject json)
         {
             var run = new Run
@@ -141,8 +139,8 @@ namespace TestRail.Types
             return run;
         }
 
-        /// <summary>Creates a json object for this class</summary>
-        /// <returns>json object that represents this class</returns>
+        /// <summary>Creates a JSON object for this class.</summary>
+        /// <returns>JSON object that represents this class.</returns>
         public JObject GetJson()
         {
             dynamic jsonParams = new JObject();

@@ -3,62 +3,60 @@ using System;
 
 namespace TestRail.Types
 {
-    /// <inheritdoc />
-    /// <summary>stores information about a case</summary>
+    /// <summary>Stores information about a case.</summary>
     public class Case : BaseTestRailType
     {
         #region Public Properties
-        /// <summary>id of the case</summary>
+        /// <summary>ID of the case.</summary>
         public ulong? Id { get; set; }
 
-        /// <summary>title of the case</summary>
+        /// <summary>Title of the case.</summary>
         public string Title { get; set; }
 
-        /// <summary>section id of the case</summary>
+        /// <summary>Section ID of the case.</summary>
         public ulong? SectionId { get; set; }
 
-        /// <summary>type id of the case</summary>
+        /// <summary>Type ID of the case.</summary>
         public ulong? TypeId { get; set; }
 
-        /// <summary>priority id of the case</summary>
+        /// <summary>Priority ID of the case.</summary>
         public ulong? PriorityId { get; set; }
 
-        /// <summary>references for the case</summary>
+        /// <summary>References for the case.</summary>
         public string References { get; set; }
 
-        /// <summary>the milestone this case was associated with</summary>
+        /// <summary>The milestone this case was associated with.</summary>
         public ulong? MilestoneId { get; set; }
 
-        /// <summary>the user who created this case</summary>
+        /// <summary>The user who created this case.</summary>
         public ulong? CreatedBy { get; set; }
 
-        /// <summary>creation date</summary>
+        /// <summary>Creation date.</summary>
         public DateTime? CreatedOn { get; set; }
 
-        /// <summary>estimate time this case will take</summary>
+        /// <summary>Estimated time this case will take.</summary>
         public string Estimate { get; set; }
 
-        /// <summary>estimate forecast</summary>
+        /// <summary>Estimate forecast.</summary>
         public string EstimateForecast { get; set; }
 
-        /// <summary>suite id for this case</summary>
+        /// <summary>Suite ID for this case.</summary>
         public ulong? SuiteId { get; set; }
 
-        /// <summary>id of the template (field layout)</summary>
+        /// <summary>ID of the template (field layout).</summary>
         public ulong? TemplateId { get; set; }
         #endregion Public Properties
 
         #region Public Methods
-        /// <summary>string representation of the object</summary>
-        /// <returns>string representation of the object</returns>
+        /// <inheritdoc />
         public override string ToString()
         {
             return Title;
         }
 
-        /// <summary>parses json into a case</summary>
-        /// <param name="json">json to parse</param>
-        /// <returns>case corresponding to the json</returns>
+        /// <summary>Parses JSON into a case.</summary>
+        /// <param name="json">JSON to parse.</param>
+        /// <returns>Case corresponding to the JSON.</returns>
         public static Case Parse(JObject json)
         {
             var newCase = new Case
@@ -82,8 +80,8 @@ namespace TestRail.Types
             return newCase;
         }
 
-        /// <summary>creates a json object with the given parameters</summary>
-        /// <returns>json object for case</returns>
+        /// <summary>Creates a JSON object with the given parameters.</summary>
+        /// <returns>JSON object for case.</returns>
         public virtual JObject GetJson()
         {
             dynamic jsonParams = new JObject();

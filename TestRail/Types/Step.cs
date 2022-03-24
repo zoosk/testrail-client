@@ -3,28 +3,27 @@ using TestRail.Enums;
 
 namespace TestRail.Types
 {
-    /// <inheritdoc />
-    /// <summary>stores information about a step</summary>
+    /// <summary>Stores information about a step.</summary>
     public class Step : BaseTestRailType
     {
         #region Public Fields
-        /// <summary>description of the step</summary>
+        /// <summary>Description of the step.</summary>
         public string Description;
 
-        /// <summary>expected result for the step</summary>
+        /// <summary>Expected result for the step.</summary>
         public string Expected;
 
-        /// <summary>actual result for the step</summary>
+        /// <summary>Actual result for the step.</summary>
         public string Actual;
 
-        /// <summary>result of the step</summary>
+        /// <summary>Result of the step.</summary>
         public ResultStatus? Status;
         #endregion Public Fields
 
         #region Public Methods
-        /// <summary>parses json into a step</summary>
-        /// <param name="json">json to parse</param>
-        /// <returns>step corresponding to the json</returns>
+        /// <summary>Parses JSON into a step.</summary>
+        /// <param name="json">JSON to parse.</param>
+        /// <returns>Step corresponding to the JSON.</returns>
         public static Step Parse(JObject json)
         {
             var step = new Step
@@ -39,8 +38,8 @@ namespace TestRail.Types
             return step;
         }
 
-        /// <summary>Get the json object that describes this class</summary>
-        /// <returns>json object for this class</returns>
+        /// <summary>Get the JSON object that describes this class.</summary>
+        /// <returns>JSON object for this class.</returns>
         public JObject GetJsonObject()
         {
             dynamic json = new JObject();

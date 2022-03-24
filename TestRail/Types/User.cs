@@ -2,27 +2,26 @@ using Newtonsoft.Json.Linq;
 
 namespace TestRail.Types
 {
-    /// <inheritdoc />
-    /// <summary>stores information about a user</summary>
+    /// <summary>Stores information about a user.</summary>
     public class User : BaseTestRailType
     {
         #region Public Properties
-        /// <summary>id of the user</summary>
+        /// <summary>ID of the user.</summary>
         public ulong Id { get; private set; }
 
-        /// <summary>name of the user</summary>
+        /// <summary>Name of the user.</summary>
         public string Name { get; private set; }
 
-        /// <summary>email of the user</summary>
+        /// <summary>Email of the user.</summary>
         public string Email { get; private set; }
 
-        /// <summary>is the user an admin</summary>
+        /// <summary>Is the user an admin?</summary>
         public bool IsAdmin { get; private set; }
 
-        /// <summary>role id of the user</summary>
+        /// <summary>Role id of the user.</summary>
         public ulong? RoleId { get; private set; }
 
-        /// <summary>Is the user active</summary>
+        /// <summary>Is the user active?</summary>
         public bool IsActive { get; private set; }
         #endregion Public Properties
 
@@ -34,9 +33,9 @@ namespace TestRail.Types
             return $"{Id}:{Name}";
         }
 
-        /// <summary>Parses the json object and returns an User object</summary>
-        /// <param name="json">json to parse</param>
-        /// <returns>a user object corresponding to the json object</returns>
+        /// <summary>Parses the JSON object and returns an User object.</summary>
+        /// <param name="json">JSON to parse</param>
+        /// <returns>A user object corresponding to the JSON object.</returns>
         public static User Parse(JObject json)
         {
             var user = new User

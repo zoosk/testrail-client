@@ -4,16 +4,16 @@ using System.Text.RegularExpressions;
 namespace TestRail.Utils
 {
     /// <summary>
-    /// TimeSpan Utility methods
+    /// TimeSpan Utility methods.
     /// </summary>
     internal static class TimeSpanUtility
     {
         /// <summary>
-        /// Convert string timespan into a TimeSpan object
+        /// Convert string timespan into a TimeSpan object.
         /// </summary>
-        /// <param name="value">string to convert</param>
-        /// <returns>TimeSpan if conversion was good, null otherwise</returns>
-        internal static TimeSpan? FromString(String value)
+        /// <param name="value">String to convert.</param>
+        /// <returns>TimeSpan if conversion was good, null otherwise.</returns>
+        internal static TimeSpan? FromString(string value)
         {
             TimeSpan? retVal = null;
 

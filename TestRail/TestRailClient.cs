@@ -12,32 +12,32 @@ using TestRail.Utils;
 
 namespace TestRail
 {
-    /// <summary>client used to access test case data in testrail</summary>
+    /// <summary>Client used to access test case data in TestRail.</summary>
     public class TestRailClient
     {
-        /// <summary>base url for testrail</summary>
+        /// <summary>Base URL for TestRail.</summary>
         protected string BaseUrl;
 
-        /// <summary>base 64 string of the given credentials</summary>
+        /// <summary>Base64 string of the given credentials.</summary>
         protected string AuthInfo;
 
-        /// <summary>projects in the test rail database</summary>
+        /// <summary>Projects in the TestRail database.</summary>
         public IList<Project> Projects => _projects.Value;
 
-        /// <summary>list of projects in the current testrail instance</summary>
+        /// <summary>List of projects in the current TestRail instance.</summary>
         private readonly Lazy<IList<Project>> _projects;
 
-        /// <summary>dictionary of priority ID (from test rail) to priority levels(where Higher value means higher priority)</summary>
+        /// <summary>Dictionary of priority ID (from TestRail) to priority levels(where Higher value means higher priority).</summary>
         private IDictionary<ulong, int> PriorityIdToLevel => LazyPriorityIdToLevel.Value;
 
-        /// <summary>dictionary of priority ID (from test rail) to priority levels(where Higher value means higher priority)</summary>
+        /// <summary>dictionary of priority ID (from TestRail) to priority levels(where Higher value means higher priority).</summary>
         private Lazy<IDictionary<ulong, int>> LazyPriorityIdToLevel { get; }
 
         #region Constructor
-        /// <summary>constructor</summary>
-        /// <param name="baseUrl">base url for test rail</param>
-        /// <param name="userName">user name</param>
-        /// <param name="password">password</param>
+        /// <summary>Constructor.</summary>
+        /// <param name="baseUrl">Base URL for TestRail.</param>
+        /// <param name="userName">User name</param>
+        /// <param name="password">Password</param>
         public TestRailClient(string baseUrl, string userName, string password)
         {
             BaseUrl = baseUrl;
@@ -51,9 +51,9 @@ namespace TestRail
         #endregion Constructor
 
         #region Public Methods
-        /// <summary>Get the priority for the case if we can</summary>
-        /// <param name="c">case to get the priority from</param>
-        /// <returns>int value of priority if possible, null if not found</returns>
+        /// <summary>Get the priority for the case if we can.</summary>
+        /// <param name="c">Case to get the priority from.</param>
+        /// <returns>Integer value of priority if possible, null if not found.</returns>
         public int? GetPriorityForCase(Case c)
         {
             int? priority = null;
@@ -737,9 +737,9 @@ namespace TestRail
         #endregion Delete Commands
 
         #region Get Commands
-        /// <summary>gets a test</summary>
-        /// <param name="testId">id of the test</param>
-        /// <returns>information about the test</returns>
+        /// <summary>Gets a test.</summary>
+        /// <param name="testId">ID of the test.</param>
+        /// <returns>Information about the test.</returns>
         public RequestResult<Test> GetTest(ulong testId)
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Test, testId);
@@ -747,9 +747,9 @@ namespace TestRail
             return _SendGetCommand<Test>(uri);
         }
 
-        /// <summary>gets tests associated with a run</summary>
-        /// <param name="runId">id of the run</param>
-        /// <returns>tests associated with the run</returns>
+        /// <summary>Gets tests associated with a run.</summary>
+        /// <param name="runId">ID of the run.</param>
+        /// <returns>Tests associated with the run.</returns>
         public RequestResult<IList<Test>> GetTests(ulong runId)
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Tests, runId);
@@ -757,9 +757,9 @@ namespace TestRail
             return _SendBulkGetCommand<IList<Test>>(uri, CommandAction.Tests);
         }
 
-        /// <summary>gets a case</summary>
-        /// <param name="caseId">id of the case</param>
-        /// <returns>information about the case</returns>
+        /// <summary>Gets a case.</summary>
+        /// <param name="caseId">ID of the case.</param>
+        /// <returns>Information about the case.</returns>
         public RequestResult<Case> GetCase(ulong caseId)
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Case, caseId);
@@ -767,11 +767,11 @@ namespace TestRail
             return _SendGetCommand<Case>(uri);
         }
 
-        /// <summary>gets cases associated with a suite</summary>
-        /// <param name="projectId">id of the project</param>
-        /// <param name="suiteId">id of the suite</param>
-        /// <param name="sectionId">(optional) id of the section</param>
-        /// <returns>cases associated with the suite</returns>
+        /// <summary>Gets cases associated with a suite.</summary>
+        /// <param name="projectId">ID of the project.</param>
+        /// <param name="suiteId">ID of the suite.</param>
+        /// <param name="sectionId">(optional) ID of the section.</param>
+        /// <returns>Cases associated with the suite.</returns>
         public RequestResult<IList<Case>> GetCases(ulong projectId, ulong suiteId, ulong? sectionId = null)
         {
             var optionalSectionId = sectionId.HasValue ? $"&section_id={sectionId.Value}" : string.Empty;
@@ -781,8 +781,8 @@ namespace TestRail
             return _SendBulkGetCommand<IList<Case>>(uri, CommandAction.Cases);
         }
 
-        /// <summary>returns a list of available test case custom fields</summary>
-        /// <returns>a list of custom field definitions</returns>
+        /// <summary>Gets a list of available test case custom fields.</summary>
+        /// <returns>A list of custom field definitions.</returns>
         public RequestResult<IList<CaseField>> GetCaseFields()
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.CaseFields);
@@ -790,8 +790,8 @@ namespace TestRail
             return _SendGetCommand<IList<CaseField>>(uri);
         }
 
-        /// <summary>returns a list of available case types</summary>
-        /// <returns>a list of test case types, each has a unique ID and a name.</returns>
+        /// <summary>Gets a list of available case types.</summary>
+        /// <returns>A list of test case types, each has a unique ID and a name.</returns>
         public RequestResult<IList<CaseType>> GetCaseTypes()
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.CaseTypes);
@@ -799,9 +799,9 @@ namespace TestRail
             return _SendGetCommand<IList<CaseType>>(uri);
         }
 
-        /// <summary>gets a suite</summary>
-        /// <param name="suiteId">id of the suite</param>
-        /// <returns>information about the suite</returns>
+        /// <summary>Gets a suite.</summary>
+        /// <param name="suiteId">ID of the suite.</param>
+        /// <returns>Information about the suite.</returns>
         public RequestResult<Suite> GetSuite(ulong suiteId)
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Suite, suiteId);
@@ -809,9 +809,9 @@ namespace TestRail
             return _SendGetCommand<Suite>(uri);
         }
 
-        /// <summary>gets suites associated with a project</summary>
-        /// <param name="projectId">id of the project</param>
-        /// <returns>suites associated with the project</returns>
+        /// <summary>Gets suites associated with a project.</summary>
+        /// <param name="projectId">ID of the project.</param>
+        /// <returns>Suites associated with the project.</returns>
         public RequestResult<IList<Suite>> GetSuites(ulong projectId)
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Suites, projectId);
@@ -819,9 +819,9 @@ namespace TestRail
             return _SendGetCommand<IList<Suite>>(uri);
         }
 
-        /// <summary>gets a section</summary>
-        /// <param name="sectionId">id of the section</param>
-        /// <returns>information about the section</returns>
+        /// <summary>Gets a section.</summary>
+        /// <param name="sectionId">ID of the section.</param>
+        /// <returns>Information about the section.</returns>
         public RequestResult<Section> GetSection(ulong sectionId)
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Section, sectionId);
@@ -829,10 +829,10 @@ namespace TestRail
             return _SendGetCommand<Section>(uri);
         }
 
-        /// <summary>gets sections associated with a suite</summary>
-        /// <param name="projectId">id of the project</param>
-        /// <param name="suiteId">id of the suite</param>
-        /// <returns>sections associated with the suite</returns>
+        /// <summary>Gets sections associated with a suite.</summary>
+        /// <param name="projectId">ID of the project.</param>
+        /// <param name="suiteId">ID of the suite.</param>
+        /// <returns>Sections associated with the suite.</returns>
         public RequestResult<IList<Section>> GetSections(ulong projectId, ulong? suiteId = null)
         {
             var options = suiteId.HasValue ? $"&suite_id={suiteId}" : string.Empty;
@@ -841,9 +841,9 @@ namespace TestRail
             return _SendBulkGetCommand<IList<Section>>(uri, CommandAction.Sections);
         }
 
-        /// <summary>gets a run</summary>
-        /// <param name="runId">id of the run</param>
-        /// <returns>information about the run</returns>
+        /// <summary>Gets a run.</summary>
+        /// <param name="runId">ID of the run.</param>
+        /// <returns>Information about the run.</returns>
         public RequestResult<Run> GetRun(ulong runId)
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Run, runId);
@@ -851,10 +851,10 @@ namespace TestRail
             return _SendGetCommand<Run>(uri);
         }
 
-        /// <summary>gets runs associated with a project</summary>
-        /// <param name="projectId">id of the project</param>
-        /// <param name="offset">Where to start counting the test cases from (the offset)</param>
-        /// <returns>runs associated with the project</returns>
+        /// <summary>Gets runs associated with a project.</summary>
+        /// <param name="projectId">ID of the project.</param>
+        /// <param name="offset">Where to start counting the test cases from (the offset).</param>
+        /// <returns>Runs associated with the project.</returns>
         public RequestResult<IList<Run>> GetRuns(ulong projectId, ulong offset = 0)
         {
             var options = offset > 0 ? $"&offset={offset}" : null;
@@ -863,9 +863,9 @@ namespace TestRail
             return _SendBulkGetCommand<IList<Run>>(uri, CommandAction.Runs);
         }
 
-        /// <summary>gets a plan</summary>
-        /// <param name="planId">id of the plan</param>
-        /// <returns>information about the plan</returns>
+        /// <summary>Gets a plan.</summary>
+        /// <param name="planId">ID of the plan.</param>
+        /// <returns>Information about the plan.</returns>
         public RequestResult<Plan> GetPlan(ulong planId)
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Plan, planId);
@@ -873,9 +873,9 @@ namespace TestRail
             return _SendGetCommand<Plan>(uri);
         }
 
-        /// <summary>gets plans associated with a project</summary>
-        /// <param name="projectId">id of the project</param>
-        /// <returns>plans associated with the project</returns>
+        /// <summary>Gets plans associated with a project.</summary>
+        /// <param name="projectId">ID of the project.</param>
+        /// <returns>Plans associated with the project.</returns>
         public RequestResult<IList<Plan>> GetPlans(ulong projectId)
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Plans, projectId);
@@ -883,9 +883,9 @@ namespace TestRail
             return _SendBulkGetCommand<IList<Plan>>(uri, CommandAction.Plans);
         }
 
-        /// <summary>gets a milestone</summary>
-        /// <param name="milestoneId">id of the milestone</param>
-        /// <returns>information about the milestone</returns>
+        /// <summary>Gets a milestone</summary>
+        /// <param name="milestoneId">ID of the milestone.</param>
+        /// <returns>Information about the milestone.</returns>
         public RequestResult<Milestone> GetMilestone(ulong milestoneId)
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Milestone, milestoneId);
@@ -893,9 +893,9 @@ namespace TestRail
             return _SendGetCommand<Milestone>(uri);
         }
 
-        /// <summary>gets milestones associated with a project</summary>
-        /// <param name="projectId">id of the project</param>
-        /// <returns>milestone associated with project</returns>
+        /// <summary>Gets milestones associated with a project.</summary>
+        /// <param name="projectId">ID of the project.</param>
+        /// <returns>Milestone associated with project.</returns>
         public RequestResult<IList<Milestone>> GetMilestones(ulong projectId)
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Milestones, projectId);
@@ -903,9 +903,9 @@ namespace TestRail
             return _SendBulkGetCommand<IList<Milestone>>(uri, CommandAction.Milestones);
         }
 
-        /// <summary>gets a project</summary>
-        /// <param name="projectId">id of the project</param>
-        /// <returns>information about the project</returns>
+        /// <summary>Gets a project.</summary>
+        /// <param name="projectId">ID of the project.</param>
+        /// <returns>Information about the project.</returns>
         public RequestResult<Project> GetProject(ulong projectId)
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Project, projectId);
@@ -913,8 +913,8 @@ namespace TestRail
             return _SendGetCommand<Project>(uri);
         }
 
-        /// <summary>gets all projects contained in the testrail instance</summary>
-        /// <returns>list containing all the projects</returns>
+        /// <summary>Gets all projects contained in the TestRail instance.</summary>
+        /// <returns>List containing all the projects.</returns>
         public RequestResult<IList<Project>> GetProjects()
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Projects);
@@ -922,9 +922,9 @@ namespace TestRail
             return _SendBulkGetCommand<IList<Project>>(uri, CommandAction.Projects);
         }
 
-        /// <summary>Get User for user id</summary>
-        /// <param name="userId">user id to search for</param>
-        /// <returns>a User object</returns>
+        /// <summary>Get User for user ID.</summary>
+        /// <param name="userId">User ID to search for.</param>
+        /// <returns>A User object.</returns>
         public RequestResult<User> GetUser(ulong userId)
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.User, userId);
@@ -932,9 +932,9 @@ namespace TestRail
             return _SendGetCommand<User>(uri);
         }
 
-        /// <summary>Find a user by their email address</summary>
-        /// <param name="email">email address of the user</param>
-        /// <returns>user if found</returns>
+        /// <summary>Find a user by their email address.</summary>
+        /// <param name="email">Email address of the user.</param>
+        /// <returns>User if found.</returns>
         public RequestResult<User> GetUserByEmail(string email)
         {
             // validate the email string
@@ -950,8 +950,8 @@ namespace TestRail
             return _SendGetCommand<User>(uri);
         }
 
-        /// <summary>Get a list of users in the testrail instance</summary>
-        /// <returns>List of users</returns>
+        /// <summary>Get a list of users in the TestRail instance.</summary>
+        /// <returns>List of users.</returns>
         public RequestResult<IList<User>> GetUsers()
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Users);
@@ -959,11 +959,11 @@ namespace TestRail
             return _SendGetCommand<IList<User>>(uri);
         }
 
-        /// <summary>Returns a list of test results for a test</summary>
-        /// <param name="testId">id of the test</param>
-        /// <param name="limit">(optional) maximum amount of test results to return, latest first</param>
-        /// <param name="statusIds">a list of status IDs to filter by</param>
-        /// <returns>list containing the results for the given test</returns>
+        /// <summary>Returns a list of test results for a test.</summary>
+        /// <param name="testId">ID of the test.</param>
+        /// <param name="limit">(optional) maximum amount of test results to return, latest first.</param>
+        /// <param name="statusIds">A list of status IDs to filter by.</param>
+        /// <returns>List containing the results for the given test.</returns>
         public RequestResult<IList<Result>> GetResults(ulong testId, ulong? limit = null, IList<ResultStatus> statusIds = null)
         {
             var filters = new StringBuilder(string.Empty);
@@ -983,13 +983,13 @@ namespace TestRail
             return _SendBulkGetCommand<IList<Result>>(uri, CommandAction.Results);
         }
 
-        /// <summary>Return the list of test results for a test run and the case combination</summary>
-        /// <param name="runId">id of the test run</param>
-        /// <param name="caseId">id of the test case</param>
-        /// <param name="limit">(optional) maximum amount of test results to return, latest first</param>
-        /// <param name="offset">(optional) offset of test results to return</param>
-        /// <param name="statusIds">a list of status IDs to filter by</param>
-        /// <returns>list of test results for a case</returns>
+        /// <summary>Return the list of test results for a test run and the case combination.</summary>
+        /// <param name="runId">ID of the test run.</param>
+        /// <param name="caseId">ID of the test case.</param>
+        /// <param name="limit">(optional) maximum amount of test results to return, latest first.</param>
+        /// <param name="offset">(optional) offset of test results to return.</param>
+        /// <param name="statusIds">A list of status IDs to filter by.</param>
+        /// <returns>List of test results for a case.</returns>
         public RequestResult<IList<Result>> GetResultsForCase(ulong runId, ulong caseId, ulong? limit = null, ulong? offset = null, IList<ResultStatus> statusIds = null)
         {
             var filters = new StringBuilder(string.Empty);
@@ -1014,12 +1014,12 @@ namespace TestRail
             return _SendBulkGetCommand<IList<Result>>(uri, CommandAction.Results);
         }
 
-        /// <summary>Return the list of test results for a test run</summary>
-        /// <param name="runId">id of the rest run</param>
-        /// <param name="limit">(optional) maximum amount of test results to return, latest first</param>
-        /// <param name="offset">(optional) offset of test results to return</param>
-        /// <param name="statusIds">a list of status IDs to filter by</param>
-        /// <returns>list of test results for a test run</returns>
+        /// <summary>Return the list of test results for a test run.</summary>
+        /// <param name="runId">ID of the rest run.</param>
+        /// <param name="limit">(optional) maximum amount of test results to return, latest first.</param>
+        /// <param name="offset">(optional) offset of test results to return.</param>
+        /// <param name="statusIds">A list of status IDs to filter by.</param>
+        /// <returns>List of test results for a test run.</returns>
         public RequestResult<IList<Result>> GetResultsForRun(ulong runId, ulong? limit = null, ulong? offset = null, IList<ResultStatus> statusIds = null)
         {
             var filters = new StringBuilder(string.Empty);
@@ -1044,8 +1044,8 @@ namespace TestRail
             return _SendBulkGetCommand<IList<Result>>(uri, CommandAction.Results);
         }
 
-        /// <summary>Returns the list of statuses available to test rail</summary>
-        /// <returns>list of possible statuses</returns>
+        /// <summary>Returns the list of statuses available to TestRail.</summary>
+        /// <returns>List of possible statuses.</returns>
         public RequestResult<IList<Status>> GetStatuses()
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Statuses);
@@ -1053,8 +1053,8 @@ namespace TestRail
             return _SendGetCommand<IList<Status>>(uri);
         }
 
-        /// <summary>Get a list of all available priorities</summary>
-        /// <returns>list of priorities</returns>
+        /// <summary>Get a list of all available priorities.</summary>
+        /// <returns>List of priorities.</returns>
         public RequestResult<IList<Priority>> GetPriorities()
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Priorities);
@@ -1062,9 +1062,9 @@ namespace TestRail
             return _SendGetCommand<IList<Priority>>(uri);
         }
 
-        /// <summary>Returns a list of Config Groups available in a Project</summary>
-        /// <param name="projectId">ID of the Project to return the Config Groups for</param>
-        /// <returns>list of ConfigurationGroup</returns>
+        /// <summary>Returns a list of Config Groups available in a Project.</summary>
+        /// <param name="projectId">ID of the Project to return the Config Groups for.</param>
+        /// <returns>List of ConfigurationGroup.</returns>
         public RequestResult<IList<ConfigurationGroup>> GetConfigurationGroups(ulong projectId)
         {
             var uri = _CreateUri_(CommandType.Get, CommandAction.Configs, projectId);
@@ -1075,14 +1075,14 @@ namespace TestRail
         #endregion Public Methods
 
         #region Protected Methods
-        /// <summary>Creates a URI with the parameters given in the format</summary>
-        /// <param name="commandType">the type of action the server is going to take (i.e. get, add, update, close)</param>
-        /// <param name="actionName">the type of command the server is going to take (i.e. run, case, plan, etc)</param>
-        /// <param name="id1">(optional)first id to include in the uri</param>
-        /// <param name="id2">(optional)second id to include in the uri</param>
-        /// <param name="options">(optional)additional options to include in the uri</param>
-        /// <param name="id2Str">(optional)additional parameters to append to the uri</param>
-        /// <returns>the newly created uri</returns>
+        /// <summary>Creates a URI with the parameters given in the format.</summary>
+        /// <param name="commandType">The type of action the server is going to take (i.e. get, add, update, close).</param>
+        /// <param name="actionName">The type of command the server is going to take (i.e. run, case, plan, etc).</param>
+        /// <param name="id1">(optional) first id to include in the URI.</param>
+        /// <param name="id2">(optional) second id to include in the URI.</param>
+        /// <param name="options">(optional) additional options to include in the URI.</param>
+        /// <param name="id2Str">(optional) additional parameters to append to the URI.</param>
+        /// <returns>The newly created URI.</returns>
         protected static string _CreateUri_(CommandType commandType, CommandAction actionName, ulong? id1 = null,
             ulong? id2 = null, string options = null, string id2Str = null)
         {
@@ -1115,10 +1115,10 @@ namespace TestRail
             return _SendCommand<T>(uri, RequestType.Get);
         }
 
-        /// <summary>Used to send a GET request for Bulk API</summary>
+        /// <summary>Used to send a GET request for Bulk API.</summary>
         /// <typeparam name="T">The type to deserialize the response to.</typeparam>
         /// <param name="uri">The endpoint to send the request to.</param>
-        /// <param name="type">The type of the JSON Bulk Property to look for (e.g. cases, projects, etc.)</param>
+        /// <param name="type">The type of the JSON Bulk Property to look for (e.g. cases, projects, etc.).</param>
         /// <returns>The List result of the request.</returns>
         private RequestResult<T> _SendBulkGetCommand<T>(string uri, CommandAction type)
         {
@@ -1231,11 +1231,11 @@ namespace TestRail
             return request.Execute<T>();
         }
 
-        /// <summary>Determines if at least one of the case ids given is contained in the project and suite</summary>
-        /// <param name="projectId">id of the project</param>
-        /// <param name="suiteId">id of the suite</param>
-        /// <param name="caseIds">collection of case ids to check</param>
-        /// <returns>true if at least one case exists in the project and suite id combination, otherwise false</returns>
+        /// <summary>Determines if at least one of the case ids given is contained in the project and suite.</summary>
+        /// <param name="projectId">ID of the project.</param>
+        /// <param name="suiteId">ID of the suite.</param>
+        /// <param name="caseIds">Collection of case IDs to check.</param>
+        /// <returns>True if at least one case exists in the project and suite id combination, otherwise false.</returns>
         private bool _CasesFoundInSuite(ulong projectId, ulong suiteId, ICollection<ulong> caseIds)
         {
             var validCases = GetCases(projectId, suiteId).Payload;
@@ -1243,8 +1243,8 @@ namespace TestRail
             return validCases.Any(tmpCase => tmpCase.Id.HasValue && caseIds.Contains(tmpCase.Id.Value));
         }
 
-        /// <summary>Create a priority dictionary</summary>
-        /// <returns>dictionary of priority ID (from test rail) to priority levels(where Higher value means higher priority)</returns>
+        /// <summary>Create a priority dictionary.</summary>
+        /// <returns>Dictionary of priority ID (from TestRail) to priority levels(where Higher value means higher priority).</returns>
         private IDictionary<ulong, int> _CreatePrioritiesDict()
         {
             var tmpDict = new Dictionary<ulong, int>();

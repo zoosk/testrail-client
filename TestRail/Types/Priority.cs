@@ -2,38 +2,36 @@ using Newtonsoft.Json.Linq;
 
 namespace TestRail.Types
 {
-    /// <inheritdoc />
-    /// <summary>stores information about a priority</summary>
+    /// <summary>Stores information about a priority.</summary>
     public class Priority : BaseTestRailType
     {
         #region Public Properties
-        /// <summary>id of the priority</summary>
+        /// <summary>ID of the priority.</summary>
         public ulong Id { get; private set; }
 
-        /// <summary>name of the priority</summary>
+        /// <summary>Name of the priority.</summary>
         public string Name { get; private set; }
 
-        /// <summary>a shortened name of the priority</summary>
+        /// <summary>A shortened name of the priority.</summary>
         public string ShortName { get; private set; }
 
-        /// <summary>true if the priority is default</summary>
+        /// <summary>True if the priority is default.</summary>
         public bool IsDefault { get; private set; }
 
-        /// <summary>Priority level</summary>
+        /// <summary>Priority level.</summary>
         public int PriorityLevel { get; private set; }
         #endregion Public Properties
 
         #region Public Methods
-        /// <summary>string representation of the object</summary>
-        /// <returns>string representation of the object</returns>
+        /// <inheritdoc />
         public override string ToString()
         {
             return Name;
         }
 
-        /// <summary>parses json into a plan</summary>
-        /// <param name="json">json to parse</param>
-        /// <returns>plan corresponding to the json</returns>
+        /// <summary>Parses JSON into a plan.</summary>
+        /// <param name="json">JSON to parse.</param>
+        /// <returns>Plan corresponding to the JSON.</returns>
         public static Priority Parse(JObject json)
         {
             var priority = new Priority
